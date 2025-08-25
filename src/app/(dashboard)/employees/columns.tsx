@@ -39,6 +39,67 @@ export type Employee = {
   department: string
 }
 
+function ActionsCell({ employee }: { employee: Employee }) {
+  const [isDeleting, setIsDeleting] = React.useState(false)
+
+  async function onDelete() {
+    setIsDeleting(true)
+    const result = await deleteEmployee(employee.id)
+    if (result.success) {
+      toast.success(result.message)
+    } else {
+      toast.error(result.message)
+    }
+    setIsDeleting(false)
+  }
+
+  return (
+    <AlertDialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <EmployeeForm employee={employee}>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              Edit
+            </DropdownMenuItem>
+          </EmployeeForm>
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem className="text-red-600 hover:!bg-red-100 hover:!text-red-600">
+              Delete
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the
+            employee &quot;{employee.full_name}&quot;.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onDelete}
+            disabled={isDeleting}
+            className={buttonVariants({ variant: "destructive" })}
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
 export const columns: ColumnDef<Employee>[] = [
   {
     id: "select",
@@ -78,64 +139,7 @@ export const columns: ColumnDef<Employee>[] = [
     id: "actions",
     cell: ({ row }) => {
       const employee = row.original
-      const [isDeleting, setIsDeleting] = React.useState(false)
-
-      async function onDelete() {
-        setIsDeleting(true)
-        const result = await deleteEmployee(employee.id)
-        if (result.success) {
-          toast.success(result.message)
-        } else {
-          toast.error(result.message)
-        }
-        setIsDeleting(false)
-      }
-
-      return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <EmployeeForm employee={employee}>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  Edit
-                </DropdownMenuItem>
-              </EmployeeForm>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem className="text-red-600 hover:!bg-red-100 hover:!text-red-600">
-                  Delete
-                </DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the
-                employee &quot;{employee.full_name}&quot;.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={onDelete}
-                disabled={isDeleting}
-                className={buttonVariants({ variant: "destructive" })}
-              >
-                {isDeleting ? "Deleting..." : "Delete"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )
+      return <ActionsCell employee={employee} />
     },
   },
 ]

@@ -7,11 +7,11 @@ import { // Keep Card components
 } from "@/components/ui/card" // Keep Card components
 import { createClient } from "@/lib/supabase/server"
 
-import { columns } from "./columns"
+
 import { EmployeesClientWrapper } from "./employees-client-wrapper" // Import the new client wrapper
 
 export default async function EmployeesPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: employees } = await supabase.from("employees").select()
 
   return (
