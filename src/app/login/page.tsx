@@ -71,17 +71,10 @@ export default function LoginPage() {
               <Button formAction={login} type="submit" className="w-full">
                 Login
               </Button>
-              <Button variant="outline" className="w-full" disabled>
-                Login with Google
-              </Button>
+              
             </div>
           </form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="#" className="underline">
-              Sign up
-            </Link>
-          </div>
+  
         </div>
       </div>
     </div>
