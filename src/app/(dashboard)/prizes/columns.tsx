@@ -37,6 +37,7 @@ export type Prize = {
   name: string
   total_quantity: number
   image_url: string
+  signedUrl: string | null
 }
 
 function ActionsCell({ prize }: { prize: Prize }) {
@@ -136,8 +137,8 @@ export const columns: ColumnDef<Prize>[] = [
     header: "Image",
     cell: ({ row }) => {
       const prize = row.original
-      const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/prizes/${prize.image_url}`
-      return <img src={imageUrl} alt={prize.name} className="h-16 w-16 object-cover" />
+      if (!prize.signedUrl) return null
+      return <img src={prize.signedUrl} alt={prize.name} className="h-16 w-16 object-cover" />
     },
   },
   {
