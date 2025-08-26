@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 
 import { login } from './actions'
 import { Button } from "@/components/ui/button";
@@ -6,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
+  const searchParams = useSearchParams()
+  const message = searchParams.get('message')
+
   return (
     <div className="w-full lg:grid lg:grid-cols-2 h-screen">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
@@ -71,7 +77,11 @@ export default function LoginPage() {
               <Button formAction={login} type="submit" className="w-full">
                 Login
               </Button>
-              
+              {message && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                  <span className="block sm:inline">{message}</span>
+                </div>
+              )}
             </div>
           </form>
   

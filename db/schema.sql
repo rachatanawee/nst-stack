@@ -1,0 +1,223 @@
+-- =================================================================
+--  Supabase DDL & RLS Script for HOYA Event System
+--  Version 3: Added DROP statements for easy reset
+-- =================================================================
+
+-- =================================================================
+--  Section 0: Clean Slate (ล้างข้อมูลเก่า)
+-- =================================================================
+-- Drop tables in reverse order of creation to avoid foreign key conflicts
+DROP TABLE IF EXISTS public.winners CASCADE;
+DROP TABLE IF EXISTS public.special_permissions CASCADE;
+DROP TABLE IF EXISTS public.registrations CASCADE;
+DROP TABLE IF EXISTS public.prize_allocations CASCADE;
+DROP TABLE IF EXISTS public.draw_rounds CASCADE;
+DROP TABLE IF EXISTS public.prizes CASCADE;
+DROP TABLE IF EXISTS public.employees CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
+
+-- Drop views
+DROP VIEW IF EXISTS public.v_lucky_draw_pool;
+DROP VIEW IF EXISTS public.v_winner_details;
+DROP VIEW IF EXISTS public.v_registration_report;
+
+-- Drop helper function
+DROP FUNCTION IF EXISTS public.get_user_role();
+
+
+-- =================================================================
+--  Section 1: Table Creation (การสร้างตาราง)
+-- =================================================================
+
+-- ตารางเก็บข้อมูลเพิ่มเติมของผู้ใช้งานระบบ (Admins/Staff)
+CREATE TABLE public.profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT,
+  role TEXT NOT NULL DEFAULT 'staff' -- 'super_admin' or 'staff'
+);
+COMMENT ON TABLE public.profiles IS 'Stores additional user data linked to Supabase Auth.';
+
+-- ตารางเก็บข้อมูลพนักงานทั้งหมด
+CREATE TABLE public.employees (
+  employee_id TEXT PRIMARY KEY,
+  full_name TEXT NOT NULL,
+  department TEXT
+);
+COMMENT ON TABLE public.employees IS 'Master list of all employees.';
+
+-- ตารางเก็บข้อมูลของรางวัล
+CREATE TABLE public.prizes (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  name TEXT NOT NULL,
+  -- Total quantity of this prize across all rounds
+  total_quantity INT NOT NULL DEFAULT 1,
+  image_url TEXT, -- URL to image in Supabase Storage
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+COMMENT ON TABLE public.prizes IS 'List of all available prizes for the lucky draw.';
+
+-- [NEW] ตารางสำหรับกำหนดรอบการจับรางวัล
+CREATE TABLE public.draw_rounds (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  name TEXT NOT NULL, -- e.g., "รอบเช้า 1", "รอบเย็น Grand Prize"
+  session TEXT NOT NULL, -- 'morning' or 'evening'
+  is_active BOOLEAN NOT NULL DEFAULT FALSE
+);
+COMMENT ON TABLE public.draw_rounds IS 'Defines the different rounds of the lucky draw.';
+
+-- [NEW] ตารางสำหรับจัดสรรรางวัลในแต่ละรอบ
+CREATE TABLE public.prize_allocations (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  prize_id BIGINT NOT NULL REFERENCES public.prizes(id) ON DELETE CASCADE,
+  round_id BIGINT NOT NULL REFERENCES public.draw_rounds(id) ON DELETE CASCADE,
+  quantity INT NOT NULL, -- How many of this prize are allocated to this round
+  UNIQUE(prize_id, round_id)
+);
+COMMENT ON TABLE public.prize_allocations IS 'Links prizes to specific draw rounds with allocated quantities.';
+
+
+-- ตารางเก็บข้อมูลการลงทะเบียนเข้าร่วมงาน
+CREATE TABLE public.registrations (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  employee_id TEXT NOT NULL REFERENCES public.employees(employee_id),
+  session TEXT NOT NULL, -- 'morning' or 'evening'
+  registered_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+COMMENT ON TABLE public.registrations IS 'Records each employee check-in at the event.';
+
+-- ตารางเก็บข้อมูลพนักงานที่ได้สิทธิ์พิเศษ (ไม่ต้องมางาน)
+CREATE TABLE public.special_permissions (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  employee_id TEXT NOT NULL REFERENCES public.employees(employee_id),
+  reason TEXT, -- e.g., 'กะดึก'
+  UNIQUE(employee_id)
+);
+COMMENT ON TABLE public.special_permissions IS 'Employees with special permission to join the lucky draw without attending.';
+
+-- [UPDATED] ตารางเก็บข้อมูลผู้ที่ได้รับรางวัล
+CREATE TABLE public.winners (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  employee_id TEXT NOT NULL REFERENCES public.employees(employee_id),
+  prize_id BIGINT NOT NULL REFERENCES public.prizes(id),
+  -- [NEW] Link to the specific round the prize was won in
+  draw_round_id BIGINT NOT NULL REFERENCES public.draw_rounds(id),
+  drawn_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  redemption_status TEXT NOT NULL DEFAULT 'pending', -- 'pending' or 'redeemed'
+  redeemed_at TIMESTAMPTZ,
+  redemption_photo_path TEXT, -- Path to image in Supabase Storage
+  redeemed_by_staff UUID REFERENCES auth.users(id),
+  UNIQUE(employee_id) -- เงื่อนไข: 1 คนได้รับรางวัลเดียว
+);
+COMMENT ON TABLE public.winners IS 'Logs all prize winners from the lucky draw.';
+
+
+-- =================================================================
+--  Section 2: Row Level Security (RLS) Setup
+-- =================================================================
+
+-- Helper function to get user role from profiles table
+CREATE OR REPLACE FUNCTION public.get_user_role()
+RETURNS TEXT AS $$
+DECLARE
+  user_role TEXT;
+BEGIN
+  SELECT role INTO user_role FROM public.profiles WHERE id = auth.uid();
+  RETURN user_role;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Enable RLS for all tables
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.employees ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.prizes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.draw_rounds ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.prize_allocations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.registrations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.special_permissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.winners ENABLE ROW LEVEL SECURITY;
+
+-- Policies for 'profiles'
+CREATE POLICY "Allow users to view their own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Allow admins to manage all profiles" ON public.profiles FOR ALL USING (public.get_user_role() = 'super_admin');
+
+-- Policies for 'employees', 'prizes'
+CREATE POLICY "Allow authenticated users to read" ON public.employees FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow only admins to manage" ON public.employees FOR ALL USING (public.get_user_role() = 'super_admin');
+CREATE POLICY "Allow authenticated users to read" ON public.prizes FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow only admins to manage" ON public.prizes FOR ALL USING (public.get_user_role() = 'super_admin');
+
+-- [NEW] Policies for 'draw_rounds' and 'prize_allocations'
+CREATE POLICY "Allow authenticated users to read" ON public.draw_rounds FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow only admins to manage" ON public.draw_rounds FOR ALL USING (public.get_user_role() = 'super_admin');
+CREATE POLICY "Allow authenticated users to read" ON public.prize_allocations FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow only admins to manage" ON public.prize_allocations FOR ALL USING (public.get_user_role() = 'super_admin');
+
+-- Policies for 'registrations'
+CREATE POLICY "Allow staff/admins to read/insert" ON public.registrations FOR ALL USING (public.get_user_role() IN ('staff', 'super_admin'));
+CREATE POLICY "Allow only admins to delete" ON public.registrations FOR DELETE USING (public.get_user_role() = 'super_admin');
+
+-- Policies for 'special_permissions'
+CREATE POLICY "Allow only admins to manage" ON public.special_permissions FOR ALL USING (public.get_user_role() = 'super_admin');
+
+-- Policies for 'winners'
+CREATE POLICY "Allow authenticated users to read" ON public.winners FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow staff/admins to update redemption" ON public.winners FOR UPDATE USING (public.get_user_role() IN ('staff', 'super_admin')) WITH CHECK (redemption_status IN ('pending', 'redeemed'));
+CREATE POLICY "Allow only admins to insert/delete" ON public.winners FOR ALL USING (public.get_user_role() = 'super_admin');
+
+-- View สำหรับแสดงข้อมูลผู้ได้รับรางวัลแบบสมบูรณ์
+CREATE OR REPLACE VIEW public.v_winner_details AS
+SELECT
+  w.id AS winner_id,
+  w.redemption_status,
+  w.redeemed_at,
+  w.redemption_photo_path,
+  e.employee_id,
+  e.full_name,
+  e.department,
+  p.name AS prize_name,
+  p.image_url AS prize_image_url,
+  dr.name as draw_round_name,
+  s.full_name AS staff_name
+FROM
+  public.winners w
+  JOIN public.employees e ON w.employee_id = e.employee_id
+  JOIN public.prizes p ON w.prize_id = p.id
+  JOIN public.draw_rounds dr ON w.draw_round_id = dr.id
+  LEFT JOIN public.profiles s ON w.redeemed_by_staff = s.id;
+COMMENT ON VIEW public.v_winner_details IS 'A comprehensive view joining winners with employee, prize, and round details.';
+
+
+-- View สำหรับรายงานการลงทะเบียน
+CREATE OR REPLACE VIEW public.v_registration_report AS
+SELECT
+  r.id,
+  r.employee_id,
+  e.full_name,
+  e.department,
+  r.session,
+  r.registered_at
+FROM
+  public.registrations r
+  JOIN public.employees e ON r.employee_id = e.employee_id;
+COMMENT ON VIEW public.v_registration_report IS 'Provides data for registration reports, joining registration records with employee details.';
+
+
+-- View สำหรับดึงรายชื่อผู้มีสิทธิ์ลุ้นรางวัลทั้งหมด
+CREATE OR REPLACE VIEW public.v_lucky_draw_pool AS
+SELECT employee_id, 'morning' AS session FROM public.registrations WHERE session = 'morning'
+UNION
+SELECT employee_id, 'evening' AS session FROM public.registrations WHERE session = 'evening'
+UNION
+SELECT employee_id, 'evening' AS session FROM public.special_permissions;
+COMMENT ON VIEW public.v_lucky_draw_pool IS 'Consolidated list of all employees eligible for the lucky draw, separated by session.';
+
+
+CREATE POLICY "Allow authenticated users to delete prize images"
+ON storage.objects FOR ALL
+TO authenticated
+USING (public.get_user_role() = 'super_admin');
+
+CREATE POLICY "Allow authenticated users to view prize images"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (bucket_id = 'prizes');

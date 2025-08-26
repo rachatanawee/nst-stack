@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Eventify
+
+Eventify is a web application built with Next.js that helps manage events, employees, and prizes. It leverages Supabase for backend services, including authentication, database management, and file storage.
+
+## Features
+
+*   **Next.js App Router**: Built with the latest Next.js App Router for modern web development.
+*   **Supabase Integration**:
+    *   **Authentication**: Secure user login and session management.
+    *   **Database**: Manages employee and prize data.
+    *   **Storage**: Handles image uploads for prizes with secure, private access using signed URLs.
+*   **Employee Management**: Full CRUD (Create, Read, Update, Delete) operations for employee records.
+*   **Prize Management**: Full CRUD operations for prizes, including image uploads and previews.
+*   **Custom Font**: Uses the 'Mitr' font for a localized and distinct visual style.
+*   **Dynamic Sidebar Navigation**: Sidebar links dynamically highlight the active route for improved user experience.
+*   **End-to-End Testing**: Configured with Playwright for robust UI testing, including login scenarios.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+*   Node.js (v18 or later)
+*   Bun (package manager)
+*   Supabase Project:
+    *   Set up a Supabase project.
+    *   Configure environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+    *   **Database Setup**: Run the SQL script located at `db/schema.sql` in your Supabase SQL Editor to set up tables, views, functions, and Row Level Security (RLS) policies.
+
+### Installation
+
+1.  Clone the repository:
+    ```bash
+    git clone <repository-url>
+    cd eventify
+    ```
+2.  Install dependencies:
+    ```bash
+    bun install
+    ```
+3.  Download Playwright browser binaries:
+    ```bash
+    bunx playwright install
+    ```
+
+### Running the Development Server
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Running Tests
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To run end-to-end tests with Playwright:
 
-## Learn More
+1.  Ensure the development server is running:
+    ```bash
+    bun run dev
+    ```
+2.  In a separate terminal, run the tests:
+    ```bash
+    bun run test:e2e
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+.
+├── public/                 # Static assets
+├── src/
+│   ├── app/                # Next.js App Router pages and layouts
+│   │   ├── (dashboard)/    # Dashboard routes
+│   │   │   ├── _components/ # UI components for dashboard (e.g., sidebar)
+│   │   │   ├── employees/  # Employee management features (pages, actions, forms, columns)
+│   │   │   └── prizes/     # Prize management features (pages, actions, forms, columns)
+│   │   ├── login/          # Login page and actions
+│   │   ├── actions.ts      # Global server actions
+│   │   ├── globals.css     # Global styles
+│   │   └── layout.tsx      # Root layout
+│   ├── components/         # Reusable UI components (shadcn/ui)
+│   │   └── ui/             # Shadcn/ui components
+│   └── lib/                # Utility functions and Supabase client setup
+│       └── supabase/       # Supabase client configurations
+├── tests/                  # Playwright end-to-end tests
+├── .vscode/                # VS Code configurations (e.g., launch.json for debugging)
+├── playwright.config.ts    # Playwright test configuration
+├── tailwind.config.ts      # Tailwind CSS configuration
+├── db/                     # Database schema and RLS policies
+└── package.json            # Project dependencies and scripts
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
+## Deployment
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For more details on deploying Next.js applications, refer to the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
