@@ -2,6 +2,7 @@
 
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n'; // Adjust path as needed
+import { Resource } from 'i18next'; // Import Resource type
 // No useEffect needed here for init
 
 // Initialize i18n once with resources
@@ -19,7 +20,7 @@ if (!i18n.isInitialized) {
   });
 }
 
-export default function ClientProvider({ children, locale, resources }: { children: React.ReactNode; locale: string; resources: any }) {
+export default function ClientProvider({ children, locale, resources }: { children: React.ReactNode; locale: string; resources: Resource }) {
   // Update i18n resources and language when props change
   if (resources && Object.keys(resources).length > 0) {
     Object.keys(resources).forEach(lng => {

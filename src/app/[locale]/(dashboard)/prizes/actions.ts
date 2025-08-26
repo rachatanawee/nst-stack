@@ -2,10 +2,13 @@
 
 import { revalidatePath } from "next/cache"
 
+import { cookies } from "next/headers" // Import cookies
+
 import { createClient } from "@/lib/supabase/server"
 
 export async function createPrize(formData: FormData) {
-  const supabase = await createClient()
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
   const imageFile = formData.get("image") as File
 
   let imageUrl = ""
@@ -38,7 +41,8 @@ export async function createPrize(formData: FormData) {
 }
 
 export async function updatePrize(id: string, formData: FormData) {
-  const supabase = await createClient()
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
   const imageFile = formData.get("image") as File
 
   const data = {
@@ -69,7 +73,8 @@ export async function updatePrize(id: string, formData: FormData) {
 }
 
 export async function deletePrize(id: string) {
-  const supabase = await createClient()
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
 
   const { error } = await supabase.from("prizes").delete().eq("id", id)
 

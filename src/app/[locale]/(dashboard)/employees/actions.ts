@@ -2,10 +2,13 @@
 
 import { revalidatePath } from "next/cache"
 
+import { cookies } from "next/headers" // Import cookies
+
 import { createClient } from "@/lib/supabase/server"
 
 export async function createEmployee(formData: FormData) {
-  const supabase = await createClient()
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
 
   const data = {
     employee_id: formData.get("employee_id") as string,
@@ -24,7 +27,8 @@ export async function createEmployee(formData: FormData) {
 }
 
 export async function updateEmployee(id: string, formData: FormData) {
-  const supabase = await createClient()
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
 
   const data = {
     employee_id: formData.get("employee_id") as string,
@@ -43,7 +47,8 @@ export async function updateEmployee(id: string, formData: FormData) {
 }
 
 export async function deleteEmployee(id: string) {
-  const supabase = await createClient()
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
 
   const { error } = await supabase.from("employees").delete().eq("id", id)
 

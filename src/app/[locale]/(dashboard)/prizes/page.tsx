@@ -6,11 +6,13 @@ import {
   CardTitle, 
 } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/server"
+import { cookies } from "next/headers" // Import cookies
 
 import { PrizesClientWrapper } from "./prizes-client-wrapper"
 
 export default async function PrizesPage() {
-  const supabase = await createClient()
+  const cookieStore = cookies() // Get cookieStore
+  const supabase = await createClient(cookieStore)
   const { data: prizesData } = await supabase.from("prizes").select()
 
   const prizes = prizesData

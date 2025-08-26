@@ -11,6 +11,7 @@ i18n
     ns: ['common'], // Specify namespaces
     defaultNS: 'common', // Set default namespace
     load: 'languageOnly', // Load only the language, not specific regional variants
+    supportedLngs: ['en', 'th'], // Explicitly list supported languages
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
@@ -20,7 +21,7 @@ i18n
     detection: {
       order: ['path', 'navigator'], // Prioritize path for language detection
       lookupFromPathIndex: 0, // Look for language in the first path segment
-      checkWhitelist: true, // Only use whitelisted languages
+      // checkWhitelist is deprecated, use supportedLngs instead
     },
   });
 

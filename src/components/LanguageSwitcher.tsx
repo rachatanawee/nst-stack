@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'; // Import DropdownMenu components
 
-export default function LanguageSwitcher({ size }: { size?: "default" | "sm" | "lg" | "icon" | "fit" }) {
+export default function LanguageSwitcher({ size }: { size?: "default" | "sm" | "lg" | "icon" }) {
   const router = useRouter();
   const pathname = usePathname(); // Get pathname
   const { i18n } = useTranslation();

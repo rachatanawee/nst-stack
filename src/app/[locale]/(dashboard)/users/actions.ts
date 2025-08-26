@@ -95,3 +95,4 @@ export async function deleteUser(userId: string) {
   const supabase = await createClient(cookieStore, true);
 
   const { error } = await supabase.auth.admin.deleteUser(userId);
+}
