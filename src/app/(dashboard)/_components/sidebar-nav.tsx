@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
   Award,
   Bell,
@@ -9,9 +12,21 @@ import {
   Users,
 } from "lucide-react"
 
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
+const navLinks = [
+  { href: "/", label: "Dashboard", icon: Home },
+  { href: "/employees", label: "จัดการข้อมูลพนักงาน", icon: Users },
+  { href: "/prizes", label: "จัดการของรางวัล", icon: Award },
+  { href: "/rewards/settings", label: "ตั้งค่ารางวัล", icon: Award },
+  { href: "/rewards/give", label: "มอบรางวัล", icon: Gift },
+  { href: "/reports", label: "รายงาน", icon: LineChart },
+]
+
 export function SidebarNav() {
+  const pathname = usePathname()
+
   return (
     <div className="hidden border-r bg-muted/40 md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
@@ -27,41 +42,24 @@ export function SidebarNav() {
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            <Link
-              href="/"
-              className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-            >
-              <Home className="h-4 w-4" />
-              Dashboard
-            </Link>
-            <Link
-              href="/employees"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-            >
-              <Users className="h-4 w-4" />
-              จัดการข้อมูลพนักงาน
-            </Link>
-            <Link
-              href="/rewards/settings"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-            >
-              <Award className="h-4 w-4" />
-              ตั้งค่ารางวัล
-            </Link>
-            <Link
-              href="/rewards/give"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-            >
-              <Gift className="h-4 w-4" />
-              มอบรางวัล
-            </Link>
-            <Link
-              href="/reports"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-            >
-              <LineChart className="h-4 w-4" />
-              รายงาน
-            </Link>
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                    isActive
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  <link.icon className="h-4 w-4" />
+                  {link.label}
+                </Link>
+              )
+            })}
           </nav>
         </div>
       </div>

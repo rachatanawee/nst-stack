@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Mitr } from 'next/font/google'
 import './globals.css'
 
 import { Toaster } from '@/components/ui/sonner'
 
-const inter = Inter({ subsets: ['latin'] })
+const mitr = Mitr({ subsets: ['latin', 'thai'], weight: ['400', '700'] })
 
 export const metadata: Metadata = {
   title: 'Eventify',
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={mitr.className}>
         {children}
         <Toaster />
       </body>
