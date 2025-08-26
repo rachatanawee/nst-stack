@@ -28,7 +28,7 @@ export function MobileSheetNav() {
             className="flex items-center gap-2 text-lg font-semibold"
           >
             <Package2 className="h-6 w-6" />
-            <span className="sr-only">Eventify</span>
+            <span className="sr-only">NST-Stack</span>
           </Link>
           <Link
             href="/"

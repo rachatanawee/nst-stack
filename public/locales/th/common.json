@@ -1,0 +1,17 @@
+{
+  "welcome": "ยินดีต้อนรับสู่แอปพลิเคชันหลายภาษา!",
+  "greeting": "สวัสดี",
+  "dashboard": "แดชบอร์ด",
+  "manage_employees": "จัดการข้อมูลพนักงาน",
+  "manage_prizes": "จัดการของรางวัล",
+  "manage_users": "จัดการผู้ใช้",
+  "reward_settings": "ตั้งค่ารางวัล",
+  "give_rewards": "มอบรางวัล",
+  "reports": "รายงาน",
+  "login_heading": "เข้าสู่ระบบ",
+  "login_description": "กรอกอีเมลของคุณด้านล่างเพื่อเข้าสู่ระบบ",
+  "email_label": "อีเมล",
+  "password_label": "รหัสผ่าน",
+  "forgot_password": "ลืมรหัสผ่าน?",
+  "login_button": "เข้าสู่ระบบ"
+}

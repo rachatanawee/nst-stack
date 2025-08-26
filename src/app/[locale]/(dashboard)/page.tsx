@@ -1,3 +1,5 @@
+'use client'; // This must be the very first line
+
 import {
   Activity,
   CreditCard,
@@ -12,7 +14,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import { useTranslation } from 'react-i18next';
+
 export default function DashboardPage() {
+  const { t } = useTranslation('common'); // Specify the namespace
+
   return (
     <>
       <div className="flex items-center">
@@ -75,7 +81,7 @@ export default function DashboardPage() {
       <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm p-8">
         <div className="flex flex-col items-center gap-1 text-center">
             <h3 className="text-2xl font-bold tracking-tight">
-                Welcome to your dashboard!
+                {t('welcome')}
             </h3>
             <p className="text-sm text-muted-foreground">
                 More content will be displayed here.

@@ -1,0 +1,17 @@
+{
+  "welcome": "Welcome to the multi-language app!",
+  "greeting": "Hello",
+  "dashboard": "Dashboard",
+  "manage_employees": "Manage Employees",
+  "manage_prizes": "Manage Prizes",
+  "manage_users": "Manage Users",
+  "reward_settings": "Reward Settings",
+  "give_rewards": "Give Rewards",
+  "reports": "Reports",
+  "login_heading": "Login",
+  "login_description": "Enter your email below to login to your account",
+  "email_label": "Email",
+  "password_label": "Password",
+  "forgot_password": "Forgot your password?",
+  "login_button": "Login"
+}

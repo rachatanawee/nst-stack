@@ -1,6 +1,6 @@
 import { CircleUser, Search } from "lucide-react"
 
-import { logout } from "@/app/actions"
+import { logout } from "@/app/[locale]/actions"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,11 +13,13 @@ import {
 import { Input } from "@/components/ui/input"
 
 import { MobileSheetNav } from "./mobile-sheet-nav"
+import LanguageSwitcher from "@/components/LanguageSwitcher"; // Add this import
 
 export function Header() {
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <MobileSheetNav />
+      <LanguageSwitcher /> {/* Add LanguageSwitcher here */}
       <div className="w-full flex-1">
         <form>
           <div className="relative">
@@ -25,7 +27,7 @@ export function Header() {
             <Input
               type="search"
               placeholder="Search..."
-              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3" 
             />
           </div>
         </form>

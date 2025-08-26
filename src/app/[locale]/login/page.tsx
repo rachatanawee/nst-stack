@@ -9,12 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { useTranslation } from 'react-i18next'; // Add this import
+import LanguageSwitcher from '@/components/LanguageSwitcher'; // Import LanguageSwitcher
+
 function LoginContent() {
   const searchParams = useSearchParams()
   const message = searchParams.get('message')
+  const { t } = useTranslation('common'); // Add this line, specify namespace
 
   return (
-    <div className="w-full lg:grid lg:grid-cols-2 h-screen">
+    <div className="w-full lg:grid lg:grid-cols-2 h-screen relative"> {/* Add relative here */}
+      <div className="absolute top-4 right-4 z-50"> {/* Position LanguageSwitcher */}
+        <LanguageSwitcher size="sm" /> {/* Add LanguageSwitcher here with size prop */}
+      </div>
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center text-lg font-medium">
@@ -30,7 +37,7 @@ function LoginContent() {
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          Eventify Inc
+          CSI Inc
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
@@ -46,15 +53,15 @@ function LoginContent() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
+            <h1 className="text-3xl font-bold">{t('login_heading')}</h1> {/* Translate heading */}
             <p className="text-balance text-muted-foreground">
-              Enter your email below to login to your account
+              {t('login_description')} {/* Translate description */}
             </p>
           </div>
           <form>
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('email_label')}</Label> {/* Translate label */}
                 <Input
                   id="email"
                   name="email"
@@ -65,24 +72,19 @@ function LoginContent() {
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('password_label')}</Label> {/* Translate label */}
                   <Link
                     href="#"
                     className="ml-auto inline-block text-sm underline"
                   >
-                    Forgot your password?
+                    {t('forgot_password')} {/* Translate text */}
                   </Link>
                 </div>
                 <Input id="password" name="password" type="password" required />
               </div>
               <Button formAction={login} type="submit" className="w-full">
-                Login
+                {t('login_button')} {/* Translate button text */}
               </Button>
-              {message && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                  <span className="block sm:inline">{message}</span>
-                </div>
-              )}
             </div>
           </form>
   
