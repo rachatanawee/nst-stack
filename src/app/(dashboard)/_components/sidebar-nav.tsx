@@ -19,6 +19,7 @@ const navLinks = [
   { href: "/", label: "Dashboard", icon: Home },
   { href: "/employees", label: "จัดการข้อมูลพนักงาน", icon: Users },
   { href: "/prizes", label: "จัดการของรางวัล", icon: Award },
+  { href: "/users", label: "จัดการผู้ใช้", icon: Users },
   { href: "/rewards/settings", label: "ตั้งค่ารางวัล", icon: Award },
   { href: "/rewards/give", label: "มอบรางวัล", icon: Gift },
   { href: "/reports", label: "รายงาน", icon: LineChart },
