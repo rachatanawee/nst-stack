@@ -94,5 +94,13 @@ export async function deleteUser(userId: string) {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore, true);
 
-  const { error } = await supabase.auth.admin.deleteUser(userId);
+  const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
+
+  if (deleteError) {
+    console.error('Error deleting user:', deleteError);
+    return { error: deleteError.message };
+  }
+
+  revalidatePath('/dashboard/users');
+  return { success: true };
 }

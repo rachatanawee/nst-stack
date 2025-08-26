@@ -33,11 +33,12 @@ i18n
 
 export default async function RootLayout({
   children,
-  params: { locale }
+  params
 }: Readonly<{
   children: React.ReactNode;
   params: { locale: string };
 }>) {
+  const { locale } = await params; // Explicitly await params
   // Load translations for the current locale
   await i18n.changeLanguage(locale);
   const resources = i18n.services.resourceStore.data;

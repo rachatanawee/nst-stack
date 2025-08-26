@@ -3,9 +3,9 @@
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n'; // Adjust path as needed
 import { Resource } from 'i18next'; // Import Resource type
-// No useEffect needed here for init
+import { useEffect } from 'react'; // Import useEffect
 
-// Initialize i18n once with resources
+// Initialize i18n once at the module level
 if (!i18n.isInitialized) {
   i18n.init({
     lng: 'en', // Default language, will be overridden by locale prop
@@ -22,16 +22,18 @@ if (!i18n.isInitialized) {
 
 export default function ClientProvider({ children, locale, resources }: { children: React.ReactNode; locale: string; resources: Resource }) {
   // Update i18n resources and language when props change
-  if (resources && Object.keys(resources).length > 0) {
-    Object.keys(resources).forEach(lng => {
-      Object.keys(resources[lng]).forEach(ns => {
-        i18n.addResourceBundle(lng, ns, resources[lng][ns], true, true);
+  useEffect(() => {
+    if (resources && Object.keys(resources).length > 0) {
+      Object.keys(resources).forEach(lng => {
+        Object.keys(resources[lng]).forEach(ns => {
+          i18n.addResourceBundle(lng, ns, resources[lng][ns], true, true);
+        });
       });
-    });
-  }
-  if (i18n.language !== locale) {
-    i18n.changeLanguage(locale);
-  }
+    }
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
+    }
+  }, [locale, resources]);
 
   return (
     <I18nextProvider i18n={i18n}>

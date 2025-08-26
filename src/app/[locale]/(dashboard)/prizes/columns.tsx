@@ -4,6 +4,7 @@ import * as React from "react"
 import { type ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
 import { toast } from "sonner"
+import Image from "next/image" // Import Image
 
 import {
   AlertDialog,
@@ -138,7 +139,7 @@ export const columns: ColumnDef<Prize>[] = [
     cell: ({ row }) => {
       const prize = row.original
       if (!prize.signedUrl) return null
-      return <img src={prize.signedUrl} alt={prize.name} className="h-16 w-16 object-cover" />
+      return <Image src={prize.signedUrl} alt={prize.name} width={64} height={64} className="h-16 w-16 object-cover" />
     },
   },
   {
