@@ -36,7 +36,7 @@ export async function updateEmployee(id: string, formData: FormData) {
     department: formData.get("department") as string,
   }
 
-  const { error } = await supabase.from("employees").update(data).eq("id", id)
+  const { error } = await supabase.from("employees").update(data).eq("employee_id", id)
 
   if (error) {
     return { success: false, message: error.message }
@@ -50,7 +50,7 @@ export async function deleteEmployee(id: string) {
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 
-  const { error } = await supabase.from("employees").delete().eq("id", id)
+  const { error } = await supabase.from("employees").delete().eq("employee_id", id)
 
   if (error) {
     return { success: false, message: error.message }

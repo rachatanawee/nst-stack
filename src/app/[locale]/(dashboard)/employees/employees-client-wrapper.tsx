@@ -1,25 +1,26 @@
-"use client"
+'use client'
 
-import { useState } from "react"
+import { useState } from 'react'
+import Link from 'next/link'
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DataTable } from "@/components/data-table"
+import { buttonVariants } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { DataTable } from '@/components/data-table'
+import { cn } from '@/lib/utils'
 
-import { columns, type Employee } from "./columns"
-import { EmployeeForm } from "./employee-form"
+import { columns, type Employee } from './columns'
 
 interface EmployeesClientWrapperProps {
   employees: Employee[]
 }
 
 export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProps) {
-  const [filter, setFilter] = useState("")
+  const [filter, setFilter] = useState('')
 
   // Filter employees based on the search input
-  const filteredEmployees = employees.filter(employee =>
-    employee.full_name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredEmployees = employees.filter((employee) =>
+    employee.full_name.toLowerCase().includes(filter.toLowerCase()),
+  )
 
   return (
     <>
@@ -30,9 +31,12 @@ export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProp
           onChange={(event) => setFilter(event.target.value)}
           className="max-w-sm"
         />
-        <EmployeeForm>
-          <Button className="ml-auto">Add Employee</Button>
-        </EmployeeForm>
+        <Link
+          href="/employees/new"
+          className={cn(buttonVariants({ variant: 'default' }), 'ml-auto')}
+        >
+          Add Employee
+        </Link>
       </div>
       <DataTable columns={columns} data={filteredEmployees} />
     </>

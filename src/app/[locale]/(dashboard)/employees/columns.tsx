@@ -1,9 +1,10 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { type ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
-import { toast } from "sonner"
+import * as React from 'react'
+import Link from 'next/link'
+import { type ColumnDef } from '@tanstack/react-table'
+import { MoreHorizontal } from 'lucide-react'
+import { toast } from 'sonner'
 
 import {
   AlertDialog,
@@ -15,11 +16,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from '@/components/ui/alert-dialog'
 
-import { buttonVariants } from "@/components/ui/button"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,13 +28,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 
-import { deleteEmployee } from "./actions"
-import { EmployeeForm } from "./employee-form"
+import { deleteEmployee } from './actions'
 
 export type Employee = {
-  id: string
   employee_id: string
   full_name: string
   department: string
@@ -44,7 +43,7 @@ function ActionsCell({ employee }: { employee: Employee }) {
 
   async function onDelete() {
     setIsDeleting(true)
-    const result = await deleteEmployee(employee.id)
+    const result = await deleteEmployee(employee.employee_id)
     if (result.success) {
       toast.success(result.message)
     } else {
@@ -65,11 +64,9 @@ function ActionsCell({ employee }: { employee: Employee }) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <EmployeeForm employee={employee}>
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              Edit
-            </DropdownMenuItem>
-          </EmployeeForm>
+          <DropdownMenuItem asChild>
+            <Link href={`/employees/${employee.employee_id}/edit`}>Edit</Link>
+          </DropdownMenuItem>
           <AlertDialogTrigger asChild>
             <DropdownMenuItem className="text-red-600 hover:!bg-red-100 hover:!text-red-600">
               Delete
@@ -90,9 +87,9 @@ function ActionsCell({ employee }: { employee: Employee }) {
           <AlertDialogAction
             onClick={onDelete}
             disabled={isDeleting}
-            className={buttonVariants({ variant: "destructive" })}
+            className={buttonVariants({ variant: 'destructive' })}
           >
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isDeleting ? 'Deleting...' : 'Delete'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -102,12 +99,12 @@ function ActionsCell({ employee }: { employee: Employee }) {
 
 export const columns: ColumnDef<Employee>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -124,19 +121,19 @@ export const columns: ColumnDef<Employee>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "employee_id",
-    header: "Employee ID",
+    accessorKey: 'employee_id',
+    header: 'Employee ID',
   },
   {
-    accessorKey: "full_name",
-    header: "Full Name",
+    accessorKey: 'full_name',
+    header: 'Full Name',
   },
   {
-    accessorKey: "department",
-    header: "Department",
+    accessorKey: 'department',
+    header: 'Department',
   },
   {
-    id: "actions",
+    id: 'actions',
     cell: ({ row }) => {
       const employee = row.original
       return <ActionsCell employee={employee} />
