@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,11 +17,16 @@ interface EmployeesClientWrapperProps {
 
 export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProps) {
   const [filter, setFilter] = useState('')
+  const router = useRouter()
 
   // Filter employees based on the search input
   const filteredEmployees = employees.filter((employee) =>
     employee.full_name.toLowerCase().includes(filter.toLowerCase()),
   )
+
+  function handleRowDoubleClick(row: Employee) {
+    router.push(`/employees/${row.employee_id}/edit`)
+  }
 
   return (
     <>
@@ -38,7 +44,11 @@ export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProp
           Add Employee
         </Link>
       </div>
-      <DataTable columns={columns} data={filteredEmployees} />
+      <DataTable
+        columns={columns}
+        data={filteredEmployees}
+        onRowDoubleClick={handleRowDoubleClick}
+      />
     </>
   )
 }

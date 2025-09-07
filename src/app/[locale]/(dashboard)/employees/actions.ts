@@ -59,3 +59,32 @@ export async function deleteEmployee(id: string) {
   revalidatePath("/employees")
   return { success: true, message: "Employee deleted successfully." }
 }
+
+export async function duplicateEmployee(id: string) {
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
+
+  const { data: original, error: findError } = await supabase
+    .from("employees")
+    .select("*")
+    .eq("employee_id", id)
+    .single()
+
+  if (findError || !original) {
+    return { success: false, message: findError?.message || "Employee not found." }
+  }
+
+  const newData = {
+    ...original,
+    employee_id: `${original.employee_id}_copy`,
+  }
+
+  const { error: insertError } = await supabase.from("employees").insert(newData)
+
+  if (insertError) {
+    return { success: false, message: insertError.message }
+  }
+
+  revalidatePath("/employees")
+  return { success: true, message: "Employee duplicated successfully." }
+}

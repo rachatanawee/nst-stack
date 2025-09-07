@@ -30,7 +30,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { deleteEmployee } from './actions'
+import { deleteEmployee, duplicateEmployee } from './actions'
 
 export type Employee = {
   employee_id: string
@@ -40,6 +40,7 @@ export type Employee = {
 
 function ActionsCell({ employee }: { employee: Employee }) {
   const [isDeleting, setIsDeleting] = React.useState(false)
+  const [isDuplicating, setIsDuplicating] = React.useState(false)
 
   async function onDelete() {
     setIsDeleting(true)
@@ -50,6 +51,17 @@ function ActionsCell({ employee }: { employee: Employee }) {
       toast.error(result.message)
     }
     setIsDeleting(false)
+  }
+
+  async function onDuplicate() {
+    setIsDuplicating(true)
+    const result = await duplicateEmployee(employee.employee_id)
+    if (result.success) {
+      toast.success(result.message)
+    } else {
+      toast.error(result.message)
+    }
+    setIsDuplicating(false)
   }
 
   return (
@@ -66,6 +78,9 @@ function ActionsCell({ employee }: { employee: Employee }) {
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link href={`/employees/${employee.employee_id}/edit`}>Edit</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onDuplicate} disabled={isDuplicating}>
+            {isDuplicating ? "Duplicating..." : "Duplicate"}
           </DropdownMenuItem>
           <AlertDialogTrigger asChild>
             <DropdownMenuItem className="text-red-600 hover:!bg-red-100 hover:!text-red-600">
