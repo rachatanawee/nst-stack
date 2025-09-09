@@ -1,13 +1,15 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTable } from "@/components/data-table"
+import { cn } from "@/lib/utils"
 
 import { columns, type Prize } from "./columns"
-import { PrizeForm } from "./prize-form"
+
 
 interface PrizesClientWrapperProps {
   prizes: Prize[]
@@ -29,11 +31,14 @@ export function PrizesClientWrapper({ prizes }: PrizesClientWrapperProps) {
           onChange={(event) => setFilter(event.target.value)}
           className="max-w-sm"
         />
-        <PrizeForm>
-          <Button className="ml-auto">Add Prize</Button>
-        </PrizeForm>
+        <Link
+          href="/prizes/new"
+          className={cn(buttonVariants({ variant: "default" }), "ml-auto")}
+        >
+          Add Prize
+        </Link>
       </div>
-      <DataTable columns={columns} data={filteredPrizes} />
+      <DataTable columns={columns} data={filteredPrizes} resourceName="prizes" />
     </>
   )
 }

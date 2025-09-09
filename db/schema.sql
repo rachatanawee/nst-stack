@@ -52,6 +52,7 @@ CREATE TABLE public.prizes (
   -- Total quantity of this prize across all rounds
   total_quantity INT NOT NULL DEFAULT 1,
   image_url TEXT, -- URL to image in Supabase Storage
+  is_continue BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 COMMENT ON TABLE public.prizes IS 'List of all available prizes for the lucky draw.';

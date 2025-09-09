@@ -28,6 +28,7 @@ export async function createPrize(formData: FormData) {
     name: formData.get("name") as string,
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: imageUrl,
+    is_continue: formData.get("is_continue") === "on",
   }
 
   const { error } = await supabase.from("prizes").insert(data)
@@ -49,6 +50,7 @@ export async function updatePrize(id: string, formData: FormData) {
     name: formData.get("name") as string,
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: formData.get("current_image_url") as string,
+    is_continue: formData.get("is_continue") === "on",
   }
 
   if (imageFile && imageFile.size > 0) {
@@ -84,4 +86,34 @@ export async function deletePrize(id: string) {
 
   revalidatePath("/prizes")
   return { success: true, message: "Prize deleted successfully." }
+}
+
+export async function duplicatePrize(id: string) {
+  const cookieStore = cookies()
+  const supabase = await createClient(cookieStore)
+
+  const { data: original, error: findError } = await supabase
+    .from("prizes")
+    .select("*")
+    .eq("id", id)
+    .single()
+
+  if (findError || !original) {
+    return { success: false, message: findError?.message || "Prize not found." }
+  }
+
+  const newData = {
+    ...original,
+    id: undefined, // Supabase will generate a new ID
+    name: `${original.name} (Copy)`,
+  }
+
+  const { error: insertError } = await supabase.from("prizes").insert(newData)
+
+  if (insertError) {
+    return { success: false, message: insertError.message }
+  }
+
+  revalidatePath("/prizes")
+  return { success: true, message: "Prize duplicated successfully." }
 }

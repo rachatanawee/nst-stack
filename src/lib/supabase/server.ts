@@ -8,7 +8,7 @@ export const createClient = async (cookieStorePromise: ReturnType<typeof cookies
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     useServiceRole
       ? process.env.SUPABASE_SERVICE_ROLE_KEY!
-      : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      : process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
     {
       cookies: {
         get(name: string) {
