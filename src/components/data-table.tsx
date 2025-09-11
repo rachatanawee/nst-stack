@@ -41,6 +41,8 @@ interface DataTableProps<TData, TValue> {
   resourceName?: string
 }
 
+const LOCAL_STORAGE_PAGE_SIZE_KEY = "data-table-page-size"
+
 export function DataTable<TData extends { id?: string; employee_id?: string }, TValue>({ 
   columns,
   data,
@@ -49,6 +51,19 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   const router = useRouter()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [rowSelection, setRowSelection] = React.useState({})
+
+  const [pageSize, setPageSize] = React.useState(() => {
+    if (typeof window !== "undefined") {
+      const storedPageSize = localStorage.getItem(LOCAL_STORAGE_PAGE_SIZE_KEY)
+      if (storedPageSize) {
+        const parsedSize = Number(storedPageSize)
+        if (!isNaN(parsedSize) && parsedSize > 0) {
+          return parsedSize
+        }
+      }
+    }
+    return 10 // Default page size
+  })
 
   const table = useReactTable({
     data,
@@ -61,8 +76,23 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     state: {
       sorting,
       rowSelection,
+      pagination: {
+        pageIndex: 0,
+        pageSize: pageSize,
+      },
+    },
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === 'function' ? updater(table.getState().pagination) : updater;
+      setPageSize(newPagination.pageSize);
     },
   })
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(LOCAL_STORAGE_PAGE_SIZE_KEY, pageSize.toString())
+    }
+  }, [pageSize])
+
 
   function handleDoubleClick(row: TData) {
     if (resourceName) {
