@@ -24,7 +24,7 @@ export default async function EditPrizePage({ params }: Props) {
   const { data: prize } = await supabase
     .from("prizes")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", (await params).id)
     .single()
 
   if (!prize) {

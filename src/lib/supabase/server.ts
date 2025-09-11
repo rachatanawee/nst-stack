@@ -5,10 +5,8 @@ export const createClient = async (cookieStorePromise: ReturnType<typeof cookies
   const cookieStore = await cookieStorePromise; // Await the cookieStore promise
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    useServiceRole
-      ? process.env.SUPABASE_SERVICE_ROLE_KEY!
-      : process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY,
     {
       cookies: {
         get(name: string) {

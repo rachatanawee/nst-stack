@@ -5,35 +5,21 @@ import i18n from '@/i18n'; // Adjust path as needed
 import { Resource } from 'i18next'; // Import Resource type
 import { useEffect } from 'react'; // Import useEffect
 
-// Initialize i18n once at the module level
-if (!i18n.isInitialized) {
-  i18n.init({
-    lng: 'en', // Default language, will be overridden by locale prop
-    resources: {}, // Initial empty resources, will be populated by prop
-    ns: ['common'],
-    defaultNS: 'common',
-    fallbackLng: 'en',
-    debug: process.env.NODE_ENV === 'development',
-    interpolation: {
-      escapeValue: false,
-    },
-  });
-}
-
 export default function ClientProvider({ children, locale, resources }: { children: React.ReactNode; locale: string; resources: Resource }) {
-  // Update i18n resources and language when props change
-  useEffect(() => {
-    if (resources && Object.keys(resources).length > 0) {
-      Object.keys(resources).forEach(lng => {
-        Object.keys(resources[lng]).forEach(ns => {
-          i18n.addResourceBundle(lng, ns, resources[lng][ns], true, true);
-        });
-      });
-    }
-    if (i18n.language !== locale) {
-      i18n.changeLanguage(locale);
-    }
-  }, [locale, resources]);
+  // Initialize i18n with resources from SSR
+  if (!i18n.isInitialized || i18n.language !== locale) {
+    i18n.init({
+      lng: locale,
+      resources: resources,
+      ns: ['common'],
+      defaultNS: 'common',
+      fallbackLng: 'en',
+      debug: process.env.NODE_ENV === 'development',
+      interpolation: {
+        escapeValue: false,
+      },
+    });
+  }
 
   return (
     <I18nextProvider i18n={i18n}>

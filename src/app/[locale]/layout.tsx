@@ -11,25 +11,8 @@ export const metadata: Metadata = {
   description: 'Event management platform',
 }
 
-import ClientProvider from '@/components/ClientProvider'; // Add this import
-import i18n from 'i18next'; // Import i18next
-import Backend from 'i18next-fs-backend'; // Import i18next-fs-backend
-import { initReactI18next } from 'react-i18next/initReactI18next'; // Import initReactI18next
-
-// Initialize i18next on the server
-i18n
-  .use(Backend)
-  .use(initReactI18next)
-  .init({
-    backend: {
-      loadPath: process.cwd() + '/public/locales/{{lng}}/{{ns}}.json',
-    },
-    lng: 'en', // Default language for server-side rendering
-    fallbackLng: 'en',
-    ns: ['common'],
-    defaultNS: 'common',
-    preload: ['en', 'th'], // Preload all supported languages
-  });
+import ClientProvider from '@/components/ClientProvider';
+import { useTranslation } from '@/lib/i18n.server';
 
 export default async function RootLayout({
   children,
@@ -38,9 +21,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }>) {
-  const { locale } = await params; // Explicitly await params
-  // Load translations for the current locale
-  await i18n.changeLanguage(locale);
+  const { locale } = params;
+  const { i18n } = await useTranslation(locale);
   const resources = i18n.services.resourceStore.data;
 
   return (

@@ -1,5 +1,6 @@
-'use client'
+'use client';
 
+import Image from "next/image"
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -111,6 +112,19 @@ export function PrizeForm({ prize }: PrizeFormProps) {
               className="col-span-3"
             />
           </div>
+          {isEditing && prize?.signedUrl && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="col-start-2 col-span-3">
+                <Image
+                  src={prize.signedUrl}
+                  alt={prize.name || "Prize Image"}
+                  width={200}
+                  height={200}
+                  objectFit="contain"
+                />
+              </div>
+            </div>
+          )}
           {isEditing && prize?.image_url && (
             <input type="hidden" name="current_image_url" value={prize.image_url} />
           )}
