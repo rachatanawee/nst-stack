@@ -12,18 +12,35 @@ export const metadata: Metadata = {
 }
 
 import ClientProvider from '@/components/ClientProvider';
-import { useTranslation } from '@/lib/i18n.server';
+import { createInstance } from 'i18next';
+import resourcesToBackend from 'i18next-resources-to-backend';
+
+const initI18next = async (lng: string, ns: string) => {
+  const i18nInstance = createInstance();
+  await i18nInstance
+    .use(resourcesToBackend((language: string, namespace: string) => import(`../../../public/locales/${language}/${namespace}.json`)))
+    .init({
+      lng,
+      ns,
+      fallbackLng: 'en',
+      defaultNS: 'common',
+      preload: ['en', 'th'],
+    });
+  return i18nInstance;
+};
+
+interface LayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
 
 export default async function RootLayout({
   children,
   params
-}: Readonly<{
-  children: React.ReactNode;
-  params: { locale: string };
-}>) {
-  const { locale } = params;
-  const { i18n } = await useTranslation(locale);
-  const resources = i18n.services.resourceStore.data;
+}: LayoutProps) {
+  const { locale } = await params;
+  const i18nInstance = await initI18next(locale, 'common');
+  const resources = i18nInstance.services.resourceStore.data;
 
   return (
     <html lang={locale}>

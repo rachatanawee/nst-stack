@@ -30,7 +30,15 @@ export const columns: ColumnDef<Winner>[] = [
     header: 'Awarded At',
     cell: ({ row }) => {
       const date = new Date(row.getValue('drawn_at'))
-      const formattedDateTime = date.toLocaleString(undefined, { hour12: false })
+      const formattedDateTime = new Intl.DateTimeFormat(undefined, {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hourCycle: 'h23',
+      }).format(date)
       return <div>{formattedDateTime}</div>
     },
   },

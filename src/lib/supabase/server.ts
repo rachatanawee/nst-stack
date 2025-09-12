@@ -4,9 +4,13 @@ import { cookies } from 'next/headers'
 export const createClient = async (cookieStorePromise: ReturnType<typeof cookies>, useServiceRole = false) => {
   const cookieStore = await cookieStorePromise; // Await the cookieStore promise
 
+  const supabaseKey = useServiceRole
+    ? process.env.SUPABASE_SERVICE_ROLE_KEY!
+    : process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY!;
+
   return createServerClient(
     process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY,
+    supabaseKey,
     {
       cookies: {
         get(name: string) {

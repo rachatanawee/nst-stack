@@ -15,22 +15,9 @@ interface EmployeesClientWrapperProps {
 }
 
 export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProps) {
-  const [filter, setFilter] = useState('')
-
-  // Filter employees based on the search input
-  const filteredEmployees = employees.filter((employee) =>
-    employee.full_name.toLowerCase().includes(filter.toLowerCase()),
-  )
-
   return (
     <>
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter by name..."
-          value={filter}
-          onChange={(event) => setFilter(event.target.value)}
-          className="max-w-sm"
-        />
         <Link
           href="/employees/new"
           className={cn(buttonVariants({ variant: 'default' }), 'ml-auto')}
@@ -40,9 +27,10 @@ export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProp
       </div>
       <DataTable
         columns={columns}
-        data={filteredEmployees}
+        data={employees}
         resourceName="employees"
       />
     </>
   )
 }
+    

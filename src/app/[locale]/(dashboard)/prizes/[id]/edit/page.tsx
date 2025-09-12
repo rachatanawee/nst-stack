@@ -12,13 +12,12 @@ import { createClient } from "@/lib/supabase/server"
 
 import { PrizeForm } from "../../prize-form"
 
-type Props = {
-  params: {
-    id: string
-  }
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function EditPrizePage({ params }: Props) {
+export default async function EditPrizePage({ params }: PageProps) {
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
   const { data: prize } = await supabase

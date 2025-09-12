@@ -16,9 +16,18 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable, // Added back useReactTable
-  getFilteredRowModel, // Added for global filter
+  useReactTable,
+  getFilteredRowModel,
+  type Header,
 } from "@tanstack/react-table"
+
+interface ResizableHeader<TData, TValue> extends Header<TData, TValue> {
+  getResizerProps: () => {
+    onMouseDown: (event: React.MouseEvent) => void;
+    onTouchStart: (event: React.TouchEvent) => void;
+  };
+}
+
 
 import { Button } from "@/components/ui/button"
 import {
@@ -70,20 +79,22 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     return 10 // Default page size
   })
 
-  const table = useReactTable({
+  const table = useReactTable<TData>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(), // Added for global filter
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter, // Added for global filter
+    onGlobalFilterChange: setGlobalFilter,
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange',
     state: {
       sorting,
       rowSelection,
-      globalFilter, // Added for global filter
+      globalFilter,
       pagination: {
         pageIndex: 0,
         pageSize: pageSize,
@@ -136,9 +147,15 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {(headerGroup.headers as ResizableHeader<TData, TValue>[]).map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{
+                        width: header.getSize(),
+                      }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : (
@@ -154,12 +171,21 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
-                              {{ 
+                              {{
                                 asc: " 🔼",
                                 desc: " 🔽",
                               }[header.column.getIsSorted() as string] ?? null}
                             </div>
                           )}
+                      {!header.isPlaceholder && header.column.getCanResize() && typeof header.getResizerProps === 'function' && (
+                        <div
+                          onMouseDown={header.getResizerProps().onMouseDown}
+                          onTouchStart={header.getResizerProps().onTouchStart}
+                          className={`resizer ${
+                            header.column.getIsResizing() ? "isResizing" : ""
+                          }`}
+                        />
+                      )}
                     </TableHead>
                   )
                 })}

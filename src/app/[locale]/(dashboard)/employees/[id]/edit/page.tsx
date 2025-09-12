@@ -12,19 +12,18 @@ import { createClient } from "@/lib/supabase/server"
 
 import { EmployeeForm } from "../../employee-form"
 
-type Props = {
-  params: {
-    id: string
-  }
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function EditEmployeePage({ params }: Props) {
+export default async function EditEmployeePage({ params }: PageProps) {
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
   const { data: employee } = await supabase
     .from("employees")
     .select("*")
-    .eq("employee_id", params.id)
+    .eq("employee_id", (await params).id)
     .single()
 
   if (!employee) {
