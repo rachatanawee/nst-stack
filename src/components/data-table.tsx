@@ -155,15 +155,16 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
                       style={{
                         width: header.getSize(),
                       }}
+                      className={header.column.getCanResize() ? "cursor-col-resize" : ""}
                     >
                       {header.isPlaceholder
                         ? null
                         : (
                             <div
                               {...{
-                                className: header.column.getCanSort()
+                                className: `font-bold ${header.column.getCanSort()
                                   ? "cursor-pointer select-none"
-                                  : "",
+                                  : ""}`,
                                 onClick: header.column.getToggleSortingHandler(),
                               }}
                             >
