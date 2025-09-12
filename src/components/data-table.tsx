@@ -8,6 +8,10 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Search,
+  Plus,
+  Edit,
+  Trash,
+  Copy,
 } from "lucide-react"
 import {
   type ColumnDef,
@@ -51,19 +55,37 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   resourceName?: string
+  // New props for action buttons
+  showAddButton?: boolean
+  onAddClick?: () => void
+  showEditButton?: boolean
+  onEditClick?: (selectedRowIds: string[]) => void
+  showDeleteButton?: boolean
+  onDeleteClick?: (selectedRowIds: string[]) => void
+  showDuplicateButton?: boolean
+  onDuplicateClick?: (selectedRowIds: string[]) => void
 }
 
 const LOCAL_STORAGE_PAGE_SIZE_KEY = "data-table-page-size"
 
-export function DataTable<TData extends { id?: string; employee_id?: string }, TValue>({ 
+export function DataTable<TData extends { id?: string; employee_id?: string }, TValue>({
   columns,
   data,
   resourceName,
+  showAddButton,
+  onAddClick,
+  showEditButton,
+  onEditClick,
+  showDeleteButton,
+  onDeleteClick,
+  showDuplicateButton,
+  onDuplicateClick,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [rowSelection, setRowSelection] = React.useState({})
   const [globalFilter, setGlobalFilter] = React.useState('') // Added for global filter
+  const [columnSizing, setColumnSizing] = React.useState({}) // Add this line
   const [showSearchInput, setShowSearchInput] = React.useState(true) // Added for search input visibility
 
   const [pageSize, setPageSize] = React.useState(() => {
@@ -89,12 +111,14 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     getSortedRowModel: getSortedRowModel(),
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnSizingChange: setColumnSizing, // Add this line
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
     state: {
       sorting,
       rowSelection,
       globalFilter,
+      columnSizing, // Add this line
       pagination: {
         pageIndex: 0,
         pageSize: pageSize,
@@ -125,22 +149,66 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   return (
     <div>
       <div className="flex items-center py-4">
-        {showSearchInput && (
-          <Input
-            placeholder="Search all columns..."
-            value={(table.getState().globalFilter as string) ?? ''}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
-            className="max-w-sm"
-          />
-        )}
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setShowSearchInput(!showSearchInput)}
-          className="ml-2"
-        >
-          <Search className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center"> {/* Left side: Search */}
+          {showSearchInput && (
+            <Input
+              placeholder="Search all columns..."
+              value={(table.getState().globalFilter as string) ?? ''}
+              onChange={(event) => table.setGlobalFilter(event.target.value)}
+              className="max-w-sm"
+            />
+          )}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowSearchInput(!showSearchInput)}
+            className="ml-2"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="flex items-center ml-auto"> {/* Right side: Action Buttons */}
+          {showAddButton && onAddClick && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onAddClick}
+              className="ml-2"
+            >
+              <Plus className="h-4 w-4 text-primary" />
+            </Button>
+          )}
+          {showEditButton && onEditClick && table.getFilteredSelectedRowModel().rows.length === 1 && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onEditClick(table.getFilteredSelectedRowModel().rows.map(row => row.id))}
+              className="ml-2"
+            >
+              <Edit className="h-4 w-4 text-primary" />
+            </Button>
+          )}
+          {showDeleteButton && onDeleteClick && table.getFilteredSelectedRowModel().rows.length > 0 && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onDeleteClick(table.getFilteredSelectedRowModel().rows.map(row => row.id))}
+              className="ml-2"
+            >
+              <Trash className="h-4 w-4 text-destructive" />
+            </Button>
+          )}
+          {showDuplicateButton && onDuplicateClick && table.getFilteredSelectedRowModel().rows.length === 1 && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onDuplicateClick(table.getFilteredSelectedRowModel().rows.map(row => row.id))}
+              className="ml-2"
+            >
+              <Copy className="h-4 w-4 text-primary" />
+            </Button>
+          )}
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>

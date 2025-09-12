@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 import { buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,6 +17,7 @@ interface PrizesClientWrapperProps {
 }
 
 export function PrizesClientWrapper({ prizes }: PrizesClientWrapperProps) {
+  const router = useRouter()
   const [filter, setFilter] = useState("")
 
   const filteredPrizes = prizes.filter(prize =>
@@ -24,21 +26,13 @@ export function PrizesClientWrapper({ prizes }: PrizesClientWrapperProps) {
 
   return (
     <>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter by name..."
-          value={filter}
-          onChange={(event) => setFilter(event.target.value)}
-          className="max-w-sm"
-        />
-        <Link
-          href="/prizes/new"
-          className={cn(buttonVariants({ variant: "default" }), "ml-auto")}
-        >
-          Add Prize
-        </Link>
-      </div>
-      <DataTable columns={columns} data={filteredPrizes} resourceName="prizes" />
+      <DataTable
+        columns={columns}
+        data={filteredPrizes}
+        resourceName="prizes"
+        showAddButton={true}
+        onAddClick={() => router.push('/prizes/new')}
+      />
     </>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,20 +16,15 @@ interface EmployeesClientWrapperProps {
 }
 
 export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProps) {
+  const router = useRouter()
   return (
     <>
-      <div className="flex items-center py-4">
-        <Link
-          href="/employees/new"
-          className={cn(buttonVariants({ variant: 'default' }), 'ml-auto')}
-        >
-          Add Employee
-        </Link>
-      </div>
       <DataTable
         columns={columns}
         data={employees}
         resourceName="employees"
+        showAddButton={true}
+        onAddClick={() => router.push('/employees/new')}
       />
     </>
   )
