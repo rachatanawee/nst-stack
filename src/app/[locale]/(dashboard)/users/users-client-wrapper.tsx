@@ -18,6 +18,7 @@ import { UserForm } from './user-form';
 export function UsersClientWrapper() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -34,23 +35,27 @@ export function UsersClientWrapper() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Add User</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>
-              <DialogDescription>
-                Fill in the details to create a new user account.
-              </DialogDescription>
-            </DialogHeader>
-            <UserForm />
-          </DialogContent>
-        </Dialog>
-      </div>
-      <DataTable columns={columns} data={users} />
+      <DataTable
+        columns={columns}
+        data={users}
+        showAddButton={true}
+        onAddClick={() => setIsAddUserDialogOpen(true)}
+      />
+      <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
+        <DialogTrigger asChild>
+          {/* This trigger will be hidden, as the button is now in DataTable */}
+          <Button id="addUserTrigger" className="hidden">Add User</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New User</DialogTitle>
+            <DialogDescription>
+              Fill in the details to create a new user account.
+            </DialogDescription>
+          </DialogHeader>
+          <UserForm />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
