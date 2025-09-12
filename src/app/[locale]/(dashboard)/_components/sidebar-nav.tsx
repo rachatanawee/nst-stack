@@ -22,8 +22,7 @@ const navLinks = [
   { href: "/employees", label: "manage_employees", icon: Users }, // Use translation key
   { href: "/prizes", label: "manage_prizes", icon: Award }, // Use translation key
   { href: "/users", label: "manage_users", icon: Users }, // Use translation key
-  { href: "/rewards/settings", label: "reward_settings", icon: Award }, // Use translation key
-  { href: "/rewards/give", label: "give_rewards", icon: Gift }, // Use translation key
+  { href: "/rewards", label: "reward_settings", icon: Award }, // Use translation key
   { href: "/reports", label: "reports", icon: LineChart }, // Use translation key
 ]
 
