@@ -25,6 +25,7 @@ export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProp
         resourceName="employees"
         showAddButton={true}
         onAddClick={() => router.push('/employees/new')}
+        showRefreshButton={true}
       />
     </>
   )

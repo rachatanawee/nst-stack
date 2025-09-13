@@ -12,6 +12,7 @@ import {
   Edit,
   Trash,
   Copy,
+  RefreshCcw,
 } from "lucide-react"
 import {
   type ColumnDef,
@@ -23,6 +24,7 @@ import {
   useReactTable,
   getFilteredRowModel,
   type Header,
+  type PaginationState,
 } from "@tanstack/react-table"
 
 
@@ -60,6 +62,8 @@ interface DataTableProps<TData, TValue> {
   showDuplicateButton?: boolean
   onDuplicateClick?: (selectedRowIds: string[]) => void
   enableColumnResizing?: boolean
+  showRefreshButton?: boolean
+  onRefreshClick?: () => void
 }
 
 const LOCAL_STORAGE_PAGE_SIZE_KEY = "data-table-page-size"
@@ -78,38 +82,39 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   showDuplicateButton,
   onDuplicateClick,
   enableColumnResizing = true,
+  showRefreshButton,
+  onRefreshClick,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [rowSelection, setRowSelection] = React.useState({})
   const [globalFilter, setGlobalFilter] = React.useState('') // Added for global filter
-  const [columnSizing, setColumnSizing] = React.useState(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem(LOCAL_STORAGE_COLUMN_SIZING_KEY)
-      if (stored) {
+  const [columnSizing, setColumnSizing] = React.useState({})
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedPageSize = localStorage.getItem(LOCAL_STORAGE_PAGE_SIZE_KEY)
+      if (storedPageSize) {
+        const parsedSize = Number(storedPageSize)
+        if (!isNaN(parsedSize) && parsedSize > 0) {
+          setPagination(p => ({ ...p, pageSize: parsedSize }))
+        }
+      }
+
+      const storedColumnSizing = localStorage.getItem(LOCAL_STORAGE_COLUMN_SIZING_KEY)
+      if (storedColumnSizing) {
         try {
-          return JSON.parse(stored)
+          setColumnSizing(JSON.parse(storedColumnSizing))
         } catch {
           // ignore
         }
       }
     }
-    return {}
-  })
-  const [showSearchInput, setShowSearchInput] = React.useState(true) // Added for search input visibility
-
-  const [pageSize, setPageSize] = React.useState(() => {
-    if (typeof window !== "undefined") {
-      const storedPageSize = localStorage.getItem(LOCAL_STORAGE_PAGE_SIZE_KEY)
-      if (storedPageSize) {
-        const parsedSize = Number(storedPageSize)
-        if (!isNaN(parsedSize) && parsedSize > 0) {
-          return parsedSize
-        }
-      }
-    }
-    return 10 // Default page size
-  })
+  }, [])
 
   const table = useReactTable<TData>({
     data,
@@ -122,6 +127,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     onColumnSizingChange: setColumnSizing, // Add this line
+    onPaginationChange: setPagination,
     enableColumnResizing,
     columnResizeMode: 'onChange',
     state: {
@@ -129,22 +135,15 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
       rowSelection,
       globalFilter,
       columnSizing, // Add this line
-      pagination: {
-        pageIndex: 0,
-        pageSize: pageSize,
-      },
-    },
-    onPaginationChange: (updater) => {
-      const newPagination = typeof updater === 'function' ? updater(table.getState().pagination) : updater;
-      setPageSize(newPagination.pageSize);
+      pagination,
     },
   })
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem(LOCAL_STORAGE_PAGE_SIZE_KEY, pageSize.toString())
+      localStorage.setItem(LOCAL_STORAGE_PAGE_SIZE_KEY, pagination.pageSize.toString())
     }
-  }, [pageSize])
+  }, [pagination.pageSize])
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -166,24 +165,24 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     <div>
       <div className="flex items-center py-4">
         <div className="flex items-center"> {/* Left side: Search */}
-          {showSearchInput && (
-            <Input
-              placeholder="Search all columns..."
-              value={(table.getState().globalFilter as string) ?? ''}
-              onChange={(event) => table.setGlobalFilter(event.target.value)}
-              className="max-w-sm"
-            />
-          )}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setShowSearchInput(!showSearchInput)}
-            className="ml-2"
-          >
-            <Search className="h-4 w-4" />
-          </Button>
+          <Input
+            placeholder="Search all columns..."
+            value={(table.getState().globalFilter as string) ?? ''}
+            onChange={(event) => table.setGlobalFilter(event.target.value)}
+            className="max-w-sm"
+          />
         </div>
         <div className="flex items-center ml-auto"> {/* Right side: Action Buttons */}
+          {showRefreshButton && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onRefreshClick ?? (() => router.refresh())}
+              className="ml-2"
+            >
+              <RefreshCcw className="h-4 w-4" />
+            </Button>
+          )}
           {showAddButton && onAddClick && (
             <Button
               variant="outline"
@@ -239,7 +238,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
                       style={{
                         width: header.getSize(),
                       }}
-                      className={header.column.getCanResize() ? "cursor-col-resize" : ""}
+                      className={`${header.column.getCanResize() ? "cursor-col-resize" : ""} border-r`}
                     >
                       {header.isPlaceholder
                         ? null
@@ -287,7 +286,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
                   className={resourceName ? "cursor-pointer" : ""}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="border-r py-0">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

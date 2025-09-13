@@ -20,12 +20,14 @@ export function UsersClientWrapper() {
   const [loading, setLoading] = useState(true);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
 
+  async function fetchUsers() {
+    setLoading(true);
+    const fetchedUsers = await getUsers();
+    setUsers(fetchedUsers);
+    setLoading(false);
+  }
+
   useEffect(() => {
-    async function fetchUsers() {
-      const fetchedUsers = await getUsers();
-      setUsers(fetchedUsers);
-      setLoading(false);
-    }
     fetchUsers();
   }, []);
 
@@ -40,6 +42,8 @@ export function UsersClientWrapper() {
         data={users}
         showAddButton={true}
         onAddClick={() => setIsAddUserDialogOpen(true)}
+        showRefreshButton={true}
+        onRefreshClick={fetchUsers}
       />
       <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
         <DialogTrigger asChild>

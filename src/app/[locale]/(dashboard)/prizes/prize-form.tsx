@@ -90,17 +90,7 @@ export function PrizeForm({ prize }: PrizeFormProps) {
               required
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="is_continue" className="text-right">
-              Continuous Draw
-            </Label>
-            <Checkbox
-              id="is_continue"
-              name="is_continue"
-              defaultChecked={prize?.is_continue}
-              className="col-span-3"
-            />
-          </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="image" className="text-right">
               Image

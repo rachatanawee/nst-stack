@@ -46,11 +46,10 @@ export async function updatePrize(id: string, formData: FormData) {
   const supabase = await createClient(cookieStore)
   const imageFile = formData.get("image") as File
 
-  const data = {
+    const data = {
     name: formData.get("name") as string,
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: formData.get("current_image_url") as string,
-    is_continue: formData.get("is_continue") === "on",
   }
 
   if (imageFile && imageFile.size > 0) {

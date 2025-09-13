@@ -14,5 +14,5 @@ export function RewardsClientWrapper({ winners }: RewardsClientWrapperProps) {
     id: winner.winner_id, // Map winner_id to id
   }));
 
-  return <DataTable columns={columns as ColumnDef<typeof dataWithId[number]>[]} data={dataWithId} />
+  return <DataTable columns={columns as ColumnDef<typeof dataWithId[number]>[]} data={dataWithId} showRefreshButton={true} />
 }

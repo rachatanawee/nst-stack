@@ -56,20 +56,7 @@ export const columns: ColumnDef<Prize>[] = [
     minSize: 80,
     maxSize: 150,
   },
-  {
-    accessorKey: "is_continue",
-    header: "Continuous",
-    cell: ({ row }) => (
-      <input
-        type="checkbox"
-        checked={row.original.is_continue}
-        readOnly
-      />
-    ),
-    size: 100,
-    minSize: 80,
-    maxSize: 120,
-  },
+  
   {
     accessorKey: "image_url",
     header: "Image",
