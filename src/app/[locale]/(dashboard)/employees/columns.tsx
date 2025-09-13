@@ -35,18 +35,29 @@ export const columns: ColumnDef<Employee>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+    enableResizing: true,
+    size: 50,
   },
   {
     accessorKey: 'employee_id',
     header: 'Employee ID',
+    size: 120,
+    minSize: 100,
+    maxSize: 200,
   },
   {
     accessorKey: 'full_name',
     header: 'Full Name',
+    size: 200,
+    minSize: 150,
+    maxSize: 300,
   },
   {
     accessorKey: 'department',
     header: 'Department',
+    size: 150,
+    minSize: 120,
+    maxSize: 250,
   },
   {
     id: 'actions',
@@ -58,5 +69,7 @@ export const columns: ColumnDef<Employee>[] = [
         onDuplicate={duplicateEmployee}
       />
     ),
+    enableResizing: false,
+    size: 100,
   },
 ]

@@ -167,9 +167,8 @@
   right: 0;
   top: 0;
   height: 100%;
-  width: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border-right: 1px solid rgba(0, 0, 0, 0.3);
+  width: 4px;
+  background: hsl(var(--border));
   cursor: col-resize;
   user-select: none;
   touch-action: none;
@@ -177,11 +176,11 @@
 }
 
 .resizer:hover {
-  background: rgba(0, 0, 0, 0.4);
+  background: hsl(var(--primary));
 }
 
 .resizer.isResizing {
-  background: blue;
+  background: hsl(var(--primary));
   opacity: 1;
 }
 

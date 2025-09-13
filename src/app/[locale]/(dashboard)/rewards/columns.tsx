@@ -16,14 +16,23 @@ export const columns: ColumnDef<Winner>[] = [
   {
     accessorKey: 'full_name',
     header: 'Full Name',
+    size: 200,
+    minSize: 150,
+    maxSize: 300,
   },
   {
     accessorKey: 'department',
     header: 'Department',
+    size: 150,
+    minSize: 120,
+    maxSize: 250,
   },
   {
     accessorKey: 'prize_name',
     header: 'Prize Name',
+    size: 200,
+    minSize: 150,
+    maxSize: 300,
   },
   {
     accessorKey: 'drawn_at',
@@ -41,6 +50,9 @@ export const columns: ColumnDef<Winner>[] = [
       }).format(date)
       return <div>{formattedDateTime}</div>
     },
+    size: 180,
+    minSize: 150,
+    maxSize: 250,
   },
   {
     accessorKey: 'claimed_at',
@@ -49,5 +61,8 @@ export const columns: ColumnDef<Winner>[] = [
       const claimed = !!row.getValue('claimed_at')
       return <Checkbox checked={claimed} disabled />
     },
+    size: 100,
+    minSize: 80,
+    maxSize: 120,
   },
 ]

@@ -39,14 +39,22 @@ export const columns: ColumnDef<Prize>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
+    enableResizing: false,
+    size: 50,
   },
   {
     accessorKey: "name",
     header: "Name",
+    size: 200,
+    minSize: 150,
+    maxSize: 300,
   },
   {
     accessorKey: "total_quantity",
     header: "Quantity",
+    size: 100,
+    minSize: 80,
+    maxSize: 150,
   },
   {
     accessorKey: "is_continue",
@@ -58,6 +66,9 @@ export const columns: ColumnDef<Prize>[] = [
         readOnly
       />
     ),
+    size: 100,
+    minSize: 80,
+    maxSize: 120,
   },
   {
     accessorKey: "image_url",
@@ -67,6 +78,8 @@ export const columns: ColumnDef<Prize>[] = [
       if (!prize.signedUrl) return null
       return <Image src={prize.signedUrl} alt={prize.name} width={64} height={64} className="h-16 w-16 object-cover" />
     },
+    enableResizing: false,
+    size: 100,
   },
   {
     id: "actions",
@@ -78,5 +91,7 @@ export const columns: ColumnDef<Prize>[] = [
         onDuplicate={duplicatePrize}
       />
     ),
+    enableResizing: false,
+    size: 100,
   },
 ]
