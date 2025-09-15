@@ -44,6 +44,7 @@ export function UsersClientWrapper() {
         onAddClick={() => setIsAddUserDialogOpen(true)}
         showRefreshButton={true}
         onRefreshClick={fetchUsers}
+        showExportButton={true}
       />
       <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
         <DialogTrigger asChild>

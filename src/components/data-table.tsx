@@ -13,6 +13,7 @@ import {
   Trash,
   Copy,
   RefreshCcw,
+  Download,
 } from "lucide-react"
 import {
   type ColumnDef,
@@ -64,6 +65,7 @@ interface DataTableProps<TData, TValue> {
   enableColumnResizing?: boolean
   showRefreshButton?: boolean
   onRefreshClick?: () => void
+  showExportButton?: boolean
 }
 
 const LOCAL_STORAGE_PAGE_SIZE_KEY = "data-table-page-size"
@@ -84,6 +86,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   enableColumnResizing = true,
   showRefreshButton,
   onRefreshClick,
+  showExportButton,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -161,6 +164,14 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     }
   }
 
+  const handleExport = async () => {
+    const { utils, writeFile } = await import("xlsx");
+    const ws = utils.json_to_sheet(data);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Data");
+    writeFile(wb, `${resourceName ?? 'export'}.xlsx`);
+  };
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -173,6 +184,16 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
           />
         </div>
         <div className="flex items-center ml-auto"> {/* Right side: Action Buttons */}
+          {showExportButton && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleExport}
+              className="ml-2"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          )}
           {showRefreshButton && (
             <Button
               variant="outline"

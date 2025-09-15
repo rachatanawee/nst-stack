@@ -33,6 +33,7 @@ export function PrizesClientWrapper({ prizes }: PrizesClientWrapperProps) {
         showAddButton={true}
         onAddClick={() => router.push('/prizes/new')}
         showRefreshButton={true}
+        showExportButton={true}
       />
     </>
   )
