@@ -7,7 +7,6 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  Search,
   Plus,
   Edit,
   Trash,
@@ -24,7 +23,6 @@ import {
   getSortedRowModel,
   useReactTable,
   getFilteredRowModel,
-  type Header,
   type PaginationState,
 } from "@tanstack/react-table"
 
@@ -68,9 +66,6 @@ interface DataTableProps<TData, TValue> {
   showExportButton?: boolean
 }
 
-const LOCAL_STORAGE_PAGE_SIZE_KEY = "data-table-page-size"
-const LOCAL_STORAGE_COLUMN_SIZING_KEY = "data-table-column-sizing"
-
 export function DataTable<TData extends { id?: string; employee_id?: string }, TValue>({
   columns,
   data,
@@ -98,26 +93,35 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     pageSize: 10,
   })
 
+  const pageSizeKey = resourceName ? `data-table-page-size-${resourceName}` : null
+  const columnSizingKey = resourceName ? `data-table-column-sizing-${resourceName}` : null
+
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedPageSize = localStorage.getItem(LOCAL_STORAGE_PAGE_SIZE_KEY)
-      if (storedPageSize) {
-        const parsedSize = Number(storedPageSize)
-        if (!isNaN(parsedSize) && parsedSize > 0) {
-          setPagination(p => ({ ...p, pageSize: parsedSize }))
+      if (pageSizeKey) {
+        console.log(`[DataTable] Loading page size with key: ${pageSizeKey}`);
+        const storedPageSize = localStorage.getItem(pageSizeKey)
+        console.log(`[DataTable] Stored page size: ${storedPageSize}`);
+        if (storedPageSize) {
+          const parsedSize = Number(storedPageSize)
+          if (!isNaN(parsedSize) && parsedSize > 0) {
+            setPagination(p => ({ ...p, pageSize: parsedSize }))
+          }
         }
       }
 
-      const storedColumnSizing = localStorage.getItem(LOCAL_STORAGE_COLUMN_SIZING_KEY)
-      if (storedColumnSizing) {
-        try {
-          setColumnSizing(JSON.parse(storedColumnSizing))
-        } catch {
-          // ignore
+      if (columnSizingKey) {
+        const storedColumnSizing = localStorage.getItem(columnSizingKey)
+        if (storedColumnSizing) {
+          try {
+            setColumnSizing(JSON.parse(storedColumnSizing))
+          } catch {
+            // ignore
+          }
         }
       }
     }
-  }, [])
+  }, [pageSizeKey, columnSizingKey])
 
   const table = useReactTable<TData>({
     data,
@@ -143,16 +147,17 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   })
 
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(LOCAL_STORAGE_PAGE_SIZE_KEY, pagination.pageSize.toString())
+    if (typeof window !== "undefined" && pageSizeKey) {
+      console.log(`[DataTable] Saving page size (${pagination.pageSize}) with key: ${pageSizeKey}`);
+      localStorage.setItem(pageSizeKey, pagination.pageSize.toString())
     }
-  }, [pagination.pageSize])
+  }, [pagination.pageSize, pageSizeKey])
 
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(LOCAL_STORAGE_COLUMN_SIZING_KEY, JSON.stringify(columnSizing))
+    if (typeof window !== "undefined" && columnSizingKey) {
+      localStorage.setItem(columnSizingKey, JSON.stringify(columnSizing))
     }
-  }, [columnSizing])
+  }, [columnSizing, columnSizingKey])
 
 
   function handleDoubleClick(row: TData) {

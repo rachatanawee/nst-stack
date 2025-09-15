@@ -17,7 +17,7 @@ const initI18next = async (lng: string, ns: string) => {
   return i18nInstance;
 };
 
-export async function useTranslation(lng: string, ns: string = 'common', options = {}) {
+export async function useTranslation(lng: string, ns: string = 'common') {
   const i18nextInstance = await initI18next(lng, ns);
   return {
     t: i18nextInstance.getFixedT(lng, ns),

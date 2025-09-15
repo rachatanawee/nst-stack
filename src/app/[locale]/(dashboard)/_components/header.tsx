@@ -1,4 +1,4 @@
-import { CircleUser, Search } from "lucide-react"
+import { Menu, CircleUser, Search } from "lucide-react"
 
 import { logout } from "@/app/[locale]/actions"
 import { Button } from "@/components/ui/button"
@@ -15,11 +15,19 @@ import { Input } from "@/components/ui/input"
 import { MobileSheetNav } from "./mobile-sheet-nav"
 import LanguageSwitcher from "@/components/LanguageSwitcher"; // Add this import
 
-export function Header() {
+export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <MobileSheetNav />
-      <LanguageSwitcher /> {/* Add LanguageSwitcher here */}
+      <Button
+        variant="outline"
+        size="icon"
+        className="shrink-0 hidden md:block flex items-center justify-center"
+        onClick={onToggleSidebar}
+      >
+        <Menu className="h-5 w-5" />
+        <span className="sr-only">Toggle sidebar</span>
+      </Button>
       <div className="w-full flex-1">
         <form>
           <div className="relative">
@@ -32,6 +40,7 @@ export function Header() {
           </div>
         </form>
       </div>
+      <LanguageSwitcher />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">

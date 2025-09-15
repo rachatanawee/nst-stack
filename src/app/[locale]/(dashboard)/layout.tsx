@@ -45,13 +45,21 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
   return (
     <>
       <LoadingIndicator />
-      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-        <SidebarNav />
+      <div
+        className={`grid min-h-screen w-full transition-[grid-template-columns] duration-300 ease-in-out ${
+          isSidebarCollapsed
+            ? "md:grid-cols-[60px_1fr]"
+            : "md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]"
+        }`}
+      >
+        <SidebarNav isCollapsed={isSidebarCollapsed} />
         <div className="flex flex-col">
-          <Header />
+          <Header onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <AnimatePresence mode="wait">
               <motion.div
