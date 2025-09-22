@@ -15,7 +15,8 @@ import { MoreHorizontal } from 'lucide-react';
 export type User = {
   id: string;
   email: string;
-  role: 'super_admin' | 'staff';
+  role_id?: number;
+  role_name: string;
   created_at: string;
 };
 
@@ -25,7 +26,7 @@ export const columns: ColumnDef<User>[] = [
     header: 'Email',
   },
   {
-    accessorKey: 'role',
+    accessorKey: 'role_name',
     header: 'Role',
   },
   {

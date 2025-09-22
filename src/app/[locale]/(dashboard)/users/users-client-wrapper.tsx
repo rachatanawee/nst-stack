@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { DataTable } from '@/components/data-table';
-import { columns, User } from './columns';
-import { getUsers } from './actions';
+import { columns } from './columns'; // Remove UserType import
+import { getRoles, getUsers } from './actions';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,20 +15,35 @@ import {
 } from '@/components/ui/dialog';
 import { UserForm } from './user-form';
 
+// Explicitly define User type here to ensure it's the correct one
+export type User = {
+  id: string;
+  email: string;
+  role_id?: number;
+  role_name: string;
+  created_at: string;
+};
+
 export function UsersClientWrapper() {
   const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddUserDialogOpen, setIsAddUserDialogOpen] = useState(false);
 
-  async function fetchUsers() {
+  async function fetchData() {
     setLoading(true);
-    const fetchedUsers = await getUsers();
-    setUsers(fetchedUsers);
+    const [fetchedUsers, fetchedRoles] = await Promise.all([
+      getUsers(),
+      getRoles()
+    ]);
+    const usersData: User[] = fetchedUsers;
+    setUsers(usersData);
+    setRoles(fetchedRoles);
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchUsers();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -43,7 +58,7 @@ export function UsersClientWrapper() {
         showAddButton={true}
         onAddClick={() => setIsAddUserDialogOpen(true)}
         showRefreshButton={true}
-        onRefreshClick={fetchUsers}
+        onRefreshClick={fetchData}
         showExportButton={true}
       />
       <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
@@ -58,7 +73,7 @@ export function UsersClientWrapper() {
               Fill in the details to create a new user account.
             </DialogDescription>
           </DialogHeader>
-          <UserForm />
+          <UserForm roles={roles} />
         </DialogContent>
       </Dialog>
     </div>

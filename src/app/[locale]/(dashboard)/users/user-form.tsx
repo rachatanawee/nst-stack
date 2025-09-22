@@ -1,13 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormField,
   FormItem,
   FormLabel,
   FormMessage,
@@ -19,37 +18,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
-  role: z.enum(['super_admin', 'staff'], { message: 'Please select a valid role.' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }).optional(),
+  role_id: z.string().transform(val => Number(val)).pipe(z.number().min(1, 'Please select a role.')),
 });
 
-type UserFormValues = z.infer<typeof formSchema>;
+type UserFormInput = z.infer<typeof formSchema>; // This is the output type
+type UserFormValues = z.input<typeof formSchema>; // This is the input type for useForm
 
-export function UserForm() {
-  const form = useForm<UserFormValues>({
+interface UserFormProps {
+  roles: { id: number; name: string }[];
+}
+
+export function UserForm({ roles }: UserFormProps) {
+  const form = useForm<UserFormValues, undefined, UserFormInput>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
-      role: 'staff',
+      role_id: String(roles.find(r => r.name === 'staff')?.id || 0), // Convert to string
     },
   });
 
-  async function onSubmit(values: UserFormValues) {
+  async function onSubmit(values: UserFormInput) {
     const result = await createUser(values);
 
-    if (result?.error) {
-      toast.error(result.error);
-    } else {
-      toast.success('User created successfully!');
+    if (result?.success) {
+      toast.success(result.message);
       form.reset();
+    } else {
+      toast.error(result.message);
     }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
+        <Controller
           control={form.control}
           name="email"
           render={({ field }) => (
@@ -62,7 +66,7 @@ export function UserForm() {
             </FormItem>
           )}
         />
-        <FormField
+        <Controller
           control={form.control}
           name="password"
           render={({ field }) => (
@@ -75,21 +79,25 @@ export function UserForm() {
             </FormItem>
           )}
         />
-        <FormField
+        <Controller
           control={form.control}
-          name="role"
+          name="role_id"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Role</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="staff">Staff</SelectItem>
-                  <SelectItem value="super_admin">Super Admin</SelectItem>
+                  {roles.map(role => (
+                    <SelectItem key={role.id} value={String(role.id)}>
+                      {/* Capitalize role name for display */}
+                      {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />

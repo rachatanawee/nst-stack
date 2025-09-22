@@ -1,6 +1,7 @@
 "use client" // LoginContent is a client component
 
 import Link from "next/link"
+import Image from "next/image"
 
 import { login } from './actions'
 import { Button } from "@/components/ui/button";
@@ -26,8 +27,14 @@ export default function LoginContent({ message, locale }: { message: string | nu
       <div className="absolute top-4 right-4 z-50">
         <LanguageSwitcher size="sm" />
       </div>
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
-        <div className="absolute inset-0 bg-zinc-900" />
+      <div className="relative hidden h-full flex-col p-10 text-white lg:flex dark:border-r">
+      <Image
+        src="https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        alt="background"
+        fill
+        style={{ objectFit: 'cover' }}
+        className="absolute inset-0"
+      />
         <div className="relative z-20 flex items-center text-lg font-medium">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -41,17 +48,7 @@ export default function LoginContent({ message, locale }: { message: string | nu
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          CSI Inc
-        </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              &ldquo;This dashboard has saved me countless hours of work and
-              helped me deliver stunning designs to my clients faster than
-              ever before.&rdquo;
-            </p>
-            <footer className="text-sm">Sofia Davis</footer>
-          </blockquote>
+          Eventify
         </div>
       </div>
       <div className="flex items-center justify-center py-12">
