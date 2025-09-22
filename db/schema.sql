@@ -112,7 +112,7 @@ CREATE TABLE public.winners (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   employee_id TEXT NOT NULL REFERENCES public.employees(employee_id),
   prize_id BIGINT NOT NULL REFERENCES public.prizes(id),
-  draw_round_id BIGINT NOT NULL REFERENCES public.draw_rounds(id),
+  -- draw_round_id BIGINT NOT NULL REFERENCES public.draw_rounds(id), -- Removed
   drawn_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   redemption_status TEXT NOT NULL DEFAULT 'pending', -- 'pending' or 'redeemed'
   redeemed_at TIMESTAMPTZ,
@@ -253,13 +253,13 @@ SELECT
   e.department,
   p.name AS prize_name,
   p.image_url AS prize_image_url,
-  dr.name as draw_round_name,
+  -- dr.name as draw_round_name, -- Removed
   s.full_name AS staff_name
 FROM
   public.winners w
   JOIN public.employees e ON w.employee_id = e.employee_id
   JOIN public.prizes p ON w.prize_id = p.id
-  JOIN public.draw_rounds dr ON w.draw_round_id = dr.id
+  -- JOIN public.draw_rounds dr ON w.draw_round_id = dr.id -- Removed
   LEFT JOIN public.profiles s ON w.redeemed_by_staff = s.id;
 COMMENT ON VIEW public.v_winner_details IS 'A comprehensive view joining winners with employee, prize, and round details.';
 

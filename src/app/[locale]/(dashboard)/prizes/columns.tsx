@@ -14,6 +14,7 @@ export type Prize = {
   total_quantity: number
   image_url: string
   signedUrl: string | null
+  session_name: string // Added session_name
   is_continue: boolean
 }
 
@@ -56,7 +57,22 @@ export const columns: ColumnDef<Prize>[] = [
     minSize: 80,
     maxSize: 150,
   },
-  
+  { // New column for session_name
+    accessorKey: "session_name",
+    header: "Session",
+    size: 120,
+    minSize: 100,
+    maxSize: 150,
+    cell: ({ row }) => {
+      const sessionName = row.getValue("session_name") as string;
+      if (sessionName === "morning") {
+        return "Day";
+      } else if (sessionName === "evening") {
+        return "Night";
+      }
+      return sessionName; // Default to original value if not morning/evening
+    },
+  },
   {
     accessorKey: "image_url",
     header: "Image",

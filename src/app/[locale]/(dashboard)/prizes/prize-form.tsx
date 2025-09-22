@@ -21,6 +21,9 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+} from "@/components/ui/select" // Added Select imports
 import { cn } from "@/lib/utils"
 
 import { createPrize, deletePrize, updatePrize } from "./actions"
@@ -88,6 +91,22 @@ export function PrizeForm({ prize }: PrizeFormProps) {
               className="col-span-3"
               required
             />
+          </div>
+          {/* New input for session_name */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="session_name" className="text-right">
+              Session
+            </Label>
+            <Select name="session_name" defaultValue={prize?.session_name || "all"}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a session" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Sessions</SelectItem>
+                <SelectItem value="morning">Day</SelectItem>
+                <SelectItem value="evening">Night</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">

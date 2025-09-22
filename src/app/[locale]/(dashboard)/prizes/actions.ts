@@ -28,6 +28,7 @@ export async function createPrize(formData: FormData) {
     name: formData.get("name") as string,
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: imageUrl,
+    session_name: formData.get("session_name") as string, // Added session_name
     is_continue: formData.get("is_continue") === "on",
   }
 
@@ -50,6 +51,7 @@ export async function updatePrize(id: string, formData: FormData) {
     name: formData.get("name") as string,
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: formData.get("current_image_url") as string,
+    session_name: formData.get("session_name") as string, // Added session_name
   }
 
   if (imageFile && imageFile.size > 0) {
