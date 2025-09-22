@@ -46,15 +46,34 @@ export async function updatePrize(id: string, formData: FormData) {
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
   const imageFile = formData.get("image") as File
+  const imageRemoved = formData.get("imageRemoved") === "true"; // Get the flag
 
-    const data = {
+  const data: {
+    name: string;
+    total_quantity: number;
+    image_url: string | null; // Allow null
+    session_name: string;
+  } = {
     name: formData.get("name") as string,
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: formData.get("current_image_url") as string,
-    session_name: formData.get("session_name") as string, // Added session_name
+    session_name: formData.get("session_name") as string,
   }
 
-  if (imageFile && imageFile.size > 0) {
+  if (imageRemoved) {
+    // If image was removed, delete the old one from storage if it exists
+    if (data.image_url) {
+      const { error: deleteError } = await supabase.storage
+        .from("prizes")
+        .remove([data.image_url]); // Remove the old image
+      if (deleteError) {
+        console.error("Error deleting old image:", deleteError);
+        // Continue with update, but log the error
+      }
+    }
+    data.image_url = null; // Set image_url to null in the database
+  } else if (imageFile && imageFile.size > 0) {
+    // Only upload new image if not removed and a new file is provided
     const { data: imageData, error: imageError } = await supabase.storage
       .from("prizes")
       .upload(`prize-image-${Date.now()}`, imageFile)

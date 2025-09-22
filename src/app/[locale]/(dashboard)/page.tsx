@@ -35,20 +35,20 @@ export default function DashboardPage() {
     async function fetchStats() {
       const { count: employeeCount } = await supabase.from('employees').select('*', { count: 'exact', head: true });
       
-      const { data: registrations, error: regError } = await supabase.from('registrations').select('session');
-      if(regError) console.error("Error fetching registrations:", regError)
+      const { count: registeredDay, error: dayError } = await supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('session', 'day');
+      if(dayError) console.error("Error fetching morning registrations:", dayError)
+
+      const { count: registeredNight, error: nightError } = await supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('session', 'night');
+      if(nightError) console.error("Error fetching evening registrations:", nightError)
 
       const { count: prizesGiven } = await supabase.from('winners').select('*', { count: 'exact', head: true });
       
       const { count: prizesClaimed } = await supabase.from('winners').select('*', { count: 'exact', head: true }).eq('redemption_status', 'redeemed');
 
-      const registeredDay = registrations?.filter(r => r.session === 'morning').length || 0;
-      const registeredNight = registrations?.filter(r => r.session === 'evening').length || 0;
-
       setStats({
         employeeCount: employeeCount || 0,
-        registeredDay,
-        registeredNight,
+        registeredDay: registeredDay || 0,
+        registeredNight: registeredNight || 0,
         prizesGiven: prizesGiven || 0,
         prizesClaimed: prizesClaimed || 0,
       });
@@ -63,12 +63,12 @@ export default function DashboardPage() {
         <h1 className="text-lg font-semibold md:text-2xl">Dashboard</h1>
       </div>
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-        <Card>
+        <Card className="bg-blue-50 dark:bg-blue-950">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Registered Users
             </CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
+            <UserCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.registeredDay + stats.registeredNight}</div>
@@ -77,30 +77,30 @@ export default function DashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-green-50 dark:bg-green-950">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Employees
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.employeeCount}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-yellow-50 dark:bg-yellow-950">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Prizes Awarded</CardTitle>
-            <Gift className="h-4 w-4 text-muted-foreground" />
+            <Gift className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.prizesGiven}</div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-red-50 dark:bg-red-950">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Prizes Claimed</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <Award className="h-4 w-4 text-red-600 dark:text-red-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.prizesClaimed}</div>

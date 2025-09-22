@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import * as React from "react"
+import { useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Trash2 } from "lucide-react"
@@ -37,8 +38,45 @@ export function PrizeForm({ prize }: PrizeFormProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = React.useState(false)
   const isEditing = !!prize
+  const imageInputRef = useRef<HTMLInputElement>(null); // Define ref
+  const [imageRemoved, setImageRemoved] = React.useState(false); // New state
+
+  const handleRemoveImage = () => {
+    setImageRemoved(true);
+    if (imageInputRef.current) {
+      imageInputRef.current.value = ''; // Clear the file input
+    }
+  };
+
+  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+    const items = event.clipboardData?.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          const blob = items[i].getAsFile();
+          if (blob) {
+            // Create a File object from the blob
+            const file = new File([blob], `pasted_image_${Date.now()}.png`, { type: blob.type });
+            
+            // Create a DataTransfer object to simulate file input
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            // Set the files to the input element
+            if (imageInputRef.current) {
+              imageInputRef.current.files = dataTransfer.files;
+            }
+            break; // Only handle the first image found
+          }
+        }
+      }
+    }
+  };
 
   async function handleSubmit(formData: FormData) {
+    // Add imageRemoved flag to formData
+    formData.append("imageRemoved", String(imageRemoved));
+
     const action = isEditing ? updatePrize.bind(null, prize.id) : createPrize
     const result = await action(formData)
 
@@ -103,8 +141,8 @@ export function PrizeForm({ prize }: PrizeFormProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Sessions</SelectItem>
-                <SelectItem value="morning">Day</SelectItem>
-                <SelectItem value="evening">Night</SelectItem>
+                <SelectItem value="day">Day</SelectItem>
+                <SelectItem value="night">Night</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -113,16 +151,27 @@ export function PrizeForm({ prize }: PrizeFormProps) {
             <Label htmlFor="image" className="text-right">
               Image
             </Label>
-            <Input
-              id="image"
-              name="image"
-              type="file"
-              className="col-span-3"
-            />
+            <div className="col-span-3 flex flex-col gap-2">
+              <Input
+                id="image"
+                name="image"
+                type="file"
+                className="hidden" // Hide the actual file input
+                ref={imageInputRef}
+                // onPaste={handlePaste} // Remove onPaste from here
+              />
+              <div
+                className="flex h-24 w-full items-center justify-center rounded-md border border-dashed text-sm text-muted-foreground cursor-pointer"
+                onPaste={handlePaste} // Add onPaste to the paste area
+                onClick={() => imageInputRef.current?.click()} // Allow clicking to open file dialog
+              >
+                Paste image here or click to select file
+              </div>
+            </div>
           </div>
-          {isEditing && prize?.signedUrl && (
+          {isEditing && prize?.signedUrl && !imageRemoved && ( // Conditionally render image preview
             <div className="grid grid-cols-4 items-center gap-4">
-              <div className="col-start-2 col-span-3">
+              <div className="col-start-2 col-span-3 flex items-center gap-2">
                 <Image
                   src={prize.signedUrl}
                   alt={prize.name || "Prize Image"}
@@ -130,10 +179,18 @@ export function PrizeForm({ prize }: PrizeFormProps) {
                   height={200}
                   objectFit="contain"
                 />
+                <Button
+                  type="button" // Important: prevent form submission
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRemoveImage}
+                >
+                  Remove Image
+                </Button>
               </div>
             </div>
           )}
-          {isEditing && prize?.image_url && (
+          {isEditing && prize?.image_url && !imageRemoved && ( // Conditionally render hidden input
             <input type="hidden" name="current_image_url" value={prize.image_url} />
           )}
         </div>
