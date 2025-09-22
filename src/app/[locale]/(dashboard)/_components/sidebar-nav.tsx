@@ -9,6 +9,7 @@ import {
   LineChart,
   Package2,
   Users,
+  ClipboardList,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -19,6 +20,7 @@ import { useTranslation } from 'react-i18next'; // Add this import
 const navLinks = [
   { href: "/", label: "dashboard", icon: Home }, // Use translation key
   { href: "/employees", label: "manage_employees", icon: Users }, // Use translation key
+  { href: "/registrations", label: "registrations", icon: ClipboardList }, // New link for registrations
   { href: "/prizes", label: "manage_prizes", icon: Award }, // Use translation key
   { href: "/users", label: "manage_users", icon: Users }, // Use translation key
   { href: "/rewards", label: "reward_settings", icon: Award }, // Use translation key

@@ -1,28 +1,55 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createClient } from '@/lib/supabase/middleware'
+import { NextResponse, type NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
-  const defaultLocale = 'en'; // Your default locale
-  const { pathname } = request.nextUrl;
+export async function middleware(request: NextRequest) {
+  const {supabase, response} = createClient(request)
 
-  // Check if the pathname already contains a locale
-  const locales = ['en', 'th']; // Define your supported locales
-  const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
+  // Refresh session if expired - required for Server Components
+  const { 
+    data: { session }, 
+  } = await supabase.auth.getSession()
 
-  if (!pathnameHasLocale) {
+  const defaultLocale = 'en'
+  const { pathname } = request.nextUrl
+  const locales = ['en', 'th']
+
+  const pathnameIsMissingLocale = locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  )
+
+  // Redirect if there is no locale
+  if (pathnameIsMissingLocale) {
     // Redirect to the default locale
     request.nextUrl.pathname = `/${defaultLocale}${pathname}`;
     return NextResponse.redirect(request.nextUrl);
   }
+  
+  const locale = pathname.split('/')[1]
 
-  return NextResponse.next();
+  // Auth logic
+  const isLoggedIn = !!session
+  const isLoginPage = pathname.endsWith('/login')
+
+  if (isLoggedIn && isLoginPage) {
+    return NextResponse.redirect(new URL(`/${locale}/`, request.url))
+  }
+
+  if (!isLoggedIn && !isLoginPage) {
+    return NextResponse.redirect(new URL(`/${locale}/login`, request.url))
+  }
+
+  return response
 }
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next)
-    '/((?!_next).*)?'
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
-};
+}
