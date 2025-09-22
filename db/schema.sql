@@ -10,8 +10,8 @@
 DROP TABLE IF EXISTS public.winners CASCADE;
 DROP TABLE IF EXISTS public.special_permissions CASCADE;
 DROP TABLE IF EXISTS public.registrations CASCADE;
-DROP TABLE IF EXISTS public.prize_allocations CASCADE;
-DROP TABLE IF EXISTS public.draw_rounds CASCADE;
+-- DROP TABLE IF EXISTS public.prize_allocations CASCADE;
+-- DROP TABLE IF EXISTS public.draw_rounds CASCADE;
 DROP TABLE IF EXISTS public.prizes CASCADE;
 DROP TABLE IF EXISTS public.employees CASCADE;
 DROP TABLE IF EXISTS public.role_permissions CASCADE;
@@ -78,28 +78,16 @@ CREATE TABLE public.prizes (
   name TEXT NOT NULL,
   total_quantity INT NOT NULL DEFAULT 1,
   image_url TEXT, -- URL to image in Supabase Storage
+  session_name TEXT NOT NULL DEFAULT 'all', -- NEW: 'morning', 'evening', or 'all'
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 COMMENT ON TABLE public.prizes IS 'List of all available prizes for the lucky draw.';
 
 -- ตารางสำหรับกำหนดรอบการจับรางวัล
-CREATE TABLE public.draw_rounds (
-  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name TEXT NOT NULL, -- e.g., "รอบเช้า 1", "รอบเย็น Grand Prize"
-  session TEXT NOT NULL, -- 'morning' or 'evening'
-  is_active BOOLEAN NOT NULL DEFAULT FALSE
-);
-COMMENT ON TABLE public.draw_rounds IS 'Defines the different rounds of the lucky draw.';
+-- Removed draw_rounds table
 
 -- ตารางสำหรับจัดสรรรางวัลในแต่ละรอบ
-CREATE TABLE public.prize_allocations (
-  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  prize_id BIGINT NOT NULL REFERENCES public.prizes(id) ON DELETE CASCADE,
-  round_id BIGINT NOT NULL REFERENCES public.draw_rounds(id) ON DELETE CASCADE,
-  quantity INT NOT NULL, -- How many of this prize are allocated to this round
-  UNIQUE(prize_id, round_id)
-);
-COMMENT ON TABLE public.prize_allocations IS 'Links prizes to specific draw rounds with allocated quantities.';
+-- Removed prize_allocations table
 
 -- ตารางเก็บข้อมูลการลงทะเบียนเข้าร่วมงาน
 CREATE TABLE public.registrations (
@@ -172,7 +160,7 @@ WHERE p.name IN ('registrations.manage', 'winners.manage');
 
 -- [UPDATED] Helper function to get user role name
 CREATE OR REPLACE FUNCTION public.get_user_role()
-RETURNS TEXT AS $$
+RETURNS TEXT AS $
 DECLARE
   user_role TEXT;
 BEGIN
@@ -182,11 +170,11 @@ BEGIN
   WHERE p.id = auth.uid();
   RETURN user_role;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- [NEW] Helper function to check if a user has a specific permission
 CREATE OR REPLACE FUNCTION public.has_permission(p_permission_name TEXT)
-RETURNS BOOLEAN AS $$
+RETURNS BOOLEAN AS $
 DECLARE
   has_perm BOOLEAN;
 BEGIN
@@ -199,7 +187,7 @@ BEGIN
   ) INTO has_perm;
   RETURN has_perm;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Enable RLS for all tables
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -208,8 +196,8 @@ ALTER TABLE public.permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.role_permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.employees ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.prizes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.draw_rounds ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.prize_allocations ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.draw_rounds ENABLE ROW LEVEL SECURITY; -- Removed
+-- ALTER TABLE public.prize_allocations ENABLE ROW LEVEL SECURITY; -- Removed
 ALTER TABLE public.registrations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.special_permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.winners ENABLE ROW LEVEL SECURITY;
@@ -234,11 +222,11 @@ CREATE POLICY "Allow only admins to manage" ON public.employees FOR ALL USING (p
 CREATE POLICY "Allow authenticated users to read" ON public.prizes FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Allow only admins to manage" ON public.prizes FOR ALL USING (public.has_permission('prizes.manage'));
 
-CREATE POLICY "Allow authenticated users to read" ON public.draw_rounds FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow only admins to manage" ON public.draw_rounds FOR ALL USING (public.get_user_role() = 'super_admin'); -- Or a new permission
+-- CREATE POLICY "Allow authenticated users to read" ON public.draw_rounds FOR SELECT USING (auth.role() = 'authenticated'); -- Removed
+-- CREATE POLICY "Allow only admins to manage" ON public.draw_rounds FOR ALL USING (public.get_user_role() = 'super_admin'); -- Removed
 
-CREATE POLICY "Allow authenticated users to read" ON public.prize_allocations FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Allow only admins to manage" ON public.prize_allocations FOR ALL USING (public.get_user_role() = 'super_admin'); -- Or a new permission
+-- CREATE POLICY "Allow authenticated users to read" ON public.prize_allocations FOR SELECT USING (auth.role() = 'authenticated'); -- Removed
+-- CREATE POLICY "Allow only admins to manage" ON public.prize_allocations FOR ALL USING (public.get_user_role() = 'super_admin'); -- Removed
 
 CREATE POLICY "Allow staff/admins to manage" ON public.registrations FOR ALL USING (public.has_permission('registrations.manage'));
 

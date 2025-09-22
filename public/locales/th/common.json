@@ -13,5 +13,7 @@
   "email_label": "อีเมล",
   "password_label": "รหัสผ่าน",
   "forgot_password": "ลืมรหัสผ่าน?",
-  "login_button": "เข้าสู่ระบบ"
+  "login_button": "เข้าสู่ระบบ",
+  "register_button": "ลงทะเบียน",
+  "registrations": "ลงทะเบียน"
 }
