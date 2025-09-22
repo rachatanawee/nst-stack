@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 
 import { useTranslation } from 'react-i18next'; // Add this import
 
-const navLinks = [
+export const navLinks = [
   { href: "/", label: "dashboard", icon: Home }, // Use translation key
   { href: "/employees", label: "manage_employees", icon: Users }, // Use translation key
   { href: "/registrations", label: "registrations", icon: ClipboardList }, // New link for registrations

@@ -22,7 +22,7 @@ export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
       <Button
         variant="outline"
         size="icon"
-        className="shrink-0 hidden md:block flex items-center justify-center"
+        className="shrink-0 hidden md:flex items-center justify-center" // Changed md:block to md:flex
         onClick={onToggleSidebar}
       >
         <Menu className="h-5 w-5" />

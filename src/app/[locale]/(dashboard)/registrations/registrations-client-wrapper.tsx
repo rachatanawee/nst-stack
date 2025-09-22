@@ -3,6 +3,7 @@
 import { DataTable } from "@/components/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button"; // Import Button
+import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
 import { useRef, useState } from "react"; // Import useRef and useState
 import * as XLSX from "xlsx"; // Import xlsx library
 import { importRegistrations } from "./actions"; // Import the server action
@@ -13,19 +14,19 @@ interface ExcelRow {
 }
 
 interface Registration {
-  id: string; // Changed to string
+  id: string; // This is now employee_id
   full_name: string;
   department: string;
-  registered_at: string;
-  session: string;
+  registered_at: string | null; // Can be null
+  session_name: string | null; // Changed to session_name
 }
 
 const columns: ColumnDef<Registration>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-    size: 80, // Smaller size for ID
-    maxSize: 80,
+    accessorKey: "id", // This is now employee_id
+    header: "Employee ID", // Changed header
+    size: 120,
+    maxSize: 120,
   },
   {
     accessorKey: "full_name",
@@ -39,21 +40,33 @@ const columns: ColumnDef<Registration>[] = [
     accessorKey: "registered_at",
     header: "Registered At",
     cell: ({ row }) => {
-      const date = new Date(row.getValue("registered_at"));
-      return date.toLocaleString(); // Format date nicely
+      const registeredAt = row.getValue("registered_at") as string | null;
+      return registeredAt ? new Date(registeredAt).toLocaleString() : 'N/A'; // Handle null
     },
   },
   {
-    accessorKey: "session",
+    accessorKey: "session_name", // Corrected accessorKey
     header: "Session",
-    size: 100, // Smaller size for Session
+    size: 100,
     maxSize: 100,
+    cell: ({ row }) => {
+      const sessionName = row.getValue("session_name") as string | null; // Corrected accessorKey
+      return sessionName === 'day' ? 'Day' : (sessionName === 'night' ? 'Night' : 'N/A'); // Display Day/Night
+    },
   },
 ];
 
 export function RegistrationsClientWrapper({ registrations }: { registrations: Registration[] }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [showDay, setShowDay] = useState(true); // Default to showing Day
+  const [showNight, setShowNight] = useState(true); // Default to showing Night
+
+  const filteredRegistrations = registrations.filter(reg => {
+    if (showDay && reg.session_name === 'day') return true;
+    if (showNight && reg.session_name === 'night') return true;
+    return false;
+  });
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -95,20 +108,50 @@ export function RegistrationsClientWrapper({ registrations }: { registrations: R
 
   return (
     <div>
-      <div className="flex justify-end mb-4">
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept=".xlsx, .xls"
-          className="hidden"
-          disabled={isImporting}
-        />
-        <Button onClick={handleImportClick} disabled={isImporting}>
-          {isImporting ? "Importing..." : "Import Excel"}
-        </Button>
+      <div className="flex items-center justify-between mb-4"> {/* Changed to justify-between */}
+        <div className="flex items-center space-x-8"> {/* New div for filters, increased space-x */}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="filterDay"
+              checked={showDay}
+              onCheckedChange={(checked) => setShowDay(!!checked)}
+            />
+            <label
+              htmlFor="filterDay"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Day
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="filterNight"
+              checked={showNight}
+              onCheckedChange={(checked) => setShowNight(!!checked)}
+            />
+            <label
+              htmlFor="filterNight"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Night
+            </label>
+          </div>
+        </div>
+        <div className="flex justify-end"> {/* Original div for import button */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".xlsx, .xls"
+            className="hidden"
+            disabled={isImporting}
+          />
+          <Button onClick={handleImportClick} disabled={isImporting}>
+            {isImporting ? "Importing..." : "Import Excel"}
+          </Button>
+        </div>
       </div>
-      <DataTable columns={columns} data={registrations} />
+      <DataTable columns={columns} data={filteredRegistrations} /> {/* Use filteredRegistrations */}
     </div>
   );
 }

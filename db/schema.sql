@@ -289,6 +289,21 @@ SELECT employee_id, 'evening' AS session FROM public.special_permissions;
 COMMENT ON VIEW public.v_lucky_draw_pool IS 'Consolidated list of all employees eligible for the lucky draw, separated by session.';
 
 
+-- New view for lucky draw participants
+CREATE OR REPLACE VIEW public.v_lucky_draw AS
+SELECT
+  r.registered_at,
+  e.full_name,
+  r.session AS session_name, -- Added alias
+  e.employee_id,
+  e.department
+FROM
+  public.registrations r
+INNER JOIN -- Changed to INNER JOIN
+  public.employees e ON r.employee_id = e.employee_id;
+COMMENT ON VIEW public.v_lucky_draw IS 'Consolidated view of registered employees for lucky draw.';
+
+
 -- =================================================================
 --  Section 4: Storage Policies
 -- =================================================================
