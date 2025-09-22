@@ -16,10 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import { useTranslation } from 'react-i18next';
-
 export default function DashboardPage() {
-  const { t } = useTranslation('common'); // Specify the namespace
 
   const [stats, setStats] = useState({
     employeeCount: 0,

@@ -7,8 +7,13 @@ import { useRef, useState } from "react"; // Import useRef and useState
 import * as XLSX from "xlsx"; // Import xlsx library
 import { importRegistrations } from "./actions"; // Import the server action
 
+interface ExcelRow {
+  EmpID: string | number;
+  ClockIn: string | number;
+}
+
 interface Registration {
-  id: number;
+  id: string; // Changed to string
   full_name: string;
   department: string;
   registered_at: string;
@@ -64,7 +69,7 @@ export function RegistrationsClientWrapper({ registrations }: { registrations: R
         const workbook = XLSX.read(data, { type: "array" });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const json: any[] = XLSX.utils.sheet_to_json(worksheet);
+        const json: ExcelRow[] = XLSX.utils.sheet_to_json(worksheet);
 
         const formattedData = json.map((row) => ({
           employee_id: String(row.EmpID), // Ensure EmpID is string

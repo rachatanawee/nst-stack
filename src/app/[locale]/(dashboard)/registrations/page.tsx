@@ -3,6 +3,16 @@ import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { RegistrationsClientWrapper } from "./registrations-client-wrapper";
 
+interface RawRegistration {
+  id: string; // Changed to string
+  registered_at: string;
+  session: string;
+  employees: {
+    full_name: string;
+    department: string;
+  }[]; // Changed to array
+}
+
 export default async function RegistrationsPage() {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
@@ -25,10 +35,10 @@ export default async function RegistrationsPage() {
   }
 
   // Flatten the data for easier consumption by the data table
-  const formattedRegistrations = registrations.map((reg: any) => ({
-    id: reg.id,
-    full_name: reg.employees?.full_name || 'N/A',
-    department: reg.employees?.department || 'N/A',
+  const formattedRegistrations = registrations.map((reg: RawRegistration) => ({
+    id: String(reg.id), // Convert to string
+    full_name: reg.employees[0]?.full_name || 'N/A', // Access first element of array
+    department: reg.employees[0]?.department || 'N/A', // Access first element of array
     registered_at: reg.registered_at,
     session: reg.session,
   }));
