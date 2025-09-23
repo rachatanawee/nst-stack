@@ -151,7 +151,9 @@ export function RegistrationsClientWrapper({ registrations }: { registrations: R
           </Button>
         </div>
       </div>
-      <DataTable columns={columns} data={filteredRegistrations} /> {/* Use filteredRegistrations */}
+      <DataTable columns={columns} data={filteredRegistrations} 
+      showRefreshButton={true}
+        showExportButton={true}/> {/* Use filteredRegistrations */}
     </div>
   );
 }
