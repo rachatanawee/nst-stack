@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 
 export type Winner = {
   winner_id: string
+  employee_id: string
   full_name: string
   prize_name: string
   claimed_at: string | null
@@ -13,6 +14,13 @@ export type Winner = {
 }
 
 export const columns: ColumnDef<Winner>[] = [
+  {
+    accessorKey: 'employee_id',
+    header: 'Employee ID',
+    size: 150,
+    minSize: 120,
+    maxSize: 200,
+  },
   {
     accessorKey: 'full_name',
     header: 'Full Name',

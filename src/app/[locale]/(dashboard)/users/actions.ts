@@ -62,7 +62,7 @@ export async function getRoles() {
   // The roles are now stored as text in the profiles table.
   // We'll return a hardcoded list for now.
   // In a real application, you might want to query distinct roles from the profiles table.
-  return ['admin', 'staff'];
+  return ['super_admin', 'staff'];
 }
 
 export async function createUser({
@@ -114,22 +114,43 @@ export async function createUser({
 
 export async function updateUser(
   userId: string,
-  data: { role?: string; full_name?: string }
+  data: { role?: string; full_name?: string; password?: string }
 ) {
   try {
     const cookieStore = cookies();
     //await checkPermission('users.manage');
-    const supabase = await createClient(cookieStore);
+    const supabase = await createClient(cookieStore, true); // Use service role for admin actions
 
-    const { error } = await supabase.from('profiles').update(data).eq('id', userId);
+    const { password, ...profileData } = data;
 
-    if (error) {
-      console.error('Error updating user:', error);
-      return { success: false, message: error.message };
+    // Update profile if there's data for it
+    if (Object.keys(profileData).length > 0) {
+        const { error: profileError } = await supabase
+            .from('profiles')
+            .update(profileData)
+            .eq('id', userId);
+
+        if (profileError) {
+            console.error('Error updating user profile:', profileError);
+            return { success: false, message: profileError.message };
+        }
+    }
+
+    // Update password if provided and not an empty string
+    if (password) {
+      const { error: authError } = await supabase.auth.admin.updateUserById(
+        userId,
+        { password }
+      );
+
+      if (authError) {
+        console.error('Error updating user password:', authError);
+        return { success: false, message: authError.message };
+      }
     }
 
     revalidatePath('/users');
-    return { success: true, message: 'User updated.' };
+    return { success: true, message: 'User updated successfully.' };
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
     return { success: false, message };

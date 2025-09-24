@@ -245,6 +245,7 @@ CREATE POLICY "Allow only admins to insert/delete" ON public.winners FOR ALL USI
 CREATE OR REPLACE VIEW public.v_winner_details AS
 SELECT
   w.id AS winner_id,
+  w.drawn_at,
   w.redemption_status,
   w.redeemed_at,
   w.redemption_photo_path,

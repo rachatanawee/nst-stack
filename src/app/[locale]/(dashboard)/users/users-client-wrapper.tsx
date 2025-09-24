@@ -43,6 +43,10 @@ export type User = {
 const editFormSchema = z.object({
   full_name: z.string().min(1, 'Please enter a full name.'),
   role: z.string().min(1, 'Please select a role.'),
+  password: z.string().optional(),
+}).refine(data => !data.password || data.password.length === 0 || data.password.length >= 6, {
+  message: "Password must be at least 6 characters if provided.",
+  path: ["password"],
 });
 type EditFormValues = z.infer<typeof editFormSchema>;
 
@@ -80,6 +84,7 @@ export function UsersClientWrapper() {
       form.reset({
         full_name: editingUser.full_name,
         role: editingUser.role,
+        password: '',
       });
     }
   }, [editingUser, form]);
@@ -202,6 +207,19 @@ export function UsersClientWrapper() {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Leave blank to keep current password" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
