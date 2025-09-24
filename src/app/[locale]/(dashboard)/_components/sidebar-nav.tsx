@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 import { useTranslation } from 'react-i18next'; // Add this import
+import { useEffect, useState } from "react"
+import { getUserInfo } from "../actions"
 
 export const navLinks = [
   { href: "/", label: "dashboard", icon: Home }, // Use translation key
@@ -30,6 +32,19 @@ export const navLinks = [
 export function SidebarNav({ isCollapsed }: { isCollapsed: boolean }) {
   const pathname = usePathname()
   const { t } = useTranslation('common'); // Add this line, specify namespace
+  const [userInfo, setUserInfo] = useState<{ email: string; role: string } | null>(
+    null
+  )
+
+  useEffect(() => {
+    async function fetchUserInfo() {
+      const info = await getUserInfo()
+      if (info) {
+        setUserInfo(info)
+      }
+    }
+    fetchUserInfo()
+  }, [])
 
   return (
     <div className="hidden border-r bg-muted/40 md:block">
@@ -71,6 +86,14 @@ export function SidebarNav({ isCollapsed }: { isCollapsed: boolean }) {
             })}
           </nav>
         </div>
+        {!isCollapsed && userInfo && (
+          <div className="mt-auto p-4">
+            <div className="text-xs text-muted-foreground">
+              <div>{userInfo.email}</div>
+              <div>Role: {userInfo.role}</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
