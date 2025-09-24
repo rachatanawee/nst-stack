@@ -1,16 +1,16 @@
 'use client'
 
 import { type ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '@/components/ui/checkbox'
 
 export type Winner = {
   winner_id: string
   employee_id: string
   full_name: string
   prize_name: string
-  claimed_at: string | null
+  redeemed_at: string | null
   department: string
   drawn_at: string
+  redemption_photo_path: string | null
 }
 
 export const columns: ColumnDef<Winner>[] = [
@@ -63,14 +63,40 @@ export const columns: ColumnDef<Winner>[] = [
     maxSize: 250,
   },
   {
-    accessorKey: 'claimed_at',
-    header: 'Claimed',
+    accessorKey: 'redeemed_at',
+    header: 'Redeemed At',
     cell: ({ row }) => {
-      const claimed = !!row.getValue('claimed_at')
-      return <Checkbox checked={claimed} disabled />
+      const redeemedAt = row.getValue('redeemed_at')
+      const redemptionPhotoPath = row.original.redemption_photo_path
+
+      if (!redeemedAt) {
+        return <div>-</div>
+      }
+
+      const date = new Date(redeemedAt as string)
+      const formattedDateTime = new Intl.DateTimeFormat(undefined, {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hourCycle: 'h23',
+      }).format(date)
+
+      if (redemptionPhotoPath) {
+        const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/claim_prize/${redemptionPhotoPath}`
+        return (
+          <a href={imageUrl} target="_blank" rel="noopener noreferrer">
+            {formattedDateTime}
+          </a>
+        )
+      }
+
+      return <div>{formattedDateTime}</div>
     },
-    size: 100,
-    minSize: 80,
-    maxSize: 120,
+    size: 180,
+    minSize: 150,
+    maxSize: 250,
   },
 ]
