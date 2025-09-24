@@ -26,9 +26,6 @@ import {
   type PaginationState,
 } from "@tanstack/react-table"
 
-
-
-
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -45,13 +42,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Input } from "@/components/ui/input" // Added for search input
+import { Input } from "@/components/ui/input"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   resourceName?: string
-  // New props for action buttons
   showAddButton?: boolean
   onAddClick?: () => void
   showEditButton?: boolean
@@ -64,6 +60,7 @@ interface DataTableProps<TData, TValue> {
   showRefreshButton?: boolean
   onRefreshClick?: () => void
   showExportButton?: boolean
+  onRowDoubleClick?: (row: TData) => void
 }
 
 export function DataTable<TData extends { id?: string; employee_id?: string }, TValue>({
@@ -82,6 +79,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   showRefreshButton,
   onRefreshClick,
   showExportButton,
+  onRowDoubleClick,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const paginationKey = resourceName ? `data-table-pagination-${resourceName}` : null
@@ -89,7 +87,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [rowSelection, setRowSelection] = React.useState({})
-  const [globalFilter, setGlobalFilter] = React.useState('') // Added for global filter
+  const [globalFilter, setGlobalFilter] = React.useState('')
   const [pagination, setPagination] = React.useState<PaginationState>(() => {
     if (typeof window !== 'undefined' && paginationKey) {
       const storedPagination = localStorage.getItem(paginationKey)
@@ -131,7 +129,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     getSortedRowModel: getSortedRowModel(),
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
-    onColumnSizingChange: setColumnSizing, // Add this line
+    onColumnSizingChange: setColumnSizing,
     onPaginationChange: setPagination,
     enableColumnResizing,
     columnResizeMode: 'onChange',
@@ -139,7 +137,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
       sorting,
       rowSelection,
       globalFilter,
-      columnSizing, // Add this line
+      columnSizing,
       pagination,
     },
   })
@@ -156,16 +154,6 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     }
   }, [columnSizing, columnSizingKey])
 
-
-  function handleDoubleClick(row: TData) {
-    if (resourceName) {
-      const id = row.id ?? row.employee_id
-      if (id) {
-        router.push(`/${resourceName}/${id}/edit`)
-      }
-    }
-  }
-
   const handleExport = async () => {
     const { utils, writeFile } = await import("xlsx");
     const ws = utils.json_to_sheet(data);
@@ -177,7 +165,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   return (
     <div>
       <div className="flex items-center py-4">
-        <div className="flex items-center"> {/* Left side: Search */}
+        <div className="flex items-center"> 
           <Input
             placeholder="Search all columns..."
             value={(table.getState().globalFilter as string) ?? ''}
@@ -185,7 +173,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
             className="max-w-sm"
           />
         </div>
-        <div className="flex items-center ml-auto"> {/* Right side: Action Buttons */}
+        <div className="flex items-center ml-auto"> 
           {showExportButton && (
             <Button
               variant="outline"
@@ -305,8 +293,8 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onDoubleClick={() => handleDoubleClick(row.original)}
-                  className={resourceName ? "cursor-pointer" : ""}
+                  onDoubleClick={() => onRowDoubleClick?.(row.original)}
+                  className={onRowDoubleClick ? "cursor-pointer" : ""}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="border-r py-0">

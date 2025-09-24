@@ -23,8 +23,8 @@ export const navLinks = [
   { href: "/registrations", label: "registrations", icon: ClipboardList }, // New link for registrations
   { href: "/prizes", label: "manage_prizes", icon: Award }, // Use translation key
   { href: "/users", label: "manage_users", icon: Users }, // Use translation key
-  { href: "/rewards", label: "reward_settings", icon: Award }, // Use translation key
-  { href: "/reports", label: "reports", icon: LineChart }, // Use translation key
+  { href: "/rewards", label: "give_rewards", icon: Award }, // Use translation key
+  //{ href: "/reports", label: "reports", icon: LineChart }, // Use translation key
 ]
 
 export function SidebarNav({ isCollapsed }: { isCollapsed: boolean }) {

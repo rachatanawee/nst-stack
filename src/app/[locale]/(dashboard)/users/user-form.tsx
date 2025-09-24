@@ -19,32 +19,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }).optional(),
-  role_id: z.string().transform(val => Number(val)).pipe(z.number().min(1, 'Please select a role.')),
+  full_name: z.string().min(1, 'Please enter a full name.'),
+  role: z.string().min(1, 'Please select a role.'),
 });
 
-type UserFormInput = z.infer<typeof formSchema>; // This is the output type
-type UserFormValues = z.input<typeof formSchema>; // This is the input type for useForm
+type UserFormValues = z.infer<typeof formSchema>;
 
 interface UserFormProps {
-  roles: { id: number; name: string }[];
+  roles: string[];
+  onUserCreated: () => void;
 }
 
-export function UserForm({ roles }: UserFormProps) {
-  const form = useForm<UserFormValues, undefined, UserFormInput>({
+export function UserForm({ roles, onUserCreated }: UserFormProps) {
+  const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
-      role_id: String(roles.find(r => r.name === 'staff')?.id || 0), // Convert to string
+      full_name: '',
+      role: 'staff',
     },
   });
 
-  async function onSubmit(values: UserFormInput) {
+  async function onSubmit(values: UserFormValues) {
     const result = await createUser(values);
 
     if (result?.success) {
       toast.success(result.message);
       form.reset();
+      onUserCreated();
     } else {
       toast.error(result.message);
     }
@@ -53,6 +56,19 @@ export function UserForm({ roles }: UserFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <Controller
+          control={form.control}
+          name="full_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <Input placeholder="John Doe" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Controller
           control={form.control}
           name="email"
@@ -81,11 +97,11 @@ export function UserForm({ roles }: UserFormProps) {
         />
         <Controller
           control={form.control}
-          name="role_id"
+          name="role"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Role</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
@@ -93,9 +109,9 @@ export function UserForm({ roles }: UserFormProps) {
                 </FormControl>
                 <SelectContent>
                   {roles.map(role => (
-                    <SelectItem key={role.id} value={String(role.id)}>
+                    <SelectItem key={role} value={role}>
                       {/* Capitalize role name for display */}
-                      {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                      {role.charAt(0).toUpperCase() + role.slice(1)}
                     </SelectItem>
                   ))}
                 </SelectContent>

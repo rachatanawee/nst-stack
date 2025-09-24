@@ -25,33 +25,32 @@ export async function getUsers() {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore, true); // Use service role for admin actions
 
-  const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
+  const { data: authUsers, error: usersError } =
+    await supabase.auth.admin.listUsers();
 
   if (usersError) {
     console.error('Error listing users:', usersError);
     return [];
   }
 
-  const userIds = users.users.map(u => u.id);
+  const userIds = authUsers.users.map((u) => u.id);
   const { data: profiles, error: profilesError } = await supabase
     .from('profiles')
-    .select('id, roles(id, name)')
+    .select('id, role, full_name')
     .in('id', userIds);
 
   if (profilesError) {
     console.error('Error fetching profiles:', profilesError);
-    return [];
+    // Still return users, just without role info
   }
 
-  const usersWithRoles = users.users.map((user) => {
-    const profile = profiles.find((p) => p.id === user.id);
-    const role = profile?.roles as { id: number; name: string } | undefined;
-
+  const usersWithRoles = authUsers.users.map((user) => {
+    const profile = profiles?.find((p) => p.id === user.id);
     return {
       id: user.id,
       email: user.email || 'N/A',
-      role_id: role?.id,
-      role_name: role?.name || 'N/A',
+      full_name: profile?.full_name || 'N/A',
+      role: profile?.role || 'N/A',
       created_at: user.created_at,
     };
   });
@@ -60,25 +59,26 @@ export async function getUsers() {
 }
 
 export async function getRoles() {
-  const cookieStore = cookies();
-  const supabase = await createClient(cookieStore);
-  const { data, error } = await supabase.from('roles').select('id, name');
-
-  if (error) {
-    console.error('Error fetching roles:', error);
-    return [];
-  }
-  return data;
+  // The roles are now stored as text in the profiles table.
+  // We'll return a hardcoded list for now.
+  // In a real application, you might want to query distinct roles from the profiles table.
+  return ['admin', 'staff'];
 }
 
 export async function createUser({
   email,
   password,
-  role_id,
-}: { email: string; password?: string; role_id: number }) {
+  role,
+  full_name,
+}: {
+  email: string;
+  password?: string;
+  role: string;
+  full_name: string;
+}) {
   try {
     const cookieStore = cookies();
-    await checkPermission('users.manage');
+    //await checkPermission('users.manage');
     const supabase = await createClient(cookieStore, true); // Use service role for admin actions
 
     const { data: user, error } = await supabase.auth.admin.createUser({
@@ -94,7 +94,8 @@ export async function createUser({
 
     const { error: profileError } = await supabase.from('profiles').insert({
       id: user.user?.id,
-      role_id,
+      role,
+      full_name,
     });
 
     if (profileError) {
@@ -111,24 +112,24 @@ export async function createUser({
   }
 }
 
-export async function updateUserRole(userId: string, role_id: number) {
+export async function updateUser(
+  userId: string,
+  data: { role?: string; full_name?: string }
+) {
   try {
     const cookieStore = cookies();
-    await checkPermission('users.manage');
+    //await checkPermission('users.manage');
     const supabase = await createClient(cookieStore);
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ role_id })
-      .eq('id', userId);
+    const { error } = await supabase.from('profiles').update(data).eq('id', userId);
 
     if (error) {
-      console.error('Error updating user role:', error);
+      console.error('Error updating user:', error);
       return { success: false, message: error.message };
     }
 
     revalidatePath('/users');
-    return { success: true, message: 'User role updated.' };
+    return { success: true, message: 'User updated.' };
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : String(e);
     return { success: false, message };
@@ -138,7 +139,7 @@ export async function updateUserRole(userId: string, role_id: number) {
 export async function deleteUser(userId: string) {
   try {
     const cookieStore = cookies();
-    await checkPermission('users.manage');
+    //await checkPermission('users.manage');
     const supabase = await createClient(cookieStore, true); // Use service role for admin actions
 
     const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
