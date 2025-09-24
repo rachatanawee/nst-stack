@@ -24,8 +24,8 @@ export async function getUserInfo() {
   if (error || !profile) {
     console.error("Error fetching user role:", error)
     // Fallback or default role
-    return { email: user.email, role: "User" }
+    return { email: user.email || "", role: "User" }
   }
 
-  return { email: user.email, role: profile.role || "User" }
+  return { email: user.email || "", role: profile.role || "User" }
 }

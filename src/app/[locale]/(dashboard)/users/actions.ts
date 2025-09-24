@@ -4,22 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 
-// Helper function to check permissions
-async function checkPermission(permission: string) {
-  const cookieStore = cookies();
-  const supabase = await createClient(cookieStore);
-  const { data: hasPerm, error } = await supabase.rpc('has_permission', {
-    p_permission_name: permission,
-  });
 
-  if (error) {
-    console.error('Permission check error:', error);
-    throw new Error('Could not check permissions.');
-  }
-  if (!hasPerm) {
-    throw new Error(`You don't have the required permission: ${permission}`);
-  }
-}
 
 export async function getUsers() {
   const cookieStore = cookies();
