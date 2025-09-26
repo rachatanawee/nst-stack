@@ -162,6 +162,14 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     writeFile(wb, `${resourceName ?? 'export'}.xlsx`);
   };
 
+  const handleRowDoubleClick = (row: TData) => {
+    if (onRowDoubleClick) {
+      onRowDoubleClick(row);
+    } else if (resourceName && row.id) {
+      router.push(`/${resourceName}/${row.id}/edit`);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center py-4">
@@ -293,8 +301,8 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onDoubleClick={() => onRowDoubleClick?.(row.original)}
-                  className={onRowDoubleClick ? "cursor-pointer" : ""}
+                  onDoubleClick={() => handleRowDoubleClick(row.original)}
+                  className={onRowDoubleClick || (resourceName && row.original.id) ? "cursor-pointer" : ""}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="border-r py-0">

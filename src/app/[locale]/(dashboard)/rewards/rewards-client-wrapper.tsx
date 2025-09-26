@@ -14,5 +14,11 @@ export function RewardsClientWrapper({ winners }: RewardsClientWrapperProps) {
     id: winner.winner_id, // Map winner_id to id
   }));
 
-  return <DataTable columns={columns as ColumnDef<typeof dataWithId[number]>[]} data={dataWithId} showRefreshButton={true} showExportButton={true} />
+  return <DataTable 
+    columns={columns as ColumnDef<typeof dataWithId[number]>[]} 
+    data={dataWithId} 
+    resourceName="rewards"
+    showRefreshButton={true} 
+    showExportButton={true} 
+  />
 }

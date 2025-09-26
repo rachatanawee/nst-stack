@@ -73,6 +73,18 @@ export async function updatePrize(id: string, formData: FormData) {
     }
     data.image_url = null; // Set image_url to null in the database
   } else if (imageFile && imageFile.size > 0) {
+    // If there was an old image, delete it
+    const oldImageUrl = formData.get("current_image_url") as string;
+    if (oldImageUrl) {
+      const { error: deleteError } = await supabase.storage
+        .from("prizes")
+        .remove([oldImageUrl]);
+      if (deleteError) {
+        console.error("Error deleting old image:", deleteError);
+        // Don't block the update, but log the error
+      }
+    }
+
     // Only upload new image if not removed and a new file is provided
     const { data: imageData, error: imageError } = await supabase.storage
       .from("prizes")

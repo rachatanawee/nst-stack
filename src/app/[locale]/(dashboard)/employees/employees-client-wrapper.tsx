@@ -12,11 +12,16 @@ interface EmployeesClientWrapperProps {
 
 export function EmployeesClientWrapper({ employees }: EmployeesClientWrapperProps) {
   const router = useRouter()
+  const dataWithId = employees.map(employee => ({
+    ...employee,
+    id: employee.employee_id,
+  }));
+
   return (
     <>
       <DataTable
         columns={columns}
-        data={employees}
+        data={dataWithId}
         resourceName="employees"
         showAddButton={true}
         onAddClick={() => router.push('/employees/new')}
