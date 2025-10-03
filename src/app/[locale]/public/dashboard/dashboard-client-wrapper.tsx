@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { type PublicRegistration } from './actions'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,14 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 
 type ColorCounts = { 
   [color: string]: { 
@@ -55,15 +48,14 @@ function calculateColorCounts(data: PublicRegistration[]): ColorCounts {
 }
 
 export default function DashboardClientWrapper({ 
-  initialData, 
-  initialCommitteeCount 
+  initialData
 }: { 
-  initialData: PublicRegistration[],
-  initialCommitteeCount: number
+  initialData: PublicRegistration[]
 }) {
+  const searchParams = useSearchParams();
+  const session = searchParams.get('session');
   const [rawData, setRawData] = useState(initialData);
-  const [selectedSession, setSelectedSession] = useState('all');
-  const [committeeCount, setCommitteeCount] = useState(initialCommitteeCount);
+  const [selectedSession, setSelectedSession] = useState(session || 'all');
 
   useEffect(() => {
     const client = createClient();
@@ -100,7 +92,13 @@ export default function DashboardClientWrapper({
 
   const counts = useMemo(() => calculateColorCounts(filteredData), [filteredData]);
   const sortedColors = useMemo(() => Object.keys(counts).sort(), [counts]);
-  const grandTotal = useMemo(() => filteredData.length, [filteredData]);
+  const committeeCount = useMemo(() => {
+    return filteredData.filter(reg => reg.is_committee).length;
+  }, [filteredData]);
+
+  const grandTotal = useMemo(() => {
+    return filteredData.length;
+  }, [filteredData]);
 
   const chartData = useMemo(() => {
     return sortedColors.map(color => ({
@@ -121,7 +119,7 @@ export default function DashboardClientWrapper({
           <div className="flex justify-between items-center">
             <CardTitle>Overview</CardTitle>
             <div className="w-[180px]">
-              <Select onValueChange={setSelectedSession} defaultValue="all">
+              <Select onValueChange={setSelectedSession} value={selectedSession}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select session" />
                 </SelectTrigger>
@@ -136,47 +134,44 @@ export default function DashboardClientWrapper({
           <div className="flex gap-8 pt-4 border-t">
             <div>
               <CardTitle>Total Registrations</CardTitle>
-              <p className="text-5xl font-bold" style={{ color: '#005bA4' }}>{grandTotal}</p>
+              <p className="text-4xl font-bold" style={{ color: '#005bA4' }}>{grandTotal}</p>
             </div>
             <div>
               <CardTitle>Committee Members</CardTitle>
-              <p className="text-5xl font-bold">{committeeCount}</p>
+              <p className="text-4xl font-bold">{committeeCount}</p>
             </div>
           </div>
         </CardHeader>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <Card>
             <CardHeader>
                 <CardTitle>Summary by Color</CardTitle>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                        <TableHead>Color</TableHead>
-                        <TableHead className="text-right">Committee</TableHead>
-                        <TableHead className="text-right">Members</TableHead>
-                        <TableHead className="text-right">Total</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {chartData.map(item => (
-                        <TableRow key={item.name}>
-                            <TableCell>
-                            <div className="flex items-center gap-2">
+                <div className="grid grid-cols-2 gap-4">
+                    {chartData.map(item => (
+                        <div key={item.name} className="border rounded-lg p-4 flex flex-col">
+                            <div className="flex items-center gap-2 mb-2">
                                 <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.name }}></div>
-                                <span>{item.name}</span>
+                                <span className="font-bold">{item.name}</span>
                             </div>
-                            </TableCell>
-                            <TableCell className="text-right font-bold">{item.committee}</TableCell>
-                            <TableCell className="text-right font-bold">{item.value - item.committee}</TableCell>
-                            <TableCell className="text-right font-bold">{item.value}</TableCell>
-                        </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                            <div className="flex justify-between text-sm">
+                                <span>Committee:</span>
+                                <span className="font-bold">{item.committee}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                                <span>Participant:</span>
+                                <span className="font-bold">{item.value - item.committee}</span>
+                            </div>
+                            <div className="flex justify-between text-sm border-t mt-2 pt-2">
+                                <span>Total:</span>
+                                <span className="font-bold">{item.value}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </CardContent>
         </Card>
         <Card>

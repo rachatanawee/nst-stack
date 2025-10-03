@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Noto_Sans_Thai } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin', 'thai'] })
+const noto = Noto_Sans_Thai({ subsets: ['latin', 'thai'] })
 
 export const metadata: Metadata = {
   title: 'nst-stack',
@@ -43,7 +43,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={inter.className}>
+      <body className={noto.className}>
         <ClientProvider locale={locale} resources={resources}> {/* Pass resources to ClientProvider */}
           {children}
         </ClientProvider>

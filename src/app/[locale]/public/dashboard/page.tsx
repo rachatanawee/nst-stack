@@ -1,18 +1,12 @@
-import { getPublicRegistrations, getCommitteeCount } from './actions'
+import { getPublicRegistrations } from './actions'
 import DashboardClientWrapper from './dashboard-client-wrapper'
 
 export default async function PublicDashboardPage() {
-  const [initialData, committeeCount] = await Promise.all([
-    getPublicRegistrations(),
-    getCommitteeCount(),
-  ])
+  const initialData = await getPublicRegistrations()
 
   return (
     <div className="container mx-auto p-4">
-      <DashboardClientWrapper
-        initialData={initialData}
-        initialCommitteeCount={committeeCount}
-      />
+      <DashboardClientWrapper initialData={initialData} />
     </div>
   )
 }

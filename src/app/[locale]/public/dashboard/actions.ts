@@ -21,14 +21,3 @@ export async function getPublicRegistrations(): Promise<PublicRegistration[]> {
   }
   return data
 }
-
-export async function getCommitteeCount(): Promise<number> {
-  const supabase = await createClient(cookies())
-  const { data, error } = await supabase.rpc('get_committee_count')
-
-  if (error) {
-    console.error('Error fetching committee count:', error)
-    return 0
-  }
-  return data || 0
-}
