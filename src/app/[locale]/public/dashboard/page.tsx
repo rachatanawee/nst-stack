@@ -5,7 +5,7 @@ export default async function PublicDashboardPage() {
   const initialData = await getPublicRegistrations()
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="bg-gradient-to-b from-[#005bA4] to-white min-h-screen">
       <DashboardClientWrapper initialData={initialData} />
     </div>
   )

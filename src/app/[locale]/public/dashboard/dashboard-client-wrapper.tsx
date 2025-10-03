@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { ShieldCheck, User, Users } from 'lucide-react'
 
 type ColorCounts = { 
   [color: string]: { 
@@ -111,8 +112,8 @@ export default function DashboardClientWrapper({
   }, [counts, sortedColors]);
 
   return (
-    <div className="flex flex-col gap-6">
-        <h1 className="text-4xl font-bold text-center" style={{ color: '#005bA4' }}>HOYA Party 2025</h1>
+    <div className="container mx-auto p-4 flex flex-col gap-6">
+        <h1 className="text-4xl font-bold text-center" style={{ color: 'white' }}>HOYA Party 2025</h1>
 
       <Card>
         <CardHeader className="flex flex-col gap-4">
@@ -152,21 +153,27 @@ export default function DashboardClientWrapper({
             <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                     {chartData.map(item => (
-                        <div key={item.name} className="border rounded-lg p-4 flex flex-col">
+                        <div key={item.name} className="border rounded-lg p-4 flex flex-col" style={{ backgroundColor: item.name, color: item.name === 'Center' ? 'blue' : 'white' }}>
                             <div className="flex items-center gap-2 mb-2">
-                                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.name }}></div>
-                                <span className="font-bold">{item.name}</span>
+                                <div className="w-4 h-4 rounded-full bg-white"></div>
+                                <span className="font-bold text-2xl">{item.name}</span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                                <span>Committee:</span>
+                            <div className="flex justify-between text-2xl">
+                                <div className="flex items-center gap-1">
+                                  <ShieldCheck size={20} />
+                                </div>
                                 <span className="font-bold">{item.committee}</span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                                <span>Participant:</span>
+                            <div className="flex justify-between text-2xl">
+                                <div className="flex items-center gap-1">
+                                  <User size={20} />
+                                </div>
                                 <span className="font-bold">{item.value - item.committee}</span>
                             </div>
-                            <div className="flex justify-between text-sm border-t mt-2 pt-2">
-                                <span>Total:</span>
+                            <div className="flex justify-between text-2xl border-t mt-2 pt-2">
+                                <div className="flex items-center gap-1">
+                                  <Users size={20} />
+                                </div>
                                 <span className="font-bold">{item.value}</span>
                             </div>
                         </div>
