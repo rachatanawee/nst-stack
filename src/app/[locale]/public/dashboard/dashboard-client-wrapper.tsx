@@ -116,9 +116,15 @@ export default function DashboardClientWrapper({
         <h1 className="text-4xl font-bold text-center" style={{ color: 'white' }}>HOYA Party 2025</h1>
 
       <Card>
-        <CardHeader className="flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <CardTitle>Overview</CardTitle>
+        <CardHeader className="flex flex-row justify-center items-center p-2 gap-8">
+            <div className="text-center">
+              <CardTitle>Total</CardTitle>
+              <p className="text-4xl font-bold" style={{ color: '#005bA4' }}>{grandTotal}</p>
+            </div>
+            <div className="text-center">
+              <CardTitle>Committee</CardTitle>
+              <p className="text-4xl font-bold">{committeeCount}</p>
+            </div>
             <div className="w-[180px]">
               <Select onValueChange={setSelectedSession} value={selectedSession}>
                 <SelectTrigger>
@@ -131,17 +137,6 @@ export default function DashboardClientWrapper({
                 </SelectContent>
               </Select>
             </div>
-          </div>
-          <div className="flex gap-8 pt-4 border-t">
-            <div>
-              <CardTitle>Total Registrations</CardTitle>
-              <p className="text-4xl font-bold" style={{ color: '#005bA4' }}>{grandTotal}</p>
-            </div>
-            <div>
-              <CardTitle>Committee Members</CardTitle>
-              <p className="text-4xl font-bold">{committeeCount}</p>
-            </div>
-          </div>
         </CardHeader>
       </Card>
 
