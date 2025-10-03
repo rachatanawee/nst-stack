@@ -116,7 +116,7 @@ export default function DashboardClientWrapper({
         <h1 className="text-4xl font-bold text-center" style={{ color: 'white' }}>HOYA Party 2025</h1>
 
       <Card>
-        <CardHeader className="flex flex-row justify-center items-center p-2 gap-8">
+        <CardHeader className="flex flex-row justify-center items-center p-1 gap-4">
             <div className="text-center">
               <CardTitle>Total</CardTitle>
               <p className="text-4xl font-bold" style={{ color: '#005bA4' }}>{grandTotal}</p>
@@ -142,9 +142,6 @@ export default function DashboardClientWrapper({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <Card>
-            <CardHeader>
-                <CardTitle>Summary by Color</CardTitle>
-            </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                     {chartData.map(item => (
