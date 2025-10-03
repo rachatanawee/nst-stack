@@ -29,6 +29,11 @@ export async function middleware(request: NextRequest) {
   // Auth logic
   const isLoggedIn = !!session
   const isLoginPage = pathname.endsWith('/login')
+  const isPublicPage = pathname.includes('/public')
+
+  if (isPublicPage) {
+    return response
+  }
 
   if (isLoggedIn && isLoginPage) {
     return NextResponse.redirect(new URL(`/${locale}/`, request.url))

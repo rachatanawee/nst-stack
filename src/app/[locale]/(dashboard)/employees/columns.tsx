@@ -11,6 +11,7 @@ export type Employee = {
   employee_id: string
   full_name: string
   department: string
+  color: string | null
 }
 
 export const columns: ColumnDef<Employee>[] = [
@@ -60,7 +61,14 @@ export const columns: ColumnDef<Employee>[] = [
     maxSize: 250,
   },
   {
-    id: 'actions',
+    accessorKey: "color",
+    header: "Color",
+    size: 150,
+    minSize: 120,
+    maxSize: 250,
+  },
+  {
+    id: "actions",
     cell: ({ row }) => (
       <DataTableActions
         row={row.original}

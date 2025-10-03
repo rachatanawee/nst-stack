@@ -1,0 +1,210 @@
+'use client'
+
+import { useEffect, useState, useMemo } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { type PublicRegistration } from './actions'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+
+type ColorCounts = { 
+  [color: string]: { 
+    total: number;
+    day: number;
+    night: number;
+    committee: number;
+  } 
+};
+
+function calculateColorCounts(data: PublicRegistration[]): ColorCounts {
+  const counts: ColorCounts = {};
+  for (const reg of data) {
+    if (!reg.color) continue;
+    
+    if (!counts[reg.color]) {
+      counts[reg.color] = { total: 0, day: 0, night: 0, committee: 0 };
+    }
+
+    counts[reg.color].total++;
+
+    if (reg.session === 'day') {
+      counts[reg.color].day++;
+    } else if (reg.session === 'night') {
+      counts[reg.color].night++;
+    }
+
+    if (reg.is_committee) {
+      counts[reg.color].committee++;
+    }
+  }
+  return counts;
+}
+
+export default function DashboardClientWrapper({ 
+  initialData, 
+  initialCommitteeCount 
+}: { 
+  initialData: PublicRegistration[],
+  initialCommitteeCount: number
+}) {
+  const [rawData, setRawData] = useState(initialData);
+  const [selectedSession, setSelectedSession] = useState('all');
+  const [committeeCount, setCommitteeCount] = useState(initialCommitteeCount);
+
+  useEffect(() => {
+    const client = createClient();
+    
+    const refetch = async () => {
+        const { data: newData } = await client.rpc('get_public_registrations');
+        if (newData) {
+            setRawData(newData as PublicRegistration[]);
+        }
+    }
+
+    const channel = client
+      .channel('dashboard_updater_channel')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'dashboard_updater', filter: 'id=eq.1' },
+        () => {
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, []);
+
+  const filteredData = useMemo(() => {
+    if (selectedSession === 'all') {
+      return rawData;
+    }
+    return rawData.filter(reg => reg.session === selectedSession);
+  }, [rawData, selectedSession]);
+
+  const counts = useMemo(() => calculateColorCounts(filteredData), [filteredData]);
+  const sortedColors = useMemo(() => Object.keys(counts).sort(), [counts]);
+  const grandTotal = useMemo(() => filteredData.length, [filteredData]);
+
+  const chartData = useMemo(() => {
+    return sortedColors.map(color => ({
+      name: color,
+      value: counts[color].total, // Pie chart uses 'value'
+      day: counts[color].day,
+      night: counts[color].night,
+      committee: counts[color].committee,
+    }));
+  }, [counts, sortedColors]);
+
+  return (
+    <div className="flex flex-col gap-6">
+        <h1 className="text-4xl font-bold text-center" style={{ color: '#005bA4' }}>HOYA Party 2025</h1>
+
+      <Card>
+        <CardHeader className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <CardTitle>Overview</CardTitle>
+            <div className="w-[180px]">
+              <Select onValueChange={setSelectedSession} defaultValue="all">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select session" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sessions</SelectItem>
+                  <SelectItem value="day">Day</SelectItem>
+                  <SelectItem value="night">Night</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex gap-8 pt-4 border-t">
+            <div>
+              <CardTitle>Total Registrations</CardTitle>
+              <p className="text-5xl font-bold" style={{ color: '#005bA4' }}>{grandTotal}</p>
+            </div>
+            <div>
+              <CardTitle>Committee Members</CardTitle>
+              <p className="text-5xl font-bold">{committeeCount}</p>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+            <CardHeader>
+                <CardTitle>Summary by Color</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                        <TableHead>Color</TableHead>
+                        <TableHead className="text-right">Committee</TableHead>
+                        <TableHead className="text-right">Members</TableHead>
+                        <TableHead className="text-right">Total</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {chartData.map(item => (
+                        <TableRow key={item.name}>
+                            <TableCell>
+                            <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.name }}></div>
+                                <span>{item.name}</span>
+                            </div>
+                            </TableCell>
+                            <TableCell className="text-right font-bold">{item.committee}</TableCell>
+                            <TableCell className="text-right font-bold">{item.value - item.committee}</TableCell>
+                            <TableCell className="text-right font-bold">{item.value}</TableCell>
+                        </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle>Chart</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <ResponsiveContainer width="100%" height={400}>
+                    <PieChart>
+                        <Pie 
+                            data={chartData} 
+                            dataKey="value" 
+                            nameKey="name" 
+                            cx="50%" 
+                            cy="50%" 
+                            outerRadius={150}
+                            label={(entry) => `${entry.name}: ${entry.value}`}
+                        >
+                            {chartData.map((entry) => (
+                                <Cell key={`cell-${entry.name}`} fill={entry.name} />
+                            ))}
+                        </Pie>
+                        <Tooltip />
+                    </PieChart>
+                </ResponsiveContainer>
+            </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}

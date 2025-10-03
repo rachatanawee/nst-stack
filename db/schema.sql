@@ -68,7 +68,8 @@ COMMENT ON TABLE public.profiles IS 'Stores additional user data linked to Supab
 CREATE TABLE public.employees (
   employee_id TEXT PRIMARY KEY,
   full_name TEXT NOT NULL,
-  department TEXT
+  department TEXT,
+  color TEXT
 );
 COMMENT ON TABLE public.employees IS 'Master list of all employees.';
 

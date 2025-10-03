@@ -20,6 +20,7 @@ import {
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 
 import { createEmployee, deleteEmployee, updateEmployee } from './actions'
@@ -101,6 +102,22 @@ export function EmployeeForm({ employee }: EmployeeFormProps) {
               className="col-span-3"
               required
             />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="color" className="text-right">
+              Color
+            </Label>
+            <Select name="color" defaultValue={employee?.color ?? ''}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a color" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="แดง">แดง</SelectItem>
+                <SelectItem value="เขียว">เขียว</SelectItem>
+                <SelectItem value="น้ำเงิน">น้ำเงิน</SelectItem>
+                <SelectItem value="ชมพู">ชมพู</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="flex justify-between items-center">

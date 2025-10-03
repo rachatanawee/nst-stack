@@ -14,6 +14,7 @@ export async function createEmployee(formData: FormData) {
     employee_id: formData.get("employee_id") as string,
     full_name: formData.get("full_name") as string,
     department: formData.get("department") as string,
+    color: formData.get("color") as string,
   }
 
   const { error } = await supabase.from("employees").insert(data)
@@ -31,9 +32,9 @@ export async function updateEmployee(id: string, formData: FormData) {
   const supabase = await createClient(cookieStore)
 
   const data = {
-    employee_id: formData.get("employee_id") as string,
     full_name: formData.get("full_name") as string,
     department: formData.get("department") as string,
+    color: formData.get("color") as string,
   }
 
   const { error } = await supabase.from("employees").update(data).eq("employee_id", id)

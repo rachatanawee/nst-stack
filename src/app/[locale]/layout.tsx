@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
-import { Mitr } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 
-import { Toaster } from '@/components/ui/sonner'
-
-const mitr = Mitr({ subsets: ['latin', 'thai'], weight: ['400', '700'] })
+const inter = Inter({ subsets: ['latin', 'thai'] })
 
 export const metadata: Metadata = {
   title: 'nst-stack',
@@ -14,6 +12,7 @@ export const metadata: Metadata = {
 import ClientProvider from '@/components/ClientProvider';
 import { createInstance } from 'i18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
+import { Toaster } from '@/components/ui/sonner';
 
 const initI18next = async (lng: string, ns: string) => {
   const i18nInstance = createInstance();
@@ -44,7 +43,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={mitr.className}>
+      <body className={inter.className}>
         <ClientProvider locale={locale} resources={resources}> {/* Pass resources to ClientProvider */}
           {children}
         </ClientProvider>

@@ -149,6 +149,7 @@ export function UsersClientWrapper() {
       {/* Add User Dialog */}
       <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
+          <DialogTitle className="sr-only">Add New User</DialogTitle>
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>
@@ -162,6 +163,7 @@ export function UsersClientWrapper() {
       {/* Edit User Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
+          <DialogTitle className="sr-only">Edit User</DialogTitle>
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>Change the details for {editingUser?.email}.</DialogDescription>
