@@ -130,6 +130,56 @@ export function PrizeForm({ prize }: PrizeFormProps) {
               required
             />
           </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="group_no" className="text-right">
+              Group No
+            </Label>
+            <Input
+              id="group_no"
+              name="group_no"
+              type="number"
+              defaultValue={prize?.group_no ?? ""}
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="order_no" className="text-right">
+              Order No
+            </Label>
+            <Input
+              id="order_no"
+              name="order_no"
+              type="number"
+              defaultValue={prize?.order_no ?? ""}
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="random_sec" className="text-right">
+              Random Sec
+            </Label>
+            <Input
+              id="random_sec"
+              name="random_sec"
+              type="number"
+              defaultValue={prize?.random_sec ?? ""}
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="is_continue" className="text-right">
+              Is Continue
+            </Label>
+            <Select name="is_continue" defaultValue={prize?.is_continue?.toString() || "false"}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select continue option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="false">False</SelectItem>
+                <SelectItem value="true">True</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           {/* New input for session_name */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="session_name" className="text-right">

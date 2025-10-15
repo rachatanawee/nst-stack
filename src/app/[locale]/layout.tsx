@@ -5,7 +5,7 @@ import './globals.css'
 const noto = Noto_Sans_Thai({ subsets: ['latin', 'thai'] })
 
 export const metadata: Metadata = {
-  title: 'nst-stack',
+  title: 'HOYA Event',
   description: 'Event management platform',
 }
 

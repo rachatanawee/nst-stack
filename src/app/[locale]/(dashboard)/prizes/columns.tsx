@@ -16,6 +16,9 @@ export type Prize = {
   signedUrl: string | null
   session_name: string // Added session_name
   is_continue: boolean
+  group_no: number | null
+  order_no: number | null
+  random_sec: number | null
 }
 
 export const columns: ColumnDef<Prize>[] = [
@@ -43,6 +46,22 @@ export const columns: ColumnDef<Prize>[] = [
     enableResizing: false,
     size: 50,
   },
+  { // New column for session_name - moved to first position
+    accessorKey: "session_name",
+    header: "Session",
+    size: 120,
+    minSize: 100,
+    maxSize: 150,
+    cell: ({ row }) => {
+      const sessionName = row.getValue("session_name") as string;
+      if (sessionName === "morning") {
+        return "Day";
+      } else if (sessionName === "evening") {
+        return "Night";
+      }
+      return sessionName; // Default to original value if not morning/evening
+    },
+  },
   {
     accessorKey: "name",
     header: "Name",
@@ -57,20 +76,26 @@ export const columns: ColumnDef<Prize>[] = [
     minSize: 80,
     maxSize: 150,
   },
-  { // New column for session_name
-    accessorKey: "session_name",
-    header: "Session",
-    size: 120,
-    minSize: 100,
-    maxSize: 150,
+  {
+    accessorKey: "group_no",
+    header: "Group No",
+    size: 100,
+    minSize: 80,
+    maxSize: 120,
     cell: ({ row }) => {
-      const sessionName = row.getValue("session_name") as string;
-      if (sessionName === "morning") {
-        return "Day";
-      } else if (sessionName === "evening") {
-        return "Night";
-      }
-      return sessionName; // Default to original value if not morning/evening
+      const groupNo = row.getValue("group_no") as number | null;
+      return groupNo || "-";
+    },
+  },
+  {
+    accessorKey: "order_no",
+    header: "Order No",
+    size: 100,
+    minSize: 80,
+    maxSize: 120,
+    cell: ({ row }) => {
+      const orderNo = row.getValue("order_no") as number | null;
+      return orderNo || "-";
     },
   },
   {

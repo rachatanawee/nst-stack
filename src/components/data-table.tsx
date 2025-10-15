@@ -61,6 +61,8 @@ interface DataTableProps<TData, TValue> {
   onRefreshClick?: () => void
   showExportButton?: boolean
   onRowDoubleClick?: (row: TData) => void
+  sorting?: SortingState
+  onSortingChange?: (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => void
 }
 
 export function DataTable<TData extends { id?: string; employee_id?: string }, TValue>({
@@ -80,12 +82,18 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   onRefreshClick,
   showExportButton,
   onRowDoubleClick,
+  sorting: externalSorting,
+  onSortingChange: externalOnSortingChange,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const paginationKey = resourceName ? `data-table-pagination-${resourceName}` : null
   const columnSizingKey = resourceName ? `data-table-column-sizing-${resourceName}` : null
 
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  // Use external sorting if provided, otherwise use internal state
+  const [internalSorting, setInternalSorting] = React.useState<SortingState>([])
+  const sorting = externalSorting ?? internalSorting
+  const setSorting = externalOnSortingChange ?? setInternalSorting
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [globalFilter, setGlobalFilter] = React.useState('')
   const [pagination, setPagination] = React.useState<PaginationState>(() => {

@@ -32,10 +32,10 @@ export default function DashboardPage() {
     async function fetchStats() {
       const { count: employeeCount } = await supabase.from('employees').select('*', { count: 'exact', head: true });
       
-      const { count: registeredDay, error: dayError } = await supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('session', 'day');
+      const { count: registeredDay, error: dayError } = await supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('session', 'Day');
       if(dayError) console.error("Error fetching morning registrations:", dayError)
 
-      const { count: registeredNight, error: nightError } = await supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('session', 'night');
+      const { count: registeredNight, error: nightError } = await supabase.from('registrations').select('*', { count: 'exact', head: true }).eq('session', 'Night');
       if(nightError) console.error("Error fetching evening registrations:", nightError)
 
       const { count: prizesGiven } = await supabase.from('winners').select('*', { count: 'exact', head: true });

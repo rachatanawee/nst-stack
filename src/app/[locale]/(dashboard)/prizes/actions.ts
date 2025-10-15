@@ -29,7 +29,10 @@ export async function createPrize(formData: FormData) {
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: imageUrl,
     session_name: formData.get("session_name") as string, // Added session_name
-    is_continue: formData.get("is_continue") === "on",
+    is_continue: formData.get("is_continue") === "true",
+    group_no: formData.get("group_no") ? parseInt(formData.get("group_no") as string, 10) : null,
+    order_no: formData.get("order_no") ? parseInt(formData.get("order_no") as string, 10) : null,
+    random_sec: formData.get("random_sec") ? parseInt(formData.get("random_sec") as string, 10) : null,
   }
 
   const { error } = await supabase.from("prizes").insert(data)
@@ -53,11 +56,19 @@ export async function updatePrize(id: string, formData: FormData) {
     total_quantity: number;
     image_url: string | null; // Allow null
     session_name: string;
+    is_continue: boolean;
+    group_no: number | null;
+    order_no: number | null;
+    random_sec: number | null;
   } = {
     name: formData.get("name") as string,
     total_quantity: parseInt(formData.get("total_quantity") as string, 10),
     image_url: formData.get("current_image_url") as string,
     session_name: formData.get("session_name") as string,
+    is_continue: formData.get("is_continue") === "true",
+    group_no: formData.get("group_no") ? parseInt(formData.get("group_no") as string, 10) : null,
+    order_no: formData.get("order_no") ? parseInt(formData.get("order_no") as string, 10) : null,
+    random_sec: formData.get("random_sec") ? parseInt(formData.get("random_sec") as string, 10) : null,
   }
 
   if (imageRemoved) {

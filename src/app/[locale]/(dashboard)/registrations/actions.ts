@@ -14,7 +14,7 @@ export async function importRegistrations(data: RegistrationData[]) {
 
   const registrationsToInsert = data.map((row) => {
     const registeredAt = new Date(row.registered_at);
-    const session = registeredAt.getHours() < 15 ? "day" : "night"; // Determine session based on time
+    const session = "night" // Determine session based on time
 
     return {
       employee_id: row.employee_id,
