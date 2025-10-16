@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { ShieldCheck, User, Users } from 'lucide-react'
 
@@ -138,6 +139,43 @@ export default function DashboardClientWrapper({
               </Select>
             </div>
         </CardHeader>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4">
+          <div className="overflow-x-auto">
+            <Table className="min-w-full border-collapse border border-gray-300">
+              <TableHeader>
+                <TableRow className="border-b-2 border-gray-300">
+                  <TableHead className="font-bold text-lg px-2 py-2 w-[25%] border-r border-gray-300">Group</TableHead>
+                  <TableHead className="font-bold text-lg text-center px-2 py-2 w-[25%] border-r border-gray-300">Regis.</TableHead>
+                  <TableHead className="font-bold text-lg text-center px-2 py-2 w-[25%] border-r border-gray-300">Comm.</TableHead>
+                  <TableHead className="font-bold text-lg text-center px-2 py-2 w-[25%]">Total</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {['Center', 'Green', 'Orange', 'Pink', 'Purple'].map(color => {
+                  const colorData = counts[color] || { total: 0, day: 0, night: 0, committee: 0 };
+                  const registered = colorData.total - colorData.committee;
+                  return (
+                    <TableRow key={color} className="border-b border-gray-300">
+                      <TableCell className="font-semibold text-lg px-2 py-2 border-r border-gray-300">{color}</TableCell>
+                      <TableCell className="text-right text-lg px-2 py-2 border-r border-gray-300">{registered}</TableCell>
+                      <TableCell className="text-right text-lg px-2 py-2 border-r border-gray-300">{colorData.committee}</TableCell>
+                      <TableCell className="text-right text-lg px-2 py-2 font-bold border-r border-gray-300">{colorData.total}</TableCell>
+                    </TableRow>
+                  );
+                })}
+                <TableRow className="border-t-2 bg-gray-50">
+                  <TableCell className="font-bold text-lg px-2 py-2 border-r border-gray-300">Total</TableCell>
+                  <TableCell className="text-right text-lg px-2 py-2 border-r border-gray-300 font-bold">{grandTotal - committeeCount}</TableCell>
+                  <TableCell className="text-right text-lg px-2 py-2 border-r border-gray-300 font-bold">{committeeCount}</TableCell>
+                  <TableCell className="text-right text-lg px-2 py-2 font-bold border-r border-gray-300">{grandTotal}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
