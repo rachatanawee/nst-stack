@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, Tooltip,  ResponsiveContainer } from 'recharts'
 import { ShieldCheck, User, Users, ChevronUp, ChevronDown } from 'lucide-react'
 
 type ColorCounts = { 

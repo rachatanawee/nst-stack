@@ -13,7 +13,7 @@ export async function importRegistrations(data: RegistrationData[]) {
   const supabase = await createClient(cookieStore);
 
   const registrationsToInsert = data.map((row) => {
-    const registeredAt = new Date(row.registered_at);
+    
     const session = "night" // Determine session based on time
 
     return {

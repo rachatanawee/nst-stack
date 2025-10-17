@@ -1,4 +1,4 @@
-import { Menu, CircleUser, Search } from "lucide-react"
+import { Menu, CircleUser } from "lucide-react"
 
 import { logout } from "@/app/[locale]/actions"
 import { Button } from "@/components/ui/button"
@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+
 
 import { MobileSheetNav } from "./mobile-sheet-nav"
 import LanguageSwitcher from "@/components/LanguageSwitcher"; // Add this import
