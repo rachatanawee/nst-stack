@@ -15,6 +15,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { PieChart, Pie, Cell, Tooltip,  ResponsiveContainer } from 'recharts'
 import { ShieldCheck, User, Users, ChevronUp, ChevronDown } from 'lucide-react'
+import { formatNumberWithCommas } from '@/lib/utils'
 
 type ColorCounts = { 
   [color: string]: { 
@@ -165,11 +166,11 @@ export default function DashboardClientWrapper({
         <CardHeader className="flex flex-row justify-center items-center p-1 gap-4">
             <div className="text-center">
               <CardTitle>Total</CardTitle>
-              <p className="text-4xl font-bold" style={{ color: '#005bA4' }}>{grandTotal}</p>
+              <p className="text-4xl font-bold" style={{ color: '#005bA4' }}>{formatNumberWithCommas(grandTotal)}</p>
             </div>
             <div className="text-center">
               <CardTitle>Committee</CardTitle>
-              <p className="text-4xl font-bold">{committeeCount}</p>
+              <p className="text-4xl font-bold">{formatNumberWithCommas(committeeCount)}</p>
             </div>
             <div className="w-[180px]">
               <Select onValueChange={setSelectedSession} value={selectedSession}>
@@ -265,19 +266,19 @@ export default function DashboardClientWrapper({
                                 <div className="flex items-center gap-1">
                                   <ShieldCheck size={20} />
                                 </div>
-                                <span className="font-bold">{item.committee}</span>
+                                <span className="font-bold">{formatNumberWithCommas(item.committee)}</span>
                             </div>
                             <div className="flex justify-between text-2xl">
                                 <div className="flex items-center gap-1">
                                   <User size={20} />
                                 </div>
-                                <span className="font-bold">{item.value - item.committee}</span>
+                                <span className="font-bold">{formatNumberWithCommas(item.value - item.committee)}</span>
                             </div>
                             <div className="flex justify-between text-2xl border-t mt-2 pt-2">
                                 <div className="flex items-center gap-1">
                                   <Users size={20} />
                                 </div>
-                                <span className="font-bold">{item.value}</span>
+                                <span className="font-bold">{formatNumberWithCommas(item.value)}</span>
                             </div>
                         </div>
                     ))}
@@ -291,14 +292,14 @@ export default function DashboardClientWrapper({
             <CardContent>
                 <ResponsiveContainer width="100%" height={400}>
                     <PieChart>
-                        <Pie 
-                            data={chartData} 
-                            dataKey="value" 
-                            nameKey="name" 
-                            cx="50%" 
-                            cy="50%" 
+                        <Pie
+                            data={chartData}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
                             outerRadius={150}
-                            label={(entry) => `${entry.name}: ${entry.value}`}
+                            label={(entry) => `${entry.name}: ${formatNumberWithCommas(entry.value as number)}`}
                         >
                             {chartData.map((entry) => (
                                 <Cell key={`cell-${entry.name}`} fill={entry.name} />
