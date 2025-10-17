@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+import { cn, formatNumberWithCommas } from "@/lib/utils"
 
 const Table = React.forwardRef<
   HTMLTableElement,
@@ -84,13 +84,36 @@ TableHead.displayName = "TableHead"
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
-    {...props}
-  />
-))
+>(({ className, children, ...props }, ref) => {
+  // Function to format cell content
+  const formatCellContent = (content: React.ReactNode): React.ReactNode => {
+    if (typeof content === 'number') {
+      return formatNumberWithCommas(content)
+    }
+
+    if (typeof content === 'string') {
+      // Check if the string represents a number
+      const numValue = parseFloat(content)
+      if (!isNaN(numValue) && isFinite(numValue)) {
+        return formatNumberWithCommas(numValue)
+      }
+    }
+
+    return content
+  }
+
+  const formattedChildren = React.Children.map(children, formatCellContent) || children
+
+  return (
+    <td
+      ref={ref}
+      className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+      {...props}
+    >
+      {formattedChildren}
+    </td>
+  )
+})
 TableCell.displayName = "TableCell"
 
 const TableCaption = React.forwardRef<
