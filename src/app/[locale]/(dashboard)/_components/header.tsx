@@ -28,7 +28,7 @@ export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle sidebar</span>
       </Button>
-      <div className="w-full flex-1">
+      <div className="w-full flex-1 flex justify-start ml-4">
         
       </div>
       <LanguageSwitcher />
