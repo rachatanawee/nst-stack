@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoya Event - User Test Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            scroll-behavior: smooth;
+        }
+        /* Custom styles for better readability and interaction */
+        .status-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .status-btn.active.pass {
+            background-color: #10B981; /* Emerald-500 */
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-btn.active.fail {
+            background-color: #EF4444; /* Red-500 */
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .link-style {
+            color: #3B82F6; /* Blue-500 */
+            text-decoration: underline;
+            word-break: break-all;
+        }
+        .link-style:hover {
+            color: #1D4ED8; /* Blue-700 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg my-8">
+        <div class="p-6 md:p-10">
+            <!-- Header -->
+            <header class="border-b-2 border-gray-200 pb-6 mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-blue-700">เอกสารประกอบการทดสอบระบบ</h1>
+                <p class="text-lg text-gray-500 mt-1">User Acceptance Test (UAT) Plan</p>
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                        <div class="flex"><strong class="w-28 font-semibold text-gray-700">โครงการ:</strong> <span class="text-gray-900">ระบบลงทะเบียนงานอีเวนต์ Hoya</span></div>
+                        <div class="flex"><strong class="w-28 font-semibold text-gray-700">วันที่ทดสอบ:</strong> <span class="text-gray-900">______ / ______ / __________</span></div>
+                        <div class="flex"><strong class="w-28 font-semibold text-gray-700">ผู้ทดสอบ:</strong> <span class="text-gray-900">_________________________</span></div>
+                    </div>
+                    <div class="mt-4">
+                        <strong class="font-semibold text-gray-700">วัตถุประสงค์:</strong>
+                        <ul class="list-disc list-inside mt-1 text-sm text-gray-900 space-y-1">
+                            <li>เพื่อทดสอบกระบวนการลงทะเบียนผู้เข้าร่วมงาน (End-to-End Flow) ด้วยการสแกน QR Code</li>
+                            <li>เพื่อทดสอบการแสดงผลข้อมูลบน Dashboard แบบ Real-time</li>
+                            <li>เพื่อทดสอบฟังก์ชันการนำเข้าข้อมูล "Night Shift"</li>
+                            <li>เพื่อทดสอบกระบวนการรับรางวัลของผู้โชคดี</li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main>
+                <!-- Section 1: Prerequisites -->
+                <section id="prerequisites" class="mb-10">
+                    <h2 class="text-2xl font-bold mb-4 border-l-4 border-blue-500 pl-4">1. การเตรียมการ (Prerequisites)</h2>
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 p-4 rounded-lg border">
+                            <h3 class="font-bold text-md text-gray-800">1.1 เตรียม QR Codes สำหรับผู้เข้าร่วมงาน</h3>
+                            <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                                <li><strong>ผู้รับผิดชอบ:</strong> (ระบุชื่อ)</li>
+                                <li>ไปที่ URL: <a href="https://hoya-event.azurewebsites.net/prepare/" target="_blank" class="link-style">https://hoya-event.azurewebsites.net/prepare/</a></li>
+                                <li>ทำการ Capture ภาพหน้าจอ QR Code ที่ไม่ซ้ำกัน</li>
+                                <li><strong>สิ่งที่ต้องได้:</strong> <span class="font-bold bg-yellow-200 px-2 py-1 rounded">รูปภาพ QR Code จำนวน 20 รูป</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border">
+                            <h3 class="font-bold text-md text-gray-800">1.2 เตรียมอุปกรณ์และบัญชีสำหรับ Staff</h3>
+                            <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                                <li><strong>ผู้รับผิดชอบ:</strong> ผู้ทดสอบ 4 คน</li>
+                                <li>เตรียมโทรศัพท์มือถือ <span class="font-bold">จำนวน 4 เครื่อง</span></li>
+                                <li>ใช้ Username ของ Staff ที่แตกต่างกัน 4 บัญชี</li>
+                                <li>Login เข้าสู่ระบบ Staff App: <a href="https://hoya-evtstaff.vercel.app/" target="_blank" class="link-style">https://hoya-evtstaff.vercel.app/</a></li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border">
+                            <h3 class="font-bold text-md text-gray-800">1.3 เตรียมข้อมูลรางวัล</h3>
+                            <ul class="list-disc list-inside mt-2 text-sm space-y-1">
+                                <li><strong>ผู้รับผิดชอบ:</strong> Developer</li>
+                                <li>ทำการเตรียมข้อมูลรางวัล และรายชื่อพนักงานผู้โชคดีไว้ในระบบ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Test Scenarios -->
+                <section id="scenarios" class="mb-10">
+                    <h2 class="text-2xl font-bold mb-6 border-l-4 border-blue-500 pl-4">2. สถานการณ์การทดสอบ (Test Scenarios)</h2>
+                    <div class="space-y-8">
+                        <!-- TC-01 Card -->
+                        <div class="border rounded-lg shadow-sm overflow-hidden">
+                            <div class="bg-gray-100 p-4 border-b">
+                                <h3 class="font-bold text-lg">TC-01: การลงทะเบียนผู้เข้าร่วมงาน (Guest Registration)</h3>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-left border-b">
+                                            <th class="p-2 w-1/12">ขั้นตอน</th>
+                                            <th class="p-2 w-5/12">รายละเอียด (Steps)</th>
+                                            <th class="p-2 w-4/12">ผลที่คาดหวัง (Expected Result)</th>
+                                            <th class="p-2 w-2/12 text-center">ผลการทดสอบ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold align-top">1.</td>
+                                            <td class="p-2 align-top">Staff ทั้ง 4 คน เปิดหน้า "Register" ที่:<br><a href="https://hoya-evtstaff.vercel.app/en/register" target="_blank" class="link-style">https://hoya-evtstaff.vercel.app/en/register</a></td>
+                                            <td class="p-2 align-top">หน้าจอแสดงกล้องพร้อมสแกน</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc01-1">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-semibold align-top">2.</td>
+                                            <td class="p-2 align-top">Staff แต่ละคน ทำการสแกน QR Code <strong class="text-blue-600">คนละ 5 รูป</strong> จนครบ 20 รูป<br><small class="text-gray-500 font-medium">(**หมายเหตุ:** ในระหว่างนี้ ให้มีผู้สังเกตการณ์เปิด Dashboard ดูข้อมูลควบคู่ไปด้วยตาม TC-02)</small></td>
+                                            <td class="p-2 align-top">เมื่อสแกนสำเร็จ ระบบแสดงข้อความยืนยัน และ QR Code ที่สแกนแล้วไม่สามารถสแกนซ้ำได้</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc01-2">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TC-02 Card -->
+                        <div class="border rounded-lg shadow-sm overflow-hidden">
+                            <div class="bg-gray-100 p-4 border-b">
+                                <h3 class="font-bold text-lg">TC-02: การตรวจสอบข้อมูลบน Dashboard</h3>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-left border-b"><th class="p-2 w-1/12">ขั้นตอน</th><th class="p-2 w-5/12">รายละเอียด (Steps)</th><th class="p-2 w-4/12">ผลที่คาดหวัง (Expected Result)</th><th class="p-2 w-2/12 text-center">ผลการทดสอบ</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold align-top">1.</td>
+                                            <td class="p-2 align-top">เปิด Dashboard ที่:<br><a href="http://hoya-eventify.vercel.app/en/public/dashboard" target="_blank" class="link-style">http://hoya-eventify.vercel.app/en/public/dashboard</a></td>
+                                            <td class="p-2 align-top">Dashboard แสดงข้อมูลเริ่มต้น (Registered = 0)</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc02-1">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-semibold align-top">2.</td>
+                                            <td class="p-2 align-top">สังเกต Dashboard ระหว่างที่ Staff กำลังสแกน และหลังจากสแกนครบ 20 รูป</td>
+                                            <td class="p-2 align-top">ตัวเลข Registered เพิ่มขึ้นแบบ Real-time และยอดรวมสุดท้ายต้องเท่ากับ <strong class="text-blue-600">20</strong></td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc02-2">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TC-03 Card -->
+                        <div class="border rounded-lg shadow-sm overflow-hidden">
+                            <div class="bg-gray-100 p-4 border-b">
+                                <h3 class="font-bold text-lg">TC-03: การทดสอบ Import "Night Shift"</h3>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-left border-b"><th class="p-2 w-1/12">ขั้นตอน</th><th class="p-2 w-5/12">รายละเอียด (Steps)</th><th class="p-2 w-4/12">ผลที่คาดหวัง (Expected Result)</th><th class="p-2 w-2/12 text-center">ผลการทดสอบ</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold align-top">1.</td>
+                                            <td class="p-2 align-top">เข้าสู่ระบบ Admin ที่:<br><a href="https://hoya-eventify.vercel.app/en" target="_blank" class="link-style">https://hoya-eventify.vercel.app/en</a></td>
+                                            <td class="p-2 align-top">Login เข้าสู่ระบบได้สำเร็จ</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc03-1">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold align-top">2.</td>
+                                            <td class="p-2 align-top">เข้าที่เมนูทางซ้ายชื่อ <strong>Registrations</strong></td>
+                                            <td class="p-2 align-top">เข้าสู่หน้า Registrations ได้สำเร็จ และพบตัวเลือกสำหรับ Import</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc03-2">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold align-top">3.</td>
+                                            <td class="p-2 align-top">ทำการ Import ข้อมูล Night Shift<br><strong>(Format: Excel ที่มี column "EmpID", "Clock in")</strong></td>
+                                            <td class="p-2 align-top">ระบบแจ้งว่า Import สำเร็จ</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc03-3">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-semibold align-top">4.</td>
+                                            <td class="p-2 align-top">ตรวจสอบข้อมูลที่ import ได้ที่:<br><a href="https://hoya-eventify.vercel.app/en/registrations" target="_blank" class="link-style">https://hoya-eventify.vercel.app/en/registrations</a><br>โดยทำการ filter "night shift"</td>
+                                            <td class="p-2 align-top">พบข้อมูลที่ import เข้ามาแสดงในตารางอย่างถูกต้อง</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc03-4">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- TC-04 Card -->
+                        <div class="border rounded-lg shadow-sm overflow-hidden">
+                            <div class="bg-gray-100 p-4 border-b">
+                                <h3 class="font-bold text-lg">TC-04: การทดสอบการรับรางวัล (Prize Redemption)</h3>
+                            </div>
+                            <div class="p-4 overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-left border-b"><th class="p-2 w-1/12">ขั้นตอน</th><th class="p-2 w-5/12">รายละเอียด (Steps)</th><th class="p-2 w-4/12">ผลที่คาดหวัง (Expected Result)</th><th class="p-2 w-2/12 text-center">ผลการทดสอบ</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold align-top">1.</td>
+                                            <td class="p-2 align-top">Staff เข้าที่หน้า Prize Redemption:<br><a href="https://hoya-evtstaff.vercel.app/en/prize" target="_blank" class="link-style">https://hoya-evtstaff.vercel.app/en/prize</a></td>
+                                            <td class="p-2 align-top">แสดงหน้าสำหรับกรอกรหัสพนักงานและปุ่มถ่ายรูป</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc04-1">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-b">
+                                            <td class="p-2 font-semibold align-top">2.</td>
+                                            <td class="p-2 align-top">ใส่รหัสพนักงานของผู้ที่ได้รับรางวัล, จากนั้นกดถ่ายรูปเพื่อเป็นหลักฐานการรับรางวัล</td>
+                                            <td class="p-2 align-top">ระบบบันทึกข้อมูลสำเร็จ และแสดงข้อความยืนยัน</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc04-2">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-semibold align-top">3.</td>
+                                            <td class="p-2 align-top">ตรวจสอบข้อมูลการรับรางวัลได้ที่:<br><a href="https://hoya-eventify.vercel.app/en/rewards" target="_blank" class="link-style">https://hoya-eventify.vercel.app/en/rewards</a></td>
+                                            <td class="p-2 align-top">พบข้อมูลการรับรางวัลของพนักงานคนดังกล่าว พร้อมรูปถ่ายเป็นหลักฐาน</td>
+                                            <td class="p-2 align-middle text-center">
+                                                <div class="status-buttons" data-testid="tc04-3">
+                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
+                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Section 3: Feedback -->
+                <section id="feedback">
+                    <h2 class="text-2xl font-bold mb-4 border-l-4 border-blue-500 pl-4">ข้อเสนอแนะ / ปัญหาที่พบ (Bugs / Feedback)</h2>
+                    <textarea class="w-full h-40 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-50" placeholder="บันทึกปัญหาที่พบหรือข้อเสนอแนะเพิ่มเติมที่นี่..."></textarea>
+                </section>
+            </main>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center py-5 text-gray-500 text-xs border-t mt-8">
+            Hoya Event Registration System &copy; 2025
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusContainers = document.querySelectorAll('.status-buttons');
+
+            statusContainers.forEach(container => {
+                const passButton = container.querySelector('.pass');
+                const failButton = container.querySelector('.fail');
+
+                passButton.addEventListener('click', () => {
+                    passButton.classList.add('active');
+                    failButton.classList.remove('active');
+                });
+
+                failButton.addEventListener('click', () => {
+                    failButton.classList.add('active');
+                    passButton.classList.remove('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
