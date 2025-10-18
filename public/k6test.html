@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สรุปผลการทดสอบประสิทธิภาพด้วย k6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Mitr', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1.5rem; /* More rounded corners */
+            padding: 2rem;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border: 1px solid rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.2);
+        }
+        .k6-logo {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .status-pass {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        .status-warn {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+        .status-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .condition-list li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .condition-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: #6D28D9;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div class="container mx-auto p-4 md:p-8 max-w-6xl">
+        
+        <!-- Section: What is k6? -->
+        <header class="text-center mb-12">
+            <svg class="k6-logo inline-block mb-4" width="80" height="72" viewBox="0 0 50 45" fill="none"><path d="M31.968 34.681a2.007 2.007 0 002.011-2.003c0-1.106-.9-2.003-2.011-2.003a2.007 2.007 0 00-2.012 2.003c0 1.106.9 2.003 2.012 2.003z" fill="#7C3AED"></path><path d="M39.575 0L27.154 16.883 16.729 9.31 0 45h50L39.575 0zM23.663 37.17l-2.97-4.072v4.072h-2.751V22.038l2.75 1.989v7.66l3.659-5.014 2.086 1.51-3.071 4.21 3.486 4.776h-3.189v.001zm8.305.17c-2.586 0-4.681-2.088-4.681-4.662 0-1.025.332-1.972.896-2.743l4.695-6.435 2.086 1.51-2.239 3.07a4.667 4.667 0 013.924 4.6c0 2.572-2.095 4.66-4.681 4.66z" fill="#6D28D9"></path></svg>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">การทดสอบ Performance ด้วย k6</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                เราใช้ k6 เพื่อสร้าง **"ทีม user จำลอง"** เข้าไปใช้งานระบบพร้อมกัน เพื่อดูว่าเว็บไซต์ของเราแข็งแกร่งแค่ไหน และจะรับมือไหวไหมเมื่อเจอภาระงานหนักๆ
+            </p>
+            <div class="mt-6 max-w-3xl mx-auto text-left bg-white/60 p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <p class="text-gray-700">
+                    <strong>k6</strong> เป็นเครื่องมือทดสอบประสิทธิภาพ (Performance Testing) แบบ Open-source ที่ทันสมัยและได้รับความนิยมสูงในกลุ่มนักพัฒนาทั่วโลกครับ จุดเด่นคือการเขียนสคริปต์ทดสอบด้วยภาษา JavaScript ซึ่งทำให้นักพัฒนาสามารถสร้างเคสทดสอบที่ซับซ้อนได้อย่างรวดเร็วและง่ายดาย นอกจากนี้ k6 ยังขึ้นชื่อเรื่องความเร็วและประสิทธิภาพของตัวมันเอง ทำให้สามารถจำลองผู้ใช้งานจำนวนมากได้โดยใช้ทรัพยากรเครื่องไม่สูงนัก
+                </p>
+            </div>
+        </header>
+
+        <!-- Section: Test Conditions -->
+        <div class="bg-white rounded-3xl p-6 md:p-10 shadow-2xl mb-12 border border-gray-200">
+            <h2 class="text-3xl font-bold text-center mb-8">เงื่อนไขการทดสอบ (Test Conditions)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card bg-gray-50">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-tasks text-3xl text-violet-500 mr-4"></i>
+                        <h3 class="text-xl font-semibold">รูปแบบการทดสอบ (Scenario)</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">เราจำลองสถานการณ์ให้เหมือนมี user ใหม่เข้ามาใช้งานระบบอย่างต่อเนื่อง โดยมีเงื่อนไขคือ:</p>
+                    <ul class="condition-list text-gray-700">
+                        <li><b>เป้าหมาย:</b> มี register เข้ามา <b>15 คน ต่อวินาที</b></li>
+                        <li><b>ระยะเวลา:</b> ทดสอบต่อเนื่องเป็นเวลา <b>60 วินาที</b></li>
+                        <li><b>User ที่เตรียมไว้:</b> เตรียม user เสมือนไว้สูงสุด <b>35 คน</b> เพื่อรองรับภาระงาน</li>
+                    </ul>
+                </div>
+                 <div class="card bg-gray-50">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-flag-checkered text-3xl text-violet-500 mr-4"></i>
+                        <h3 class="text-xl font-semibold">เกณฑ์ตัดสิน 'ผ่าน/ตก' (Thresholds)</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">เราตั้งเกณฑ์เพื่อตัดสินว่าระบบทำงานได้ดีแค่ไหน โดยต้อง:</p>
+                     <ul class="condition-list text-gray-700">
+                        <li><b>ความเร็ว:</b> 95% ของการ Register ต้องเสร็จใน <b>3,000ms</b></li>
+                        <li><b>Error:</b> ยอมรับ Error โดยรวมได้ไม่เกิน <b>80%</b> (เผื่อกรณีสมัคร user ซ้ำ)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Test Results -->
+        <div class="bg-white rounded-3xl p-6 md:p-10 shadow-2xl mb-12 border border-gray-200">
+            <h2 class="text-3xl font-bold text-center mb-8">สรุปผลการทดสอบ (เวลา 15:03)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                
+                <!-- Metric Card: RPS -->
+                <div class="card">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-gauge-high text-3xl text-violet-500 mr-4"></i>
+                        <h3 class="text-xl font-semibold">การรองรับภาระงาน (RPS)</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">คือจำนวนคำสั่งที่ระบบรองรับได้ใน 1 วินาที ยิ่งเยอะยิ่งดี</p>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500">เป้าหมาย: 15 / วินาที</p>
+                        <p class="text-4xl font-bold my-2 text-violet-600">14.27<span class="text-lg font-normal"> / วินาที</span></p>
+                        <span class="status-badge status-warn">⚠️ เกือบถึงเป้า</span>
+                    </div>
+                </div>
+                
+                <!-- Metric Card: Response Time -->
+                <div class="card">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-stopwatch text-3xl text-green-500 mr-4"></i>
+                        <h3 class="text-xl font-semibold">ความเร็วในการตอบสนอง (p95)</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">คือความเร็วที่ระบบตอบกลับ (95% ของ user รอไม่เกินเวลานี้) ยิ่งน้อยยิ่งดี</p>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500">เกณฑ์: น้อยกว่า 3000ms</p>
+                        <p class="text-4xl font-bold my-2 text-green-600">1103<span class="text-lg font-normal"> ms</span></p>
+                        <span class="status-badge status-pass">✅ ผ่าน</span>
+                    </div>
+                </div>
+
+                <!-- Metric Card: Failed Requests -->
+                <div class="card">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-heart-crack text-3xl text-red-500 mr-4"></i>
+                        <h3 class="text-xl font-semibold">อัตราการ Error</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">เปอร์เซ็นต์คำสั่งที่ล้มเหลว โดย Error ส่วนใหญ่เกิดจากการสุ่มสมัคร user ซ้ำ ซึ่งเป็นสิ่งที่คาดการณ์ไว้</p>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500">เกณฑ์: น้อยกว่า 80%</p>
+                        <p class="text-4xl font-bold my-2 text-red-600">9<span class="text-lg font-normal"> %</span></p>
+                        <span class="status-badge status-pass">✅ ผ่าน</span>
+                    </div>
+                </div>
+
+                <!-- Metric Card: Virtual Users -->
+                <div class="card">
+                    <div class="flex items-center mb-3">
+                        <i class="fas fa-users text-3xl text-blue-500 mr-4"></i>
+                        <h3 class="text-xl font-semibold">User เสมือน (VUs)</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">คือจำนวน user จำลองที่ถูกสร้างขึ้นเพื่อทดสอบระบบ</p>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500">เตรียมไว้สูงสุด: 35 คน</p>
+                        <p class="text-4xl font-bold my-2 text-blue-600">35<span class="text-lg font-normal"> คน</span></p>
+                        <span class="status-badge status-danger">🚨 ใช้จนเต็มพิกัด</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section: Conclusion -->
+        <div class="text-center">
+             <h2 class="text-3xl font-bold mb-4">สรุปโดยรวม</h2>
+            <div class="max-w-3xl mx-auto bg-violet-50 border-l-4 border-violet-500 text-violet-800 p-6 rounded-r-lg shadow-md">
+                <p class="text-lg">
+                    ผลการทดสอบโดยรวมถือว่า **"ผ่าน"** ตามเกณฑ์ที่ตั้งไว้ แต่ก็พบสัญญาณว่าระบบเริ่ม **"ตึงมือ"** และทำงานจนสุดกำลังแล้ว
+                    เห็นได้จากการที่ต้องใช้ User เสมือน (VUs) จนเต็มพิกัด และความเร็วในการตอบสนองที่ช้าลง
+                </p>
+            </div>
+            
+            <a href="/performance.html" class="mt-8 inline-block bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                <i class="fas fa-file-alt mr-2"></i> ดู Report ฉบับเต็ม
+            </a>
+        </div>
+
+    </div>
+</body>
+</html>
+
+
