@@ -40,9 +40,14 @@ interface Employee {
 }
 
 interface Registration {
-  department: string;
-  color: string;
-  session: string;
+  employee_id: string;
+  full_name: string | null;
+  color: string | null;
+  department: string | null;
+  session: string | null;
+  registered_at: string | null;
+  is_committee: boolean | null;
+  is_night_shift: boolean | null;
 }
 
 interface Winner {
@@ -80,8 +85,8 @@ export default function DashboardPage() {
       const { count: employeeCount } = await supabase.from('employees').select('*', { count: 'exact', head: true });
       const { count: registeredDay } = await supabase.from('v_registrations').select('*', { count: 'exact', head: true }).eq('session', 'day');
       const { count: registeredNight } = await supabase.from('v_registrations').select('*', { count: 'exact', head: true }).eq('session', 'night');
-      const { count: prizesGiven } = await supabase.from('winners').select('*', { count: 'exact', head: true });
-      const { count: prizesClaimed } = await supabase.from('winners').select('*', { count: 'exact', head: true }).eq('redemption_status', 'redeemed');
+      const { count: prizesGiven } = await supabase.from('v_winner_details').select('*', { count: 'exact', head: true });
+      const { count: prizesClaimed } = await supabase.from('v_winner_details').select('*', { count: 'exact', head: true }).eq('redemption_status', 'redeemed');
       const { count: nightShiftCount } = await supabase.from('v_registrations').select('*', { count: 'exact', head: true }).eq('is_night_shift', true);
 
       setStats({
@@ -95,8 +100,23 @@ export default function DashboardPage() {
 
       // Detailed Stats Data
       const { data: employees } = await supabase.from('employees').select('department, color');
-      const { data: registrations } = await supabase.from('v_registrations').select('department, color, session');
-      const { data: winners } = await supabase.from('v_winner_details').select('department');
+      const { data: registrations } = await supabase.from('v_registrations').select('employee_id, full_name, color, department, session, registered_at, is_committee, is_night_shift');
+
+      // Get winners data from v_winner_details (already includes session info)
+      const { data: winnersData } = await supabase
+        .from('v_winner_details')
+        .select(`
+          department,
+          session_name,
+          redemption_status
+        `);
+
+      // Transform winners data to match expected interface
+      const winners = winnersData?.map(winner => ({
+        department: winner.department,
+        session: winner.session_name || null,
+        redemption_status: winner.redemption_status
+      })) || [];
 
       if (employees) setAllEmployees(employees);
       if (registrations) setAllRegistrations(registrations);
@@ -107,32 +127,32 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (allEmployees.length === 0) return;
+    if (allEmployees.length === 0 || allRegistrations.length === 0) return;
 
+    // Filter registrations based on checkbox selections
     const filteredRegistrations = allRegistrations.filter(reg => {
       const dayMatch = showDay && reg.session === 'day';
       const nightMatch = showNight && reg.session === 'night';
       return dayMatch || nightMatch;
     });
 
-    // Calculate filtered stats for main cards
-    const filteredDayCount = showDay ? stats.registeredDay : 0;
-    const filteredNightCount = showNight ? stats.registeredNight : 0;
-    const filteredTotalRegistered = filteredDayCount + filteredNightCount;
+    // Calculate filtered counts from the filtered data
+    const filteredDayCount = filteredRegistrations.filter(reg => reg.session === 'day').length;
+    const filteredNightCount = filteredRegistrations.filter(reg => reg.session === 'night').length;
+    const filteredNightShiftCount = filteredRegistrations.filter(reg => reg.is_night_shift === true).length;
 
-    // Filter night shift count based on night checkbox
-    const filteredNightShiftCount = showNight ? stats.nightShiftCount : 0;
-
-    // Filter prizes based on selected sessions
-    const filteredWinners = showDay && showNight ? allWinners :
-      showDay ? allWinners.filter((winner: Winner) => winner.session === 'day') :
-      showNight ? allWinners.filter((winner: Winner) => winner.session === 'night') :
-      [];
+    // Filter winners based on session (if they have session info)
+    const filteredWinners = allWinners.filter(winner => {
+      if (!winner.session) return true; // Include winners without session info
+      const dayMatch = showDay && winner.session === 'day';
+      const nightMatch = showNight && winner.session === 'night';
+      return dayMatch || nightMatch;
+    });
 
     const filteredPrizesGiven = filteredWinners.length;
-    const filteredPrizesClaimed = filteredWinners.filter((winner: Winner) => winner.redemption_status === 'redeemed').length;
+    const filteredPrizesClaimed = filteredWinners.filter(winner => winner.redemption_status === 'redeemed').length;
 
-    // Update main stats with filtered data
+    // Update stats with filtered data
     setStats(prevStats => ({
       ...prevStats,
       registeredDay: filteredDayCount,
@@ -142,7 +162,7 @@ export default function DashboardPage() {
       nightShiftCount: filteredNightShiftCount,
     }));
 
-    // Color Stats
+    // Color Stats - calculate from filtered registrations
     const cStats: { [key: string]: { total: number; registered: number } } = {};
     for (const emp of allEmployees) {
       const color = emp.color || 'N/A';
@@ -155,7 +175,7 @@ export default function DashboardPage() {
     }
     setColorStats(cStats);
 
-    // Department Stats
+    // Department Stats - calculate from filtered data
     const dStats: { [key: string]: { total: number; registered: number; prizes: number } } = {};
     for (const emp of allEmployees) {
       const dept = emp.department || 'N/A';
@@ -172,7 +192,7 @@ export default function DashboardPage() {
     }
     setDepartmentStats(dStats);
 
-  }, [showDay, showNight, allEmployees, allRegistrations, allWinners, stats.registeredDay, stats.registeredNight, stats.nightShiftCount]);
+  }, [showDay, showNight, allEmployees, allRegistrations, allWinners]);
 
   return (
     <>
