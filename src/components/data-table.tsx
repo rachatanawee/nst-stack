@@ -96,6 +96,8 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
 
   const [rowSelection, setRowSelection] = React.useState({})
   const [globalFilter, setGlobalFilter] = React.useState('')
+  const [isClient, setIsClient] = React.useState(false)
+
   const [pagination, setPagination] = React.useState<PaginationState>(() => {
     if (typeof window !== 'undefined' && paginationKey) {
       const storedPagination = localStorage.getItem(paginationKey)
@@ -126,6 +128,11 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     }
     return {}
   })
+
+  // Fix hydration issues by ensuring client-side rendering consistency
+  React.useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const table = useReactTable<TData>({
     data,
@@ -178,10 +185,28 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
     }
   };
 
+  // Prevent hydration mismatch by ensuring client-side rendering
+  if (!isClient) {
+    return (
+      <div>
+        <div className="flex items-center py-4">
+          <div className="max-w-sm h-10 bg-gray-200 animate-pulse rounded" />
+          <div className="ml-auto flex items-center space-x-2">
+            <div className="h-8 w-8 bg-gray-200 animate-pulse rounded" />
+            <div className="h-8 w-8 bg-gray-200 animate-pulse rounded" />
+          </div>
+        </div>
+        <div className="rounded-md border">
+          <div className="h-48 bg-gray-100 animate-pulse" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="flex items-center py-4">
-        <div className="flex items-center"> 
+        <div className="flex items-center">
           <Input
             placeholder="Search all columns..."
             value={(table.getState().globalFilter as string) ?? ''}
@@ -189,7 +214,7 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
             className="max-w-sm"
           />
         </div>
-        <div className="flex items-center ml-auto"> 
+        <div className="flex items-center ml-auto">
           {showExportButton && (
             <Button
               variant="outline"

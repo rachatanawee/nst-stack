@@ -18,6 +18,11 @@ import {
 } from "@/components/ui/card"
 import { Checkbox } from '@/components/ui/checkbox';
 
+// Number formatting utility function
+const formatNumber = (num: number): string => {
+  return num.toLocaleString('en-US');
+};
+
 interface DepartmentStats {
   total: number;
   registered: number;
@@ -183,9 +188,9 @@ export default function DashboardPage() {
             <UserCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.registeredDay + stats.registeredNight}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats.registeredDay + stats.registeredNight)}</div>
             <p className="text-sm text-muted-foreground">
-              <span className="font-semibold">Day:</span> {stats.registeredDay}, <span className="font-semibold">Night:</span> {stats.registeredNight}
+              <span className="font-semibold">Day:</span> {formatNumber(stats.registeredDay)}, <span className="font-semibold">Night:</span> {formatNumber(stats.registeredNight)}
             </p>
           </CardContent>
         </Card>
@@ -197,7 +202,7 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.employeeCount}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats.employeeCount)}</div>
           </CardContent>
         </Card>
         <Card className="bg-yellow-50 dark:bg-yellow-950">
@@ -206,7 +211,7 @@ export default function DashboardPage() {
             <Gift className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.prizesGiven}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats.prizesGiven)}</div>
           </CardContent>
         </Card>
         <Card className="bg-red-50 dark:bg-red-950">
@@ -215,7 +220,7 @@ export default function DashboardPage() {
             <Award className="h-4 w-4 text-red-600 dark:text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.prizesClaimed}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats.prizesClaimed)}</div>
           </CardContent>
         </Card>
         <Card className="bg-indigo-50 dark:bg-indigo-950">
@@ -224,7 +229,7 @@ export default function DashboardPage() {
             <Moon className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.nightShiftCount}</div>
+            <div className="text-2xl font-bold">{formatNumber(stats.nightShiftCount)}</div>
           </CardContent>
         </Card>
       </div>
@@ -268,9 +273,9 @@ export default function DashboardPage() {
                   {Object.entries(departmentStats).map(([dept, data]: [string, DepartmentStats]) => (
                     <tr key={dept} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                       <td className="p-4 align-middle font-medium">{dept}</td>
-                      <td className="p-4 align-middle">{data.total}</td>
-                      <td className="p-4 align-middle">{data.registered}</td>
-                      <td className="p-4 align-middle">{data.prizes}</td>
+                      <td className="p-4 align-middle">{formatNumber(data.total)}</td>
+                      <td className="p-4 align-middle">{formatNumber(data.registered)}</td>
+                      <td className="p-4 align-middle">{formatNumber(data.prizes)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -300,8 +305,8 @@ export default function DashboardPage() {
                         <div className="w-4 h-4 rounded-full border" style={{ backgroundColor: color }}></div>
                         {color}
                       </td>
-                      <td className="p-4 align-middle">{data.total}</td>
-                      <td className="p-4 align-middle">{data.registered}</td>
+                      <td className="p-4 align-middle">{formatNumber(data.total)}</td>
+                      <td className="p-4 align-middle">{formatNumber(data.registered)}</td>
                     </tr>
                   ))}
                 </tbody>

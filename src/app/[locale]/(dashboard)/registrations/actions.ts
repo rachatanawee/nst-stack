@@ -6,25 +6,92 @@ import { cookies } from "next/headers";
 interface RegistrationData {
   employee_id: string;
   registered_at: string; // ISO string
+  rowNumber?: number; // Excel row number for error reporting
 }
 
 export async function importRegistrations(data: RegistrationData[]) {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
-  const registrationsToInsert = data.map((row) => {
-    
-    const session = "night" // Determine session based on time
+  const results = {
+    successful: 0,
+    failed: 0,
+    errors: [] as Array<{row: number, employee_id: string, error: string}>
+  };
 
-    return {
-      employee_id: row.employee_id,
-      registered_at: row.registered_at,
-      session: session,
-      is_night_shift: true,
-    };
-  });
+  // Process each record individually to handle errors gracefully
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
 
-  const { error } = await supabase.from("registrations_test").insert(registrationsToInsert);
+    try {
+      // Validate data
+      if (!row.employee_id || !row.registered_at) {
+        results.failed++;
+        results.errors.push({
+          row: row.rowNumber || i + 2,
+          employee_id: row.employee_id || 'Unknown',
+          error: 'Missing employee_id or registered_at'
+        });
+        continue;
+      }
 
-  return { error };
+      // Convert string to Date object for proper timestamptz handling
+      const registeredDate = new Date(row.registered_at);
+
+      // Validate date
+      if (isNaN(registeredDate.getTime())) {
+        results.failed++;
+        results.errors.push({
+          row: row.rowNumber || i + 2,
+          employee_id: row.employee_id,
+          error: 'Invalid date format'
+        });
+        continue;
+      }
+
+      // Determine session based on hour (assuming day shift is before 18:00, night shift is 18:00 and after)
+      const hour = registeredDate.getHours();
+      const session = hour >= 18 || hour < 6 ? "night" : "day";
+
+      const registrationData = {
+        employee_id: row.employee_id,
+        registered_at: registeredDate.toISOString(),
+        session: session,
+        is_night_shift: true,
+      };
+
+      const { error } = await supabase.from("registrations_test").upsert(registrationData, {
+        onConflict: 'employee_id,session'
+      });
+
+      if (error) {
+        results.failed++;
+        results.errors.push({
+          row: row.rowNumber || i + 2,
+          employee_id: row.employee_id,
+          error: error.message
+        });
+      } else {
+        results.successful++;
+      }
+    } catch (err) {
+      results.failed++;
+      results.errors.push({
+        row: row.rowNumber || i + 2,
+        employee_id: row.employee_id || 'Unknown',
+        error: err instanceof Error ? err.message : 'Unknown error'
+      });
+    }
+  }
+
+  // Log summary
+  console.log(`Import completed: ${results.successful} successful, ${results.failed} failed`);
+  if (results.errors.length > 0) {
+    console.table(results.errors);
+  }
+
+  return {
+    error: results.failed > 0 ? { message: `${results.failed} records failed to import` } : null,
+    results
+  };
 }

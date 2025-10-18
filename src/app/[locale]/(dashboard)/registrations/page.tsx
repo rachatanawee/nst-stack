@@ -6,6 +6,7 @@ import { RegistrationsClientWrapper } from "./registrations-client-wrapper";
 interface RawRegistration {
   employee_id: string;
   full_name: string | null;
+  color: string | null;
   department: string | null;
   session: string | null;
   registered_at: string | null;
@@ -22,6 +23,7 @@ export default async function RegistrationsPage() {
     .select(`
       employee_id,
       full_name,
+      color,
       department,
       session,
       registered_at,
@@ -33,7 +35,7 @@ export default async function RegistrationsPage() {
     console.error("Error fetching registrations:", error);
     return <div>Error loading registrations.</div>;
   }
-  console.log("Fetched registrations:", registrations);
+  //console.log("Fetched registrations:", registrations);
   // Flatten the data for easier consumption by the data table
   const formattedRegistrations = registrations.map((reg: RawRegistration) => ({
     id: reg.employee_id,
