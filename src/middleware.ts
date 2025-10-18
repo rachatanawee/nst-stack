@@ -13,12 +13,15 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const locales = ['en', 'th']
 
+  // Check if pathname is a static file or public file
+  const isStaticFile = /\.(?:svg|png|jpg|jpeg|gif|webp|ico|pdf|html|htm|txt|xml|css|js)$/i.test(pathname)
+
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   )
 
-  // Redirect if there is no locale
-  if (pathnameIsMissingLocale) {
+  // Don't redirect if it's a static file
+  if (pathnameIsMissingLocale && !isStaticFile) {
     // Redirect to the default locale
     request.nextUrl.pathname = `/${defaultLocale}${pathname}`;
     return NextResponse.redirect(request.nextUrl);
@@ -53,10 +56,9 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - uat.html (UAT document)
-     * - en/uat.html (UAT document in English locale)
+     * - All static files and public files (make them publicly accessible)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|uat\.html|en/uat\.html|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|pdf|html|htm|txt|xml|css|js)$).*)',
   ],
 }
