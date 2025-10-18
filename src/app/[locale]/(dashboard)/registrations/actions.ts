@@ -60,7 +60,11 @@ export async function importRegistrations(data: RegistrationData[]) {
         is_night_shift: true,
       };
 
-      const { error } = await supabase.from("registrations_test").upsert(registrationData, {
+      // Determine table name based on environment
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      const tableName = isDevelopment ? "registrations_test" : "registrations";
+
+      const { error } = await supabase.from(tableName).upsert(registrationData, {
         onConflict: 'employee_id,session'
       });
 
