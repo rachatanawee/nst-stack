@@ -53,8 +53,10 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - uat.html (UAT document)
+     * - en/uat.html (UAT document in English locale)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|uat\.html|en/uat\.html|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

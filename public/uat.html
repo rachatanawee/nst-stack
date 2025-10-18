@@ -59,7 +59,6 @@
                             <li>เพื่อทดสอบกระบวนการลงทะเบียนผู้เข้าร่วมงาน (End-to-End Flow) ด้วยการสแกน QR Code</li>
                             <li>เพื่อทดสอบการแสดงผลข้อมูลบน Dashboard แบบ Real-time</li>
                             <li>เพื่อทดสอบฟังก์ชันการนำเข้าข้อมูล "Night Shift"</li>
-                            <li>เพื่อทดสอบกระบวนการรับรางวัลของผู้โชคดี</li>
                         </ul>
                     </div>
                 </div>
@@ -87,13 +86,6 @@
                                 <li>เตรียมโทรศัพท์มือถือ <span class="font-bold">จำนวน 4 เครื่อง</span></li>
                                 <li>ใช้ Username ของ Staff ที่แตกต่างกัน 4 บัญชี</li>
                                 <li>Login เข้าสู่ระบบ Staff App: <a href="https://hoya-evtstaff.vercel.app/" target="_blank" class="link-style">https://hoya-evtstaff.vercel.app/</a></li>
-                            </ul>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg border">
-                            <h3 class="font-bold text-md text-gray-800">1.3 เตรียมข้อมูลรางวัล</h3>
-                            <ul class="list-disc list-inside mt-2 text-sm space-y-1">
-                                <li><strong>ผู้รับผิดชอบ:</strong> Developer</li>
-                                <li>ทำการเตรียมข้อมูลรางวัล และรายชื่อพนักงานผู้โชคดีไว้ในระบบ</li>
                             </ul>
                         </div>
                     </div>
@@ -132,7 +124,7 @@
                                         </tr>
                                         <tr>
                                             <td class="p-2 font-semibold align-top">2.</td>
-                                            <td class="p-2 align-top">Staff แต่ละคน ทำการสแกน QR Code <strong class="text-blue-600">คนละ 5 รูป</strong> จนครบ 20 รูป<br><small class="text-gray-500 font-medium">(**หมายเหตุ:** ในระหว่างนี้ ให้มีผู้สังเกตการณ์เปิด Dashboard ดูข้อมูลควบคู่ไปด้วยตาม TC-02)</small></td>
+                                            <td class="p-2 align-top">Staff แต่ละคน ทำการสแกน QR Code <strong class="text-blue-600">คนละ 5 รูป</strong> จนครบ 20 รูป</td>
                                             <td class="p-2 align-top">เมื่อสแกนสำเร็จ ระบบแสดงข้อความยืนยัน และ QR Code ที่สแกนแล้วไม่สามารถสแกนซ้ำได้</td>
                                             <td class="p-2 align-middle text-center">
                                                 <div class="status-buttons" data-testid="tc01-2">
@@ -243,55 +235,6 @@
                                 </table>
                             </div>
                         </div>
-                        
-                        <!-- TC-04 Card -->
-                        <div class="border rounded-lg shadow-sm overflow-hidden">
-                            <div class="bg-gray-100 p-4 border-b">
-                                <h3 class="font-bold text-lg">TC-04: การทดสอบการรับรางวัล (Prize Redemption)</h3>
-                            </div>
-                            <div class="p-4 overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <thead>
-                                        <tr class="text-left border-b"><th class="p-2 w-1/12">ขั้นตอน</th><th class="p-2 w-5/12">รายละเอียด (Steps)</th><th class="p-2 w-4/12">ผลที่คาดหวัง (Expected Result)</th><th class="p-2 w-2/12 text-center">ผลการทดสอบ</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="border-b">
-                                            <td class="p-2 font-semibold align-top">1.</td>
-                                            <td class="p-2 align-top">Staff เข้าที่หน้า Prize Redemption:<br><a href="https://hoya-evtstaff.vercel.app/en/prize" target="_blank" class="link-style">https://hoya-evtstaff.vercel.app/en/prize</a></td>
-                                            <td class="p-2 align-top">แสดงหน้าสำหรับกรอกรหัสพนักงานและปุ่มถ่ายรูป</td>
-                                            <td class="p-2 align-middle text-center">
-                                                <div class="status-buttons" data-testid="tc04-1">
-                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
-                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="border-b">
-                                            <td class="p-2 font-semibold align-top">2.</td>
-                                            <td class="p-2 align-top">ใส่รหัสพนักงานของผู้ที่ได้รับรางวัล, จากนั้นกดถ่ายรูปเพื่อเป็นหลักฐานการรับรางวัล</td>
-                                            <td class="p-2 align-top">ระบบบันทึกข้อมูลสำเร็จ และแสดงข้อความยืนยัน</td>
-                                            <td class="p-2 align-middle text-center">
-                                                <div class="status-buttons" data-testid="tc04-2">
-                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
-                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="p-2 font-semibold align-top">3.</td>
-                                            <td class="p-2 align-top">ตรวจสอบข้อมูลการรับรางวัลได้ที่:<br><a href="https://hoya-eventify.vercel.app/en/rewards" target="_blank" class="link-style">https://hoya-eventify.vercel.app/en/rewards</a></td>
-                                            <td class="p-2 align-top">พบข้อมูลการรับรางวัลของพนักงานคนดังกล่าว พร้อมรูปถ่ายเป็นหลักฐาน</td>
-                                            <td class="p-2 align-middle text-center">
-                                                <div class="status-buttons" data-testid="tc04-3">
-                                                    <button class="status-btn pass text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-green-400">Pass</button>
-                                                    <button class="status-btn fail text-xs px-3 py-1 rounded-md bg-gray-200 hover:bg-red-400">Fail</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
 
                     </div>
                 </section>
@@ -303,7 +246,7 @@
                 </section>
             </main>
         </div>
-        
+
         <!-- Footer -->
         <footer class="text-center py-5 text-gray-500 text-xs border-t mt-8">
             Hoya Event Registration System &copy; 2025
@@ -332,4 +275,3 @@
     </script>
 </body>
 </html>
-
