@@ -19,6 +19,7 @@ interface Registration {
   department: string;
   registered_at: string | null; // Can be null
   session_name: string | null; // Changed to session_name
+  is_night_shift: boolean | null;
 }
 
 const columns: ColumnDef<Registration>[] = [
@@ -54,6 +55,20 @@ const columns: ColumnDef<Registration>[] = [
       return sessionName === 'day' ? 'Day' : (sessionName === 'night' ? 'Night' : 'N/A'); // Display Day/Night
     },
   },
+  {
+    accessorKey: "is_night_shift",
+    header: () => <div className="text-center">Night Shift</div>,
+    size: 100,
+    maxSize: 100,
+    cell: ({ row }) => {
+      const isNightShift = row.getValue("is_night_shift");
+      return (
+        <div className="flex justify-center">
+          {isNightShift ? <Checkbox checked={true} disabled /> : <Checkbox checked={false} disabled />}
+        </div>
+      );
+    },
+  },
 ];
 
 export function RegistrationsClientWrapper({ registrations }: { registrations: Registration[] }) {
@@ -61,11 +76,20 @@ export function RegistrationsClientWrapper({ registrations }: { registrations: R
   const [isImporting, setIsImporting] = useState(false);
   const [showDay, setShowDay] = useState(true); // Default to showing Day
   const [showNight, setShowNight] = useState(true); // Default to showing Night
+  const [showIsNightShift, setShowIsNightShift] = useState(true); // New state
 
   const filteredRegistrations = registrations.filter(reg => {
-    if (showDay && reg.session_name === 'day') return true;
-    if (showNight && reg.session_name === 'night') return true;
-    return false;
+    if (!showDay && !showNight && !showIsNightShift) {
+      return false;
+    }
+
+    if (showDay && showNight && showIsNightShift) {
+      return true;
+    }
+
+    return (showDay && reg.session_name === 'day') ||
+           (showNight && reg.session_name === 'night') ||
+           (showIsNightShift && reg.is_night_shift);
   });
 
   const handleImportClick = () => {
@@ -134,6 +158,19 @@ export function RegistrationsClientWrapper({ registrations }: { registrations: R
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Night
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="filterNightShift"
+              checked={showIsNightShift}
+              onCheckedChange={(checked) => setShowIsNightShift(!!checked)}
+            />
+            <label
+              htmlFor="filterNightShift"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Night Shift
             </label>
           </div>
         </div>

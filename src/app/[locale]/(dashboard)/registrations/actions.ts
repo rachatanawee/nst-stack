@@ -20,10 +20,11 @@ export async function importRegistrations(data: RegistrationData[]) {
       employee_id: row.employee_id,
       registered_at: row.registered_at,
       session: session,
+      is_night_shift: true,
     };
   });
 
-  const { error } = await supabase.from("registrations").insert(registrationsToInsert);
+  const { error } = await supabase.from("registrations_test").insert(registrationsToInsert);
 
   return { error };
 }

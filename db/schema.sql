@@ -298,7 +298,8 @@ SELECT
   e.full_name,
   r.session AS session_name, -- Added alias
   e.employee_id,
-  e.department
+  e.department,
+  e.is_night_shift
 FROM
   public.registrations r
 INNER JOIN -- Changed to INNER JOIN
