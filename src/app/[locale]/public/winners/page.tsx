@@ -30,6 +30,29 @@ function WinnersDisplay() {
   const [loading, setLoading] = useState(true);
   const [videoSrc, setVideoSrc] = useState('/Fantasy_Sports.mp4');
 
+  const getFontSizeForAward = (winnerCount: number) => {
+    if (winnerCount > 50) {
+      return 'text-[10px]';
+    }
+    if (winnerCount > 25) {
+      return 'text-xs';
+    }
+    if (winnerCount > 10) {
+      return 'text-sm';
+    }
+    return 'text-base';
+  };
+
+  const getTitleFontSize = (winnerCount: number) => {
+    if (winnerCount > 50) {
+        return 'text-lg';
+    }
+    if (winnerCount > 25) {
+        return 'text-xl';
+    }
+    return 'text-2xl';
+  }
+
   useEffect(() => {
     if (session === 'day') {
         setSessionDisplayName('รอบเช้า - Morning Session');
@@ -80,9 +103,9 @@ function WinnersDisplay() {
             groups[winner.prize_id].count++;
           });
 
-          // Sort winners within each group by winner_id
+          // Sort winners within each group by employee_id
           Object.values(groups).forEach(group => {
-            group.winners.sort((a, b) => a.winner_id - b.winner_id);
+            group.winners.sort((a, b) => a.employee_id.localeCompare(b.employee_id));
           });
 
           const sortedGroups = Object.values(groups).sort((a, b) => {
@@ -97,6 +120,7 @@ function WinnersDisplay() {
           });
 
           setGroupedAwards(sortedGroups);
+
         } catch (error) {
             console.error("Failed to fetch winners", error);
         } finally {
@@ -111,61 +135,56 @@ function WinnersDisplay() {
   }, [session]);
 
   return (
-    <div className="h-screen w-screen relative overflow-hidden">
+    <div className="w-screen relative">
       <video autoPlay muted loop id="bg-video-sum" className="absolute inset-0 w-full h-full object-cover z-0" playsInline key={videoSrc}>
         <source src={videoSrc} type="video/mp4" />
       </video>
       <div className="overlay-all absolute inset-0 z-10"></div>
       <div className="relative z-20 h-full w-full flex flex-col">
-        <header className="flex-shrink-0 text-center py-4 md:py-8">
-          
-          
+        <header className="flex-shrink-0 text-center py-2 md:py-4">
         </header>
-        <main className="flex-1 overflow-y-auto pb-8">
+        <main className="flex-1 pb-4">
           <div className="h-full">
-            <div className="session-box bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-4 md:p-6 lg:p-8 h-full flex flex-col">
-              <div className="session-header morning bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl p-3 md:p-4 mb-4 md:mb-6 flex-shrink-0">
-                <h3 className="tx-header-day text-lg md:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2 md:gap-3">
-                  <i className="fa-regular fa-sun text-xl md:text-2xl lg:text-3xl"></i>
+            <div className="session-box bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-2 md:p-4 lg:p-6 flex flex-col">
+              <div className="session-header morning bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl p-2 md:p-3 mb-2 md:mb-4 flex-shrink-0">
+                <h3 className="tx-header-day text-xl md:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2">
+                  <i className="fa-regular fa-sun text-xl md:text-2xl"></i>
                   {sessionDisplayName}
                 </h3>
               </div>
-              <div className="session-content grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+              <div className="session-content grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {loading ? (
                   <div className="text-white text-center">Loading winners...</div>
                 ) : groupedAwards.length > 0 ? (
-                  groupedAwards.map((award, awardIndex) => (
-                    <div key={award.prize_id} className={`award-card bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-3 md:p-4 ${award.winners.length > 25 ? 'lg:col-span-2' : ''}`}>
-                      <div className="award-header flex flex-col lg:flex-row gap-4 md:gap-6">
-                        <div className="reward-card-all flex-shrink-0 mx-auto lg:mx-0">
-                          <img className="image-award-all w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 object-contain rounded-lg" src={award.prize_signed_url || '/HOYA_logo.png'} alt={award.prize_name} onError={(e) => { e.currentTarget.src = '/HOYA_logo.png'; }} />
-                        </div>
-                        <div className="award-content flex-1">
-                          <h4 className="award-title text-lg md:text-xl font-bold text-white mb-2 text-center lg:text-left">
-                            {award.prize_name} <span className="txt-number-award text-blue-400">({award.count} รางวัล)</span>
-                          </h4>
-                          <div className="card-layout-nameemp grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
-                            {award.winners.map((winner, winnerIndex) => (
-                              <div key={winner.winner_id} className="winner-card bg-white bg-opacity-30 rounded-lg p-1 md:p-2">
-                                <div className="winner-info">
-                                  <div className="align-t">
-                                    <div className="winner-name text-white font-semibold text-xs mb-1">
-                                      <i className={`fa-solid fa-circle icon-color-or mr-1`}></i>
-                                      <span className="block md:inline">{winner.full_name}</span>
-                                    </div>
-                                    <div className="winner-position text-gray-200 text-xs">
-                                      <span className="employee-id font-medium">{winner.employee_id}</span>
-                                      <span className="block md:inline">{winner.department}</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                  groupedAwards.map(award => {
+                    const fontSizeClass = getFontSizeForAward(award.count);
+                    const titleFontSizeClass = getTitleFontSize(award.count);
+                    return (
+                      <div key={award.prize_id} className="bg-white/10 p-4 rounded-lg flex flex-col">
+                        <h4 className={`${titleFontSizeClass} font-bold text-white mb-2`}>{award.prize_name}</h4>
+                        <div className="overflow-y-auto">
+                          <table className={`w-full text-white ${fontSizeClass}`}>
+                            <thead className="sticky top-0 bg-white/20 backdrop-blur-sm">
+                              <tr>
+                                <th className="p-2 text-left">Employee ID</th>
+                                <th className="p-2 text-left">Name</th>
+                                <th className="p-2 text-left">Department</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {award.winners.map(winner => (
+                                <tr key={winner.winner_id} className="border-b border-white/10">
+                                  <td className="p-2">{winner.employee_id}</td>
+                                  <td className="p-2">{winner.full_name}</td>
+                                  <td className="p-2">{winner.department}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    )
+                  })
                 ) : (
                   <div className="text-white text-center">No winners to display for this session.</div>
                 )}
