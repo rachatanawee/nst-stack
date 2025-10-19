@@ -12,6 +12,7 @@ export async function getWinners(session: string) {
     .select('*')
     .eq('session_name', session)
     .order('group_no')
+    .order('order_no')
     .order('winner_id');
 
   if (error) {
