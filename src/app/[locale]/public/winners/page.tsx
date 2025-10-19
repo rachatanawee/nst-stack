@@ -109,14 +109,15 @@ function WinnersDisplay() {
           });
 
           const sortedGroups = Object.values(groups).sort((a, b) => {
-            const groupA = a.group_no ?? Infinity;
-            const groupB = b.group_no ?? Infinity;
-            if (groupA !== groupB) {
-              return groupA - groupB;
+            if (a.group_no === null && b.group_no !== null) return 1;
+            if (a.group_no !== null && b.group_no === null) return -1;
+            if (a.group_no !== b.group_no) {
+              return (b.group_no ?? 0) - (a.group_no ?? 0); // Descending for group_no
             }
-            const orderA = a.order_no ?? Infinity;
-            const orderB = b.order_no ?? Infinity;
-            return orderA - orderB;
+            
+            if (a.order_no === null && b.order_no !== null) return 1;
+            if (a.order_no !== null && b.order_no === null) return -1;
+            return (a.order_no ?? 0) - (b.order_no ?? 0); // Ascending for order_no
           });
 
           setGroupedAwards(sortedGroups);
@@ -134,6 +135,11 @@ function WinnersDisplay() {
     fetchData();
   }, [session]);
 
+  const uniqueGroupNos = [...new Set(groupedAwards.map(g => g.group_no))].sort((a, b) => (b ?? 0) - (a ?? 0));
+  const top3GroupNos = uniqueGroupNos.slice(0, 3);
+  const cardColors = ['bg-[#0168B7]/70', 'bg-[#0168B7]/50', 'bg-[#11116B]/50'];
+  const defaultCardColor = 'bg-white/10';
+
   return (
     <div className="w-screen relative">
       <video autoPlay muted loop id="bg-video-sum" className="absolute inset-0 w-full h-full object-cover z-0" playsInline key={videoSrc}>
@@ -146,7 +152,7 @@ function WinnersDisplay() {
         <main className="flex-1 pb-4">
           <div className="h-full">
             <div className="session-box bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-2 md:p-4 lg:p-6 flex flex-col">
-              <div className="session-header morning bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl p-2 md:p-3 mb-2 md:mb-4 flex-shrink-0">
+              <div className="session-header morning bg-gradient-to-r from-[#11116B] to-[#0168B7] rounded-xl p-2 md:p-3 mb-2 md:mb-4 flex-shrink-0">
                 <h3 className="tx-header-day text-xl md:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2">
                   <i className="fa-regular fa-sun text-xl md:text-2xl"></i>
                   {sessionDisplayName}
@@ -159,9 +165,22 @@ function WinnersDisplay() {
                   groupedAwards.map(award => {
                     const fontSizeClass = getFontSizeForAward(award.count);
                     const titleFontSizeClass = getTitleFontSize(award.count);
+                    
+                    let cardColorClass = defaultCardColor;
+                    if (session === 'night') {
+                      const groupNoIndex = top3GroupNos.indexOf(award.group_no);
+                      if (groupNoIndex !== -1) {
+                        cardColorClass = cardColors[groupNoIndex];
+                      }
+                    } else if (session === 'day') {
+                      if (award.group_no === top3GroupNos[0] && top3GroupNos[0] !== null) {
+                        cardColorClass = cardColors[0];
+                      }
+                    }
+
                     return (
-                      <div key={award.prize_id} className="bg-white/10 p-4 rounded-lg flex flex-col">
-                        <h4 className={`${titleFontSizeClass} font-bold text-white mb-2`}>{award.prize_name}</h4>
+                      <div key={award.prize_id} className={`p-4 rounded-lg flex flex-col ${cardColorClass}`}>
+                        <h4 className={`${titleFontSizeClass} font-bold text-white mb-2 p-2`}>{award.prize_name} <span className="text-base font-normal">({award.count} รางวัล)</span></h4>
                         <div className="overflow-y-auto">
                           <table className={`w-full text-white ${fontSizeClass}`}>
                             <thead className="sticky top-0 bg-white/20 backdrop-blur-sm">
