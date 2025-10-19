@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   const locales = ['en', 'th']
 
   // Check if pathname is a static file or public file
-  const isStaticFile = /\.(?:svg|png|jpg|jpeg|gif|webp|ico|pdf|html|htm|txt|xml|css|js)$/i.test(pathname)
+  const isStaticFile = /\.(?:svg|png|jpg|jpeg|gif|webp|ico|pdf|html|htm|txt|xml|css|js|mp4)$/i.test(pathname)
 
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
@@ -33,8 +33,10 @@ export async function middleware(request: NextRequest) {
   const isLoggedIn = !!session
   const isLoginPage = pathname.endsWith('/login')
   const isPublicPage = pathname.includes('/public')
+  const isWinnersPage = pathname.includes('/winners')
+  const isPublicWinnersPage = pathname.includes('/public/winners')
 
-  if (isPublicPage) {
+  if (isPublicPage || isWinnersPage || isPublicWinnersPage) {
     return response
   }
 
@@ -57,8 +59,10 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - All static files and public files (make them publicly accessible)
+     * - winners page (publicly accessible)
+     * - public/winners page (publicly accessible)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|pdf|html|htm|txt|xml|css|js)$).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|pdf|html|htm|txt|xml|css|js|mp4)$|winners|public/winners).*)',
   ],
 }
