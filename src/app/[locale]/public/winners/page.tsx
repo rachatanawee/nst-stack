@@ -166,7 +166,7 @@ function WinnersDisplay() {
                 {loading ? (
                   <div className="text-white text-center">Loading winners...</div>
                 ) : groupedAwards.length > 0 ? (
-                  groupedAwards.map((award, awardIndex) => {
+                  groupedAwards.map((award) => {
                     const fontSizeClass = getFontSizeForAward(award.count);
                     const titleFontSizeClass = getTitleFontSize(award.count);
                     
