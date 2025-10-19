@@ -3,39 +3,64 @@
 import { createClient } from '@/lib/supabase/server';
 import { cookies } from 'next/headers';
 
-export async function getWinners(session: string) {
+export interface Winner {
+  winner_id: number;
+  full_name: string;
+  employee_id: string;
+  department: string;
+}
+
+export interface AwardGroup {
+  group_no: number | null;
+  order_no: number | null;
+  prize_id: string;
+  prize_name: string;
+  redemption_photo_path: string | null;
+  count: number;
+  winners: Winner[];
+}
+
+export async function getWinners(session: string): Promise<Array<{
+  winner_id: number;
+  full_name: string;
+  employee_id: string;
+  department: string;
+  group_no: number | null;
+  order_no: number | null;
+  prize_id: string;
+  prize_name: string;
+  redemption_photo_path: string | null;
+}>> {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
 
-  const { data: winners, error } = await supabase
-    .from('v_winner_details')
-    .select('*')
-    .eq('session_name', session)
-    .order('group_no')
-    .order('order_no')
-    .order('winner_id');
+  try {
+    const { data, error } = await supabase
+      .from('v_winner_details')
+      .select(`
+        winner_id,
+        full_name,
+        employee_id,
+        department,
+        group_no,
+        order_no,
+        prize_id,
+        prize_name,
+        redemption_photo_path
+      `)
+      .eq('session_name', session)
+      .order('group_no', { ascending: false, nullsFirst: false })
+      .order('order_no', { ascending: false, nullsFirst: false })
+      .order('employee_id', { ascending: true });
 
-  if (error) {
-    console.error('Error fetching winners:', error);
-    throw error;
-  }
+    if (error) {
+      console.error('Error fetching winners:', error);
+      return [];
+    }
 
-  if (!winners) {
+    return data || [];
+  } catch (error) {
+    console.error('Error in getWinners:', error);
     return [];
   }
-
-  // Create signed URLs for prize images
-  const winnersWithSignedUrls = await Promise.all(
-    winners.map(async (winner) => {
-      if (winner.prize_image_url) {
-        const { data: signedUrlData } = await supabase.storage
-          .from('prizes')
-          .createSignedUrl(winner.prize_image_url, 3600); // Signed URL valid for 1 hour
-        return { ...winner, prize_signed_url: signedUrlData?.signedUrl };
-      }
-      return { ...winner, prize_signed_url: null };
-    })
-  );
-
-  return winnersWithSignedUrls;
 }

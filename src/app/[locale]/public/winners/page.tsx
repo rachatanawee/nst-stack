@@ -17,7 +17,7 @@ interface AwardGroup {
   order_no: number | null;
   prize_id: string;
   prize_name: string;
-  prize_signed_url: string | null;
+  redemption_photo_path: string | null;
   count: number;
   winners: Winner[];
 }
@@ -89,7 +89,7 @@ function WinnersDisplay() {
                 order_no: winner.order_no,
                 prize_id: winner.prize_id,
                 prize_name: winner.prize_name,
-                prize_signed_url: winner.prize_signed_url,
+                redemption_photo_path: winner.redemption_photo_path,
                 count: 0,
                 winners: [],
               };
@@ -141,7 +141,7 @@ function WinnersDisplay() {
 
   const uniqueGroupNos = [...new Set(groupedAwards.map(g => g.group_no))].sort((a, b) => (b ?? 0) - (a ?? 0));
   const top3GroupNos = uniqueGroupNos.slice(0, 3);
-  const cardColors = ['bg-[#0168B7]/70', 'bg-[#0168B7]/50', 'bg-[#11116B]/50'];
+  const cardColors = ['bg-[#0168B7]/90', 'bg-[#0168B7]/40', 'bg-[#0168B7]/40'];
   const defaultCardColor = 'bg-white/10';
 
   return (

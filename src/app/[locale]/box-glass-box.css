@@ -41,7 +41,7 @@ body {
     color: var(--text-color);
     align-items: center;
     justify-content: center;
-    background-image: url('/Users/pailinmasri/Downloads/Hoya2025NY/eventify-prepare/public/party2.png');
+    background-image: url('party2.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
