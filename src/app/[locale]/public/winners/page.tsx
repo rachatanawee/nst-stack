@@ -94,13 +94,17 @@ function WinnersDisplay() {
                 winners: [],
               };
             }
-            groups[winner.prize_id].winners.push({
-                winner_id: winner.winner_id,
-                full_name: winner.full_name,
-                employee_id: winner.employee_id,
-                department: winner.department,
-            });
-            groups[winner.prize_id].count++;
+            
+            const winnerExists = groups[winner.prize_id].winners.some(w => w.winner_id === winner.winner_id);
+            if (!winnerExists) {
+                groups[winner.prize_id].winners.push({
+                    winner_id: winner.winner_id,
+                    full_name: winner.full_name,
+                    employee_id: winner.employee_id,
+                    department: winner.department,
+                });
+                groups[winner.prize_id].count++;
+            }
           });
 
           // Sort winners within each group by employee_id
@@ -117,7 +121,7 @@ function WinnersDisplay() {
             
             if (a.order_no === null && b.order_no !== null) return 1;
             if (a.order_no !== null && b.order_no === null) return -1;
-            return (a.order_no ?? 0) - (b.order_no ?? 0); // Ascending for order_no
+            return (b.order_no ?? 0) - (a.order_no ?? 0); // Descending for order_no
           });
 
           setGroupedAwards(sortedGroups);
@@ -162,7 +166,7 @@ function WinnersDisplay() {
                 {loading ? (
                   <div className="text-white text-center">Loading winners...</div>
                 ) : groupedAwards.length > 0 ? (
-                  groupedAwards.map(award => {
+                  groupedAwards.map((award, awardIndex) => {
                     const fontSizeClass = getFontSizeForAward(award.count);
                     const titleFontSizeClass = getTitleFontSize(award.count);
                     
@@ -180,10 +184,10 @@ function WinnersDisplay() {
 
                     return (
                       <div key={award.prize_id} className={`p-4 rounded-lg flex flex-col ${cardColorClass}`}>
-                        <h4 className={`${titleFontSizeClass} font-bold text-white mb-2 p-2`}>{award.prize_name} <span className="text-base font-normal">({award.count} รางวัล)</span></h4>
+                        <h4 className={`${titleFontSizeClass} font-bold text-[#FF7F50] mb-2 p-2`}>{award.prize_name} <span className="text-base font-normal text-white">({award.count} รางวัล)</span></h4>
                         <div className="overflow-y-auto">
                           <table className={`w-full text-white ${fontSizeClass}`}>
-                            <thead className="sticky top-0 bg-white/20 backdrop-blur-sm">
+                            <thead className="sticky top-0 bg-white/20 backdrop-blur-sm text-[#0168B7]">
                               <tr>
                                 <th className="p-2 text-left">Employee ID</th>
                                 <th className="p-2 text-left">Name</th>
