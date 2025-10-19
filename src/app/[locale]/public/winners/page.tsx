@@ -1,71 +1,39 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { getWinners } from './actions';
 
+// Define interfaces for our data structures
 interface Winner {
-  name: string;
-  employeeId: string;
-  position: string;
-  color: string;
+  full_name: string;
+  employee_id: string;
+  department: string;
 }
 
-interface Award {
-  title: string;
+interface AwardGroup {
+  group_no: number;
+  prize_name: string;
+  prize_signed_url: string | null;
   count: number;
-  image: string;
   winners: Winner[];
 }
 
-const morningAwards: Award[] = [
-  {
-    title: 'Gift Card Central ฿1,000',
-    count: 5,
-    image: '/GiftCard1000.png',
-    winners: [
-      { name: 'สมชาย ใจดี', employeeId: 'EMP001', position: 'ผู้จัดการฝ่ายขาย', color: 'icon-color-or' },
-      { name: 'สมหญิง ขยัน', employeeId: 'EMP002', position: 'หัวหน้าแผนกการตลาด', color: 'icon-color-gr' },
-      { name: 'วิชัย พัฒนา', employeeId: 'EMP003', position: 'ผู้ช่วยผู้อำนวยการ', color: 'icon-color-p' },
-      { name: 'ประยุทธ สร้างสรรค์', employeeId: 'EMP004', position: 'นักพัฒนาระบบ', color: 'icon-color-gr' },
-      { name: 'อรทัย คิดดี', employeeId: 'EMP005', position: 'นักวิเคราะห์ระบบ', color: 'icon-color-pu' },
-    ],
-  },
-  {
-    title: 'Smartwatch',
-    count: 3,
-    image: '/SW-1.png',
-    winners: [
-      { name: 'น้ำมล วิลัยภัค', employeeId: 'EMP093', position: 'ฝ่ายผลิต', color: 'icon-color-gr' },
-      { name: 'พชร พงษ์ศักดิ์', employeeId: 'EMP037', position: 'นักวิเคราะห์ระบบ', color: 'icon-color-p' },
-      { name: 'อครเดช เย็นใจ', employeeId: 'EMP245', position: 'จัดซื้อ จัดจ้าง', color: 'icon-color-pu' },
-    ],
-  },
-  {
-    title: 'พัดลม hatari',
-    count: 5,
-    image: '/พัดลมhatari1.png',
-    winners: [
-      { name: 'สุรชัย มั่นคง', employeeId: 'EMP006', position: 'พนักงานฝ่ายผลิต', color: 'icon-color-pu' },
-      { name: 'มานี รักงาน', employeeId: 'EMP007', position: 'พนักงานฝ่ายคุณภาพ', color: 'icon-color-or' },
-      { name: 'วิไล ทำดี', employeeId: 'EMP008', position: 'พนักงานฝ่ายสนับสนุน', color: 'icon-color-or' },
-      { name: 'สมศรี ใส่ใจ', employeeId: 'EMP009', position: 'พนักงานฝ่ายบริการ', color: 'icon-color-gr' },
-      { name: 'นฤมล ชัยชาญ', employeeId: 'EMP087', position: 'บัญชี', color: 'icon-color-p' },
-    ],
-  },
-];
+function WinnersDisplay() {
+  const searchParams = useSearchParams();
+  const session = searchParams.get('session');
+  const [groupedAwards, setGroupedAwards] = useState<AwardGroup[]>([]);
+  const [sessionDisplayName, setSessionDisplayName] = useState('');
+  const [loading, setLoading] = useState(true);
 
-export default function WinnersPage() {
   useEffect(() => {
-    // Set page title and meta description
-    document.title = 'ประกาศผลรางวัล - Hoya Event';
-
-    // Update or create meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      document.head.appendChild(metaDescription);
+    if (session === 'day') {
+        setSessionDisplayName('รอบเช้า - Morning Session');
+    } else if (session === 'night') {
+        setSessionDisplayName('รอบค่ำ - Night Session');
+    } else {
+        setSessionDisplayName('ประกาศผลรางวัล');
     }
-    metaDescription.setAttribute('content', 'ประกาศผลรางวัลผู้โชคดีในงานเลี้ยงปีใหม่ Hoya');
 
     // Add CSS link
     let cssLink = document.querySelector('link[href="/box-glass-box.css"]');
@@ -75,103 +43,112 @@ export default function WinnersPage() {
       cssLink.setAttribute('href', '/box-glass-box.css');
       document.head.appendChild(cssLink);
     }
-  }, []);
+  }, [session]);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (session) {
+        setLoading(true);
+        try {
+          const winnersData = await getWinners(session);
+          
+          const groups: { [key: number]: AwardGroup } = {};
+          
+          winnersData.forEach(winner => {
+            if (!groups[winner.group_no]) {
+              groups[winner.group_no] = {
+                group_no: winner.group_no,
+                prize_name: winner.prize_name,
+                prize_signed_url: winner.prize_signed_url,
+                count: 0,
+                winners: [],
+              };
+            }
+            groups[winner.group_no].winners.push({
+                full_name: winner.full_name,
+                employee_id: winner.employee_id,
+                department: winner.department,
+            });
+            groups[winner.group_no].count++;
+          });
+
+          setGroupedAwards(Object.values(groups));
+        } catch (error) {
+            console.error("Failed to fetch winners", error);
+        } finally {
+            setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [session]);
 
   return (
     <div className="h-screen w-screen relative overflow-hidden">
-      {/* วิดีโอพื้นหลัง */}
-      <video
-        autoPlay
-        muted
-        loop
-        id="bg-video-sum"
-        className="absolute inset-0 w-full h-full object-cover z-0"
-        playsInline
-      >
+      <video autoPlay muted loop id="bg-video-sum" className="absolute inset-0 w-full h-full object-cover z-0" playsInline>
         <source src="/Fantasy_Sports.mp4" type="video/mp4" />
       </video>
-
-      {/* ชั้นมืดซ้อนพื้นหลัง */}
       <div className="overlay-all absolute inset-0 z-10"></div>
-
-      {/* Content Container - Full Screen */}
       <div className="relative z-20 h-full w-full flex flex-col">
-        {/* Header - Fixed Height */}
         <header className="flex-shrink-0 text-center py-4 md:py-8">
           <div className="header-logo-all flex items-center justify-center mb-4 md:mb-6">
             <div className="logo-all">
-              <img
-                src="/HOYA_logo.png"
-                alt="HOYA Vision Care"
-                className="w-32 md:w-48 lg:w-64 h-auto mx-auto"
-                onError={(e) => {
-                  e.currentTarget.src = '/next.svg'; // Fallback to Next.js logo
-                }}
-              />
+              <img src="/HOYA_logo.png" alt="HOYA Vision Care" className="w-32 md:w-48 lg:w-64 h-auto mx-auto" onError={(e) => { e.currentTarget.src = '/next.svg'; }} />
             </div>
           </div>
-          <div className="badge">
-            <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold text-white mb-2">
-              ประกาศผลรางวัล
-            </h1>
-            <p className="text-base md:text-xl lg:text-2xl text-gray-200">
-              Award Announcement
-            </p>
-          </div>
+          
         </header>
-
-        {/* Main Content - Flexible Height */}
         <main className="flex-1 overflow-y-auto pb-8">
           <div className="h-full">
-            {/* Morning Session - Full Height Container */}
             <div className="session-box bg-white bg-opacity-10 backdrop-blur-md rounded-2xl p-4 md:p-6 lg:p-8 h-full flex flex-col">
               <div className="session-header morning bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl p-3 md:p-4 mb-4 md:mb-6 flex-shrink-0">
                 <h3 className="tx-header-day text-lg md:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2 md:gap-3">
                   <i className="fa-regular fa-sun text-xl md:text-2xl lg:text-3xl"></i>
-                  รอบเช้า - Morning Session
+                  {sessionDisplayName}
                 </h3>
               </div>
-
               <div className="session-content flex-1 overflow-y-auto space-y-4 md:space-y-6 lg:space-y-8">
-                {morningAwards.map((award, awardIndex) => (
-                  <div key={awardIndex} className="award-card bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4 md:p-6">
-                    <div className="award-header flex flex-col lg:flex-row gap-4 md:gap-6">
-                      <div className="reward-card-all flex-shrink-0 mx-auto lg:mx-0">
-                        <img
-                          className="image-award-all w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 object-contain rounded-lg"
-                          src={award.image}
-                          alt={award.title}
-                          onError={(e) => {
-                            e.currentTarget.src = '/HOYA_logo.png'; // Fallback image
-                          }}
-                        />
-                      </div>
-                      <div className="award-content flex-1">
-                        <h4 className="award-title text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 text-center lg:text-left">
-                          {award.title} <span className="txt-number-award text-blue-400">({award.count} รางวัล)</span>
-                        </h4>
-                        <div className="card-layout-nameemp grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                          {award.winners.map((winner, winnerIndex) => (
-                            <div key={winnerIndex} className="winner-card bg-white bg-opacity-30 rounded-lg p-3 md:p-4">
-                              <div className="winner-info">
-                                <div className="align-t">
-                                  <div className="winner-name text-white font-semibold text-sm md:text-base lg:text-lg mb-1">
-                                    <i className={`fa-solid fa-circle ${winner.color} mr-1 md:mr-2`}></i>
-                                    <span className="block md:inline">{winner.name}</span>
-                                  </div>
-                                  <div className="winner-position text-gray-200 text-xs md:text-sm">
-                                    <span className="employee-id font-medium">{winner.employeeId}</span>
-                                    <span className="block md:inline">{winner.position}</span>
+                {loading ? (
+                  <div className="text-white text-center">Loading winners...</div>
+                ) : groupedAwards.length > 0 ? (
+                  groupedAwards.map((award, awardIndex) => (
+                    <div key={awardIndex} className="award-card bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4 md:p-6">
+                      <div className="award-header flex flex-col lg:flex-row gap-4 md:gap-6">
+                        <div className="reward-card-all flex-shrink-0 mx-auto lg:mx-0">
+                          <img className="image-award-all w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 object-contain rounded-lg" src={award.prize_signed_url || '/HOYA_logo.png'} alt={award.prize_name} onError={(e) => { e.currentTarget.src = '/HOYA_logo.png'; }} />
+                        </div>
+                        <div className="award-content flex-1">
+                          <h4 className="award-title text-lg md:text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4 text-center lg:text-left">
+                            {award.prize_name} <span className="txt-number-award text-blue-400">({award.count} รางวัล)</span>
+                          </h4>
+                          <div className="card-layout-nameemp grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                            {award.winners.map((winner, winnerIndex) => (
+                              <div key={winnerIndex} className="winner-card bg-white bg-opacity-30 rounded-lg p-3 md:p-4">
+                                <div className="winner-info">
+                                  <div className="align-t">
+                                    <div className="winner-name text-white font-semibold text-sm md:text-base lg:text-lg mb-1">
+                                      <i className={`fa-solid fa-circle icon-color-or mr-1 md:mr-2`}></i>
+                                      <span className="block md:inline">{winner.full_name}</span>
+                                    </div>
+                                    <div className="winner-position text-gray-200 text-xs md:text-sm">
+                                      <span className="employee-id font-medium">{winner.employee_id}</span>
+                                      <span className="block md:inline">{winner.department}</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <div className="text-white text-center">No winners to display for this session.</div>
+                )}
               </div>
             </div>
           </div>
@@ -179,4 +156,12 @@ export default function WinnersPage() {
       </div>
     </div>
   );
+}
+
+export default function WinnersPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <WinnersDisplay />
+        </Suspense>
+    );
 }
