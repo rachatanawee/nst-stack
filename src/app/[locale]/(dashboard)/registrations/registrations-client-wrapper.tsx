@@ -126,7 +126,7 @@ export function RegistrationsClientWrapper({ registrations }: { registrations: R
 
           const formattedData = json.map((row, index) => ({
             employee_id: String(row.EmpID), // Ensure EmpID is string
-            registered_at: new Date(row.ClockIn).toISOString(), // Convert to ISO string
+            registered_at: new Date().toISOString(), // Use current GMT+7 time
             rowNumber: index + 2, // Excel row number (add 2 for header row)
           }));
 
