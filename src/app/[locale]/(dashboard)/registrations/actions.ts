@@ -62,7 +62,7 @@ export async function importRegistrations(data: RegistrationData[]) {
 
       // Determine table name based on environment
       const isDevelopment = process.env.NODE_ENV === 'development';
-      const tableName = isDevelopment ? "registrations_test" : "registrations";
+      const tableName = isDevelopment ? "registrations" : "registrations";
 
       const { error } = await supabase.from(tableName).upsert(registrationData, {
         onConflict: 'employee_id,session'
