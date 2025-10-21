@@ -42,9 +42,9 @@ export const columns: ColumnDef<Employee>[] = [
   {
     accessorKey: 'employee_id',
     header: 'Employee ID',
-    size: 120,
-    minSize: 100,
-    maxSize: 150,
+    size: 60,
+    minSize: 50,
+    maxSize: 80,
   },
   {
     accessorKey: 'full_name',
@@ -58,14 +58,14 @@ export const columns: ColumnDef<Employee>[] = [
     header: 'Department',
     size: 150,
     minSize: 120,
-    maxSize: 300,
+    maxSize: 320,
   },
   {
     accessorKey: "color",
     header: "Color",
-    size: 150,
-    minSize: 120,
-    maxSize: 250,
+    size: 80,
+    minSize: 60,
+    maxSize: 80,
   },
   {
     id: "actions",
