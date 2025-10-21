@@ -65,8 +65,8 @@ export async function importRegistrations(data: RegistrationData[]) {
         }
 
         // Determine session based on hour (assuming day shift is before 18:00, night shift is 18:00 and after)
-        const hour = registeredDate.getHours();
-        const session = hour >= 18 || hour < 6 ? "night" : "day";
+       
+        const session = "night";
 
         registrationData.registered_at = registeredDate.toISOString();
         registrationData.session = session;
