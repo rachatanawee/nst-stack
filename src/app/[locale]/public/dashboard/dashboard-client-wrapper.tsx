@@ -73,11 +73,11 @@ export default function DashboardClientWrapper({
     }
 
     const channel = client
-      .channel('dashboard_updater_channel')
+      .channel('public-registrations')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'dashboard_updater', filter: 'id=eq.1' },
-        () => {
+        { event: '*', schema: 'public', table: 'registrations' },
+        (payload) => {
           refetch();
         }
       )
