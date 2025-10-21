@@ -112,10 +112,11 @@ export function EmployeeForm({ employee }: EmployeeFormProps) {
                 <SelectValue placeholder="Select a color" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="แดง">แดง</SelectItem>
-                <SelectItem value="เขียว">เขียว</SelectItem>
-                <SelectItem value="น้ำเงิน">น้ำเงิน</SelectItem>
-                <SelectItem value="ชมพู">ชมพู</SelectItem>
+                <SelectItem value="center">Center</SelectItem>
+                <SelectItem value="green">Green</SelectItem>
+                <SelectItem value="orange">Orange</SelectItem>
+                <SelectItem value="pink">Pink</SelectItem>
+                <SelectItem value="purple">Purple</SelectItem>
               </SelectContent>
             </Select>
           </div>
