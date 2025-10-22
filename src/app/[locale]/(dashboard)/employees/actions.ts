@@ -1,12 +1,15 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-
-import { cookies } from "next/headers" // Import cookies
-
+import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
+import { checkRateLimit } from "@/lib/rate-limit"
 
 export async function createEmployee(formData: FormData) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 
@@ -28,6 +31,10 @@ export async function createEmployee(formData: FormData) {
 }
 
 export async function updateEmployee(id: string, formData: FormData) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 
@@ -48,6 +55,10 @@ export async function updateEmployee(id: string, formData: FormData) {
 }
 
 export async function deleteEmployee(id: string) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 
@@ -62,6 +73,10 @@ export async function deleteEmployee(id: string) {
 }
 
 export async function duplicateEmployee(id: string) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 

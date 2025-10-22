@@ -1,12 +1,15 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-
-import { cookies } from "next/headers" // Import cookies
-
+import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
+import { checkRateLimit } from "@/lib/rate-limit"
 
 export async function createPrize(formData: FormData) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
   const imageFile = formData.get("image") as File
@@ -46,6 +49,10 @@ export async function createPrize(formData: FormData) {
 }
 
 export async function updatePrize(id: string, formData: FormData) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
   const imageFile = formData.get("image") as File
@@ -118,6 +125,10 @@ export async function updatePrize(id: string, formData: FormData) {
 }
 
 export async function deletePrize(id: string) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 
@@ -132,6 +143,10 @@ export async function deletePrize(id: string) {
 }
 
 export async function duplicatePrize(id: string) {
+  if (!await checkRateLimit(10, 60000)) {
+    return { success: false, message: "Too many requests. Please try again later." }
+  }
+
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 
