@@ -77,7 +77,7 @@ export default function DashboardClientWrapper({
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'registrations' },
-        (payload) => {
+        () => {
           refetch();
         }
       )

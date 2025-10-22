@@ -12,7 +12,8 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Application error:', error)
+    console.error('[ERROR] Application error:', error)
+    // TODO: Send to error tracking service (Sentry, etc.)
   }, [error])
 
   return (

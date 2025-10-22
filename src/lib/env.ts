@@ -17,7 +17,7 @@ function validateClientEnv() {
     })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const missingVars = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('\n')
+      const missingVars = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('\n')
       throw new Error(`❌ Invalid environment variables:\n${missingVars}`)
     }
     throw error
@@ -38,7 +38,7 @@ export function getServerEnv() {
     return _serverEnv
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const missingVars = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('\n')
+      const missingVars = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('\n')
       throw new Error(`❌ Invalid environment variables:\n${missingVars}`)
     }
     throw error
