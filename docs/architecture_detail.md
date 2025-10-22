@@ -1,5 +1,9 @@
 # NST Stack Architecture
 
+> 💡 **Tip:** สามารถแก้ไข diagram ได้ที่ [architecture.drawio](./architecture.drawio) ด้วย [draw.io](https://app.diagrams.net/) หรือ VS Code extension "Draw.io Integration"
+
+---
+
 ## System Architecture
 
 ```mermaid

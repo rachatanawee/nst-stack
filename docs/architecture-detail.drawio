@@ -1,0 +1,169 @@
+<mxfile host="app.diagrams.net" modified="2025-01-15T00:00:00.000Z" agent="5.0" version="24.0.0">
+  <diagram name="Data Flow Detail" id="data-flow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="NST Stack - Detailed Data Flow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="400" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 1: User Action -->
+        <mxCell id="step1" value="1. User Action" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="100" y="100" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step1-detail" value="• Click &quot;Add Employee&quot;&#xa;• Fill form&#xa;• Submit" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="110" y="130" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 2: Client Component -->
+        <mxCell id="step2" value="2. Client Component" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="350" y="100" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step2-detail" value="form.tsx&#xa;• Validate input&#xa;• Create FormData" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="360" y="130" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 3: Server Action -->
+        <mxCell id="step3" value="3. Server Action" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="600" y="100" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step3-detail" value="createEmployee()&#xa;• Rate limit check&#xa;• Zod validation" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="610" y="130" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 4: Supabase Client -->
+        <mxCell id="step4" value="4. Supabase Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="850" y="100" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step4-detail" value="createClient()&#xa;• Get session&#xa;• Attach JWT" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="860" y="130" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 5: Database -->
+        <mxCell id="step5" value="5. PostgreSQL + RLS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="100" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step5-detail" value="INSERT INTO&#xa;• Check RLS policies&#xa;• Execute query" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="130" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Return Flow -->
+        <mxCell id="step6" value="6. Return Success" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="250" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step6-detail" value="{ success: true }&#xa;• Log success&#xa;• Return to action" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="280" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 7: Revalidate -->
+        <mxCell id="step7" value="7. Revalidate Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="850" y="250" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step7-detail" value="revalidatePath()&#xa;• Clear Next.js cache&#xa;• Mark stale" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="860" y="280" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 8: TanStack Query -->
+        <mxCell id="step8" value="8. TanStack Query" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="600" y="250" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step8-detail" value="invalidateQueries()&#xa;• Invalidate cache&#xa;• Trigger refetch" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="610" y="280" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Step 9: UI Update -->
+        <mxCell id="step9" value="9. UI Update" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="350" y="250" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="step9-detail" value="• Toast notification&#xa;• Table refresh&#xa;• router.back()" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="280" width="180" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Arrows Forward -->
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;fillColor=#dae8fc;strokeColor=#6c8ebf;endArrow=classic;endFill=1;" edge="1" parent="1" source="step1" target="step2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;fillColor=#dae8fc;strokeColor=#6c8ebf;endArrow=classic;endFill=1;" edge="1" parent="1" source="step2" target="step3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;fillColor=#d5e8d4;strokeColor=#82b366;endArrow=classic;endFill=1;" edge="1" parent="1" source="step3" target="step4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=3;fillColor=#d5e8d4;strokeColor=#82b366;endArrow=classic;endFill=1;" edge="1" parent="1" source="step4" target="step5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Arrows Return -->
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#b85450;endArrow=classic;endFill=1;dashed=1;" edge="1" parent="1" source="step5" target="step6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;endArrow=classic;endFill=1;dashed=1;" edge="1" parent="1" source="step6" target="step7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;endArrow=classic;endFill=1;dashed=1;" edge="1" parent="1" source="step7" target="step8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;endArrow=classic;endFill=1;dashed=1;" edge="1" parent="1" source="step8" target="step9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Timeline -->
+        <mxCell id="timeline" value="Timeline →" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="50" y="130" width="100" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Key Points -->
+        <mxCell id="keypoints" value="Key Points" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;align=left;verticalAlign=top;spacingTop=10;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="400" width="1200" height="150" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="point1" value="✅ Server Actions = Type-safe RPC (ไม่ต้องสร้าง API routes)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="120" y="430" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="point2" value="✅ RLS Policies = Automatic security (ไม่ต้องเช็คใน code)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="120" y="460" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="point3" value="✅ revalidatePath() + invalidateQueries() = Fresh data without full refresh" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="120" y="490" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="point4" value="✅ Input Validation = Zod schemas (client + server validation)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="700" y="430" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="point5" value="✅ Rate Limiting = 10 requests/minute per IP" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="700" y="460" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="point6" value="✅ Logging = Structured logs with context (ready for Sentry)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="700" y="490" width="550" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend" value="Legend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;fontStyle=1;align=left;verticalAlign=top;spacingTop=5;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="600" width="400" height="100" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend1" value="━━━ Solid line = Request flow (forward)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="120" y="630" width="350" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend2" value="- - - Dashed line = Response flow (return)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="120" y="655" width="350" height="20" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

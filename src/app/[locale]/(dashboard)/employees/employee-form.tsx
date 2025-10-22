@@ -43,7 +43,8 @@ export function EmployeeForm({ employee }: EmployeeFormProps) {
 
     if (result.success) {
       toast.success(result.message)
-      router.push('/employees')
+      router.back()
+      router.refresh()
     } else {
       toast.error(result.message)
     }
@@ -55,7 +56,8 @@ export function EmployeeForm({ employee }: EmployeeFormProps) {
     const result = await deleteEmployee(employee.employee_id)
     if (result.success) {
       toast.success(result.message)
-      router.push('/employees')
+      router.back()
+      router.refresh()
     } else {
       toast.error(result.message)
     }

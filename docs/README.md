@@ -2,9 +2,36 @@
 
 เอกสารประกอบสำหรับ NST Stack Project
 
+## 🚀 Quick Start
+
+```bash
+# อ่านเอกสารตามลำดับ
+1. architecture-diagram.svg     # ดูภาพรวมก่อน
+2. data-flow-diagram.svg        # เข้าใจ data flow
+3. developer-guide.md           # อ่านคู่มือละเอียด
+4. architecture.md              # ดู Mermaid diagrams
+```
+
+### สำหรับ Developer ใหม่
+1. เริ่มจาก `architecture-diagram.svg` เพื่อเข้าใจภาพรวม
+2. อ่าน `developer-guide.md` ส่วน "ภาพรวมสถาปัตยกรรม"
+3. ทำตาม "การพัฒนา Feature ใหม่" step-by-step
+
+### สำหรับ Developer ที่มีประสบการณ์
+1. ดู `data-flow-diagram.svg` เพื่อเข้าใจ data flow
+2. อ่าน `developer-guide.md` ส่วน "Best Practices"
+3. ใช้ `architecture.md` เป็น reference
+
+### สำหรับ Architect/Lead
+1. ศึกษา `architecture.md` ทั้งหมด
+2. อ่าน `developer-guide.md` ส่วน "Security" และ "Deployment"
+3. Review "Technology Stack Layers" diagram
+
+---
+
 ## 📄 เอกสารทั้งหมด
 
-### 1. [Architecture Diagram](./architecture.md)
+### 1. [Architecture Diagram](./architecture_detail.md)
 Mermaid diagrams แสดงสถาปัตยกรรมระบบทั้งหมด:
 - System Architecture
 - Application Flow (Sequence Diagram)
@@ -34,6 +61,18 @@ Mermaid diagrams แสดงสถาปัตยกรรมระบบทั
 - **Next.js App Router Layer**: Server Components, Server Actions, Middleware
 - **Supabase Backend Layer**: PostgreSQL, Authentication, Storage, Realtime
 
+### 3.1 [Architecture Diagram (Draw.io)](./architecture.drawio)
+ไฟล์ draw.io สำหรับแก้ไข architecture diagram:
+- เปิดด้วย [draw.io](https://app.diagrams.net/)
+- หรือใช้ VS Code extension: "Draw.io Integration"
+- แก้ไขและ export เป็น PNG/SVG ได้
+
+### 3.2 [Detailed Data Flow (Draw.io)](./architecture-detail.drawio)
+ไฟล์ draw.io แสดง data flow แบบละเอียด:
+- แสดง 9 ขั้นตอนตั้งแต่ User Action ถึง UI Update
+- มี Key Points และ Legend
+- เหมาะสำหรับอธิบายให้ developer ใหม่
+
 ### 4. [Data Flow Diagram (SVG)](./data-flow-diagram.svg)
 รูปภาพแสดงการไหลของข้อมูลตั้งแต่:
 1. User Action
@@ -44,16 +83,6 @@ Mermaid diagrams แสดงสถาปัตยกรรมระบบทั
 6. Revalidate Cache
 7. TanStack Query
 8. UI Update
-
-## 🚀 Quick Start
-
-```bash
-# อ่านเอกสารตามลำดับ
-1. architecture-diagram.svg     # ดูภาพรวมก่อน
-2. data-flow-diagram.svg        # เข้าใจ data flow
-3. developer-guide.md           # อ่านคู่มือละเอียด
-4. architecture.md              # ดู Mermaid diagrams
-```
 
 ## 📊 ภาพรวม Technology Stack
 
@@ -90,23 +119,6 @@ Deploy:    Vercel + Supabase Cloud
 - Optimistic updates
 - Smart caching
 
-## 📖 การใช้งานเอกสาร
-
-### สำหรับ Developer ใหม่
-1. เริ่มจาก `architecture-diagram.svg` เพื่อเข้าใจภาพรวม
-2. อ่าน `developer-guide.md` ส่วน "ภาพรวมสถาปัตยกรรม"
-3. ทำตาม "การพัฒนา Feature ใหม่" step-by-step
-
-### สำหรับ Developer ที่มีประสบการณ์
-1. ดู `data-flow-diagram.svg` เพื่อเข้าใจ data flow
-2. อ่าน `developer-guide.md` ส่วน "Best Practices"
-3. ใช้ `architecture.md` เป็น reference
-
-### สำหรับ Architect/Lead
-1. ศึกษา `architecture.md` ทั้งหมด
-2. อ่าน `developer-guide.md` ส่วน "Security" และ "Deployment"
-3. Review "Technology Stack Layers" diagram
-
 ## 🔗 External Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
@@ -118,6 +130,7 @@ Deploy:    Vercel + Supabase Cloud
 ## 💡 Tips
 
 - ใช้ VS Code extension "Markdown Preview Mermaid Support" เพื่อดู Mermaid diagrams
+- ใช้ VS Code extension "Draw.io Integration" เพื่อแก้ไข .drawio files
 - เปิด SVG files ใน browser หรือ VS Code preview
 - Bookmark `developer-guide.md` เพื่อใช้เป็น reference
 - อัพเดทเอกสารเมื่อมีการเปลี่ยนแปลง architecture
@@ -127,9 +140,12 @@ Deploy:    Vercel + Supabase Cloud
 เมื่อเพิ่ม feature ใหม่:
 1. อัพเดท `architecture.md` ถ้ามีการเปลี่ยนแปลง architecture
 2. เพิ่ม section ใน `developer-guide.md` ถ้าเป็น pattern ใหม่
-3. อัพเดท diagrams ถ้าจำเป็น
+3. อัพเดท diagrams ถ้าจำเป็น:
+   - แก้ไข `architecture.drawio` ด้วย draw.io
+   - Export เป็น PNG/SVG
+   - อัพเดท Mermaid diagrams ใน `architecture.md`
 
 ---
 
-**Last Updated:** 2024
+**Last Updated:** 2025
 **Maintained by:** Development Team
