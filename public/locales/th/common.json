@@ -15,5 +15,8 @@
   "forgot_password": "ลืมรหัสผ่าน?",
   "login_button": "เข้าสู่ระบบ",
   "register_button": "ลงทะเบียน",
-  "registrations": "ลงทะเบียน"
+  "registrations": "ลงทะเบียน",
+  "realtime_dashboard": "แดชบอร์ดสด",
+  "winners_day": "ผู้โชคดี (กลางวัน)",
+  "winners_night": "ผู้โชคดี (กลางคืน)"
 }

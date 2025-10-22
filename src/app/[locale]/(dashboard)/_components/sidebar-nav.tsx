@@ -8,6 +8,8 @@ import {
   Home,
   Users,
   ClipboardList,
+  Monitor,
+  Trophy,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -17,13 +19,15 @@ import { useEffect, useState } from "react"
 import { getUserInfo } from "../actions"
 
 export const navLinks = [
-  { href: "/", label: "dashboard", icon: Home }, // Use translation key
-  { href: "/employees", label: "manage_employees", icon: Users }, // Use translation key
-  { href: "/registrations", label: "registrations", icon: ClipboardList }, // New link for registrations
-  { href: "/prizes", label: "manage_prizes", icon: Award }, // Use translation key
-  { href: "/users", label: "manage_users", icon: Users }, // Use translation key
-  { href: "/rewards", label: "give_rewards", icon: Award }, // Use translation key
-  //{ href: "/reports", label: "reports", icon: LineChart }, // Use translation key
+  { href: "/", label: "dashboard", icon: Home },
+  { href: "/employees", label: "manage_employees", icon: Users },
+  { href: "/registrations", label: "registrations", icon: ClipboardList },
+  { href: "/prizes", label: "manage_prizes", icon: Award },
+  { href: "/users", label: "manage_users", icon: Users },
+  { href: "/rewards", label: "give_rewards", icon: Award },
+  { href: "/public/dashboard?session=day", label: "realtime_dashboard", icon: Monitor, external: true },
+  { href: "/public/winners?session=day", label: "winners_day", icon: Trophy, external: true },
+  { href: "/public/winners?session=night", label: "winners_night", icon: Trophy, external: true },
 ]
 
 export function SidebarNav({ isCollapsed }: { isCollapsed: boolean }) {
@@ -62,23 +66,24 @@ export function SidebarNav({ isCollapsed }: { isCollapsed: boolean }) {
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             {navLinks.map((link) => {
-              const currentLocale = pathname.split('/')[1]; // Extract locale from pathname
-              const localizedHref = `/${currentLocale}${link.href === '/' ? '' : link.href}`; // Prepend locale to href
-
-              const isActive = pathname === localizedHref; // Compare with localized href
+              const currentLocale = pathname.split('/')[1];
+              const localizedHref = `/${currentLocale}${link.href === '/' ? '' : link.href}`;
+              const isActive = pathname === localizedHref;
+              
               return (
                 <Link
                   key={link.href}
-                  href={localizedHref} // Use localized href
+                  href={localizedHref}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
                     isActive
                       ? "bg-muted text-primary"
                       : "text-muted-foreground"
                   )}
+                  {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 >
                   <link.icon className="h-4 w-4" />
-                  {!isCollapsed && t(link.label)} {/* Use t() for translation */}
+                  {!isCollapsed && t(link.label)}
                 </Link>
               )
             })}

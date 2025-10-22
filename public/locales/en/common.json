@@ -15,5 +15,8 @@
   "forgot_password": "Forgot your password?",
   "login_button": "Login",
   "register_button": "Register",
-  "registrations": "Registrations"
+  "registrations": "Registrations",
+  "realtime_dashboard": "Realtime Dashboard",
+  "winners_day": "Winners (Day)",
+  "winners_night": "Winners (Night)"
 }
