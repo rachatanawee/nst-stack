@@ -4,6 +4,9 @@ import { type ColumnDef } from '@tanstack/react-table'
 
 export type Winner = {
   winner_id: string
+  session_name: string
+  group_no: number | null
+  order_no: number | null
   employee_id: string
   full_name: string
   prize_name: string
@@ -14,6 +17,13 @@ export type Winner = {
 }
 
 export const columns: ColumnDef<Winner>[] = [
+  {
+    accessorKey: 'session_name',
+    header: 'Session',
+    size: 120,
+    minSize: 100,
+    maxSize: 150,
+  },
   {
     accessorKey: 'employee_id',
     header: 'Employee ID',
