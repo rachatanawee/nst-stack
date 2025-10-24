@@ -67,7 +67,7 @@ export async function updateEmployee(id: string, formData: FormData) {
   const cookieStore = cookies()
   const supabase = await createClient(cookieStore)
 
-  const { employee_id, ...updateData } = result.data
+  const { ...updateData } = result.data
   const { error } = await supabase.from("employees").update(updateData).eq("employee_id", id)
 
   if (error) {
