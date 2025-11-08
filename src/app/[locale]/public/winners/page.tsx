@@ -74,14 +74,17 @@ function WinnersDisplay() {
       document.head.appendChild(cssLink);
     }
 
+    // Enable scrolling for this page
+    document.body.style.overflow = 'auto';
+
     async function fetchData() {
       if (session) {
         setLoading(true);
         try {
           const winnersData = await getWinners(session);
-          
+
           const groups: { [key: string]: AwardGroup } = {};
-          
+
           winnersData.forEach(winner => {
             if (!groups[winner.prize_id]) {
               groups[winner.prize_id] = {
@@ -94,7 +97,7 @@ function WinnersDisplay() {
                 winners: [],
               };
             }
-            
+
             const winnerExists = groups[winner.prize_id].winners.some(w => w.winner_id === winner.winner_id);
             if (!winnerExists) {
                 groups[winner.prize_id].winners.push({
@@ -112,17 +115,7 @@ function WinnersDisplay() {
             group.winners.sort((a, b) => a.employee_id.localeCompare(b.employee_id));
           });
 
-          const sortedGroups = Object.values(groups).sort((a, b) => {
-            if (a.group_no === null && b.group_no !== null) return 1;
-            if (a.group_no !== null && b.group_no === null) return -1;
-            if (a.group_no !== b.group_no) {
-              return (b.group_no ?? 0) - (a.group_no ?? 0); // Descending for group_no
-            }
-            
-            if (a.order_no === null && b.order_no !== null) return 1;
-            if (a.order_no !== null && b.order_no === null) return -1;
-            return (b.order_no ?? 0) - (a.order_no ?? 0); // Descending for order_no
-          });
+          const sortedGroups = Object.values(groups).sort((a, b) => a.count - b.count);
 
           setGroupedAwards(sortedGroups);
 
@@ -137,6 +130,10 @@ function WinnersDisplay() {
     }
 
     fetchData();
+
+    return () => {
+      document.body.style.overflow = 'hidden';
+    };
   }, [session]);
 
   const uniqueGroupNos = [...new Set(groupedAwards.map(g => g.group_no))].sort((a, b) => (b ?? 0) - (a ?? 0));
@@ -170,41 +167,29 @@ function WinnersDisplay() {
                     const fontSizeClass = getFontSizeForAward(award.count);
                     const titleFontSizeClass = getTitleFontSize(award.count);
                     
-                    let cardColorClass = defaultCardColor;
-                    if (session === 'night') {
-                      const groupNoIndex = top3GroupNos.indexOf(award.group_no);
-                      if (groupNoIndex !== -1) {
-                        cardColorClass = cardColors[groupNoIndex];
-                      }
-                    } else if (session === 'day') {
-                      if (award.group_no === top3GroupNos[0] && top3GroupNos[0] !== null) {
-                        cardColorClass = cardColors[0];
-                      }
-                    }
+                    const cardColorClass = 'bg-[#0168B7]/90';
 
                     return (
                       <div key={award.prize_id} className={`p-4 rounded-lg flex flex-col ${cardColorClass}`}>
-                        <h4 className={`${titleFontSizeClass} font-bold text-[#FF7F50] mb-2 p-2`}>{award.prize_name} <span className="text-base font-normal text-white">({award.count} รางวัล)</span></h4>
-                        <div className="overflow-y-auto">
-                          <table className={`w-full text-white ${fontSizeClass}`}>
-                            <thead className="sticky top-0 bg-white/20 backdrop-blur-sm text-[#0168B7]">
-                              <tr>
-                                <th className="p-2 text-left">Employee ID</th>
-                                <th className="p-2 text-left">Name</th>
-                                <th className="p-2 text-left">Department</th>
-                              </tr>
-                            </thead>
+                        <h4 className={`${titleFontSizeClass} font-bold text-[#FF7F50] mb-2 p-2`}>{award.prize_name} <span className="text-base font-normal text-white">({award.count})</span></h4>
+                        <table className={`w-full text-white ${fontSizeClass}`}>
+                          <thead className="bg-white/20 backdrop-blur-sm text-[#0168B7]">
+                            <tr>
+                              <th className="p-2 text-left">Emp.ID </th>
+                              <th className="p-2 text-left">Name</th>
+                              <th className="p-2 text-left">Department</th>
+                            </tr>
+                          </thead>
                             <tbody>
                               {award.winners.map(winner => (
                                 <tr key={winner.winner_id} className="border-b border-white/10">
-                                  <td className="p-2">{winner.employee_id}</td>
-                                  <td className="p-2">{winner.full_name}</td>
-                                  <td className="p-2">{winner.department}</td>
+                                  <td className="p-2 text-xs">{winner.employee_id}</td>
+                                  <td className="p-2 text-xs">{winner.full_name}</td>
+                                  <td className="p-2 text-xs">{winner.department}</td>
                                 </tr>
                               ))}
                             </tbody>
-                          </table>
-                        </div>
+                        </table>
                       </div>
                     )
                   })
