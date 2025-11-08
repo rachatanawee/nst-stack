@@ -1,37 +1,93 @@
 # NST Stack
 
-NST Stack is a modern web application boilerplate built with a powerful combination of technologies: **Next.js**, **Supabase**, **Tailwind CSS**, **TanStack Query**, and **Shadcn UI**. It provides a robust foundation for building scalable and maintainable full-stack applications.
+NST Stack is a production-ready web application boilerplate built with **Next.js 15**, **Supabase**, **Tailwind CSS v4**, **TanStack Query**, and **Shadcn UI**. It provides a robust foundation for building scalable and maintainable full-stack applications with built-in security, validation, and monitoring.
 
-## Technologies Used
+## 🚀 What's New
 
-*   **Next.js**: A React framework for building server-rendered and static web applications. Utilizes the App Router for modern routing and server components.
-*   **Supabase**: An open-source Firebase alternative providing a PostgreSQL database, authentication, real-time subscriptions, and storage.
-*   **Tailwind CSS**: A utility-first CSS framework for rapidly building custom designs.
-*   **TanStack Query (React Query)**: A powerful data-fetching library for React, enabling efficient caching, synchronization, and management of server state.
-*   **Shadcn UI**: A collection of re-usable components built with Radix UI and Tailwind CSS, providing beautiful and accessible UI primitives.
+- ✅ **Error Boundaries** - Graceful error handling
+- ✅ **Loading States** - Skeleton loaders for better UX
+- ✅ **Input Validation** - Zod schemas for type-safe validation
+- ✅ **Rate Limiting** - 10 requests/minute per IP
+- ✅ **Logging & Monitoring** - Structured logging ready for Sentry
+- ✅ **Optimized Layout** - Server Components for better performance
 
-## Features
+## 🛠️ Tech Stack
 
-*   **Full-stack Architecture**: Seamless integration of frontend (Next.js, React) and backend (Supabase) for a complete development experience.
-*   **Authentication**: Secure user login and session management powered by Supabase Auth.
-*   **Database Management**: Efficient data handling with Supabase PostgreSQL, including schema setup and Row Level Security (RLS).
-*   **File Storage**: Secure image and file uploads with Supabase Storage, including private access using signed URLs.
-*   **Internationalization (i18n)**: Multi-language support with URL-based routing, ensuring a global reach for your application.
-*   **Responsive Design**: Built with Tailwind CSS for a mobile-first and adaptive user interface.
-*   **Reusable UI Components**: Leverages Shadcn UI for accessible, customizable, and aesthetically pleasing UI elements.
-*   **Data Fetching & Caching**: Optimized data fetching and state management with TanStack Query.
-*   **End-to-End Testing**: Configured with Playwright for robust UI testing, including authentication flows.
+### Frontend
+*   **Next.js 15.4** - React framework with App Router and Server Components
+*   **React 19** - Latest React with improved performance
+*   **TypeScript 5** - Type-safe development
+*   **Tailwind CSS v4** - Utility-first CSS framework
+*   **Shadcn UI** - Beautiful and accessible UI components
+*   **TanStack Query** - Powerful data-fetching and caching
+*   **Framer Motion** - Smooth animations
+
+### Backend
+*   **Supabase** - PostgreSQL database with Row Level Security (RLS)
+*   **Supabase Auth** - JWT-based authentication
+*   **Supabase Storage** - File storage with signed URLs
+*   **Server Actions** - Type-safe RPC calls
+
+### Developer Experience
+*   **Bun** - Fast package manager and runtime
+*   **Turbopack** - Next-generation bundler
+*   **Playwright** - End-to-end testing
+*   **ESLint** - Code linting
+*   **Zod** - Schema validation
+
+## ✨ Features
+
+### Core Features
+*   ✅ **Full-stack Architecture** - Server Components + Server Actions
+*   ✅ **Authentication** - Secure JWT-based auth with Supabase
+*   ✅ **Database Management** - PostgreSQL with Row Level Security (RLS)
+*   ✅ **File Storage** - Secure uploads with signed URLs
+*   ✅ **Internationalization (i18n)** - Multi-language support (EN/TH)
+*   ✅ **Responsive Design** - Mobile-first with Tailwind CSS
+*   ✅ **Real-time Updates** - Live data with Supabase Realtime
+
+### Security & Reliability
+*   🛡️ **Input Validation** - Zod schemas on client and server
+*   🛡️ **Rate Limiting** - Prevent abuse (10 req/min per IP)
+*   🛡️ **Error Boundaries** - Graceful error handling
+*   🛡️ **Environment Validation** - Type-safe env variables
+*   🛡️ **Row Level Security** - Database-level security
+
+### Developer Experience
+*   📊 **Logging & Monitoring** - Structured logs ready for Sentry
+*   🎨 **Reusable Components** - Shadcn UI component library
+*   ⚡ **Optimized Performance** - Server-first architecture
+*   🧪 **End-to-End Testing** - Playwright test suite
+*   📝 **Type Safety** - TypeScript throughout
 
 ## Getting Started
 
 ### Prerequisites
 
-*   Node.js (v18 or later)
-*   Bun (package manager)
-*   Supabase Project:
-    *   Set up a Supabase project.
-    *   Configure environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`).
-    *   **Database Setup**: Run the SQL script located at `db/schema.sql` in your Supabase SQL Editor to set up tables, views, functions, and Row Level Security (RLS) policies.
+*   **Node.js** v18 or later
+*   **Bun** (recommended) or npm/yarn
+*   **Supabase Account** - [Sign up here](https://supabase.com)
+
+### Environment Setup
+
+Create a `.env.local` file:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
+
+### Database Setup
+
+1. Go to your Supabase project
+2. Open SQL Editor
+3. Run the SQL script from `db/schema.sql`
+4. This will create:
+   - Tables with Row Level Security (RLS)
+   - Views and functions
+   - Storage buckets
+   - RLS policies
 
 ### Installation
 
@@ -70,39 +126,87 @@ To run end-to-end tests with Playwright:
     bun run test:e2e
     ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 .
-├── public/                 # Static assets (including /locales for i18n)
+├── docs/                   # 📚 Documentation
+│   ├── README.md           # Quick start guide
+│   ├── developer-guide.md  # Complete developer guide
+│   ├── architecture.md     # Architecture diagrams (Mermaid)
+│   ├── architecture.drawio # Editable architecture diagram
+│   └── improvements.md     # Improvements checklist
+├── public/
+│   └── locales/            # 🌍 i18n translations (en, th)
 ├── src/
-│   ├── app/                # Next.js App Router pages and layouts (now with /[locale] segment)
-│   │   └── [locale]/       # Dynamic locale segment for internationalized routing
-│   │       ├── (dashboard)/# Dashboard routes
-│   │       │   ├── _components/ # UI components for dashboard (e.g., sidebar)
-│   │       │   ├── employees/  # Employee management features (pages, actions, forms, columns)
-│   │       │   └── prizes/     # Prize management features (pages, actions, forms, columns)
-│   │       ├── login/          # Login page and actions
-│   │       ├── actions.ts      # Global server actions
-│   │       ├── globals.css     # Global styles
-│   │       └── layout.tsx      # Root layout
-│   ├── components/         # Reusable UI components (shadcn/ui)
-│   │   └── ui/             # Shadcn/ui components
-│   ├── lib/                # Utility functions and Supabase client setup
-│   │   └── supabase/       # Supabase client configurations
-│   └── i18n.ts             # i18next configuration
-├── tests/                  # Playwright end-to-end tests
-├── .vscode/                # VS Code configurations (e.g., launch.json for debugging)
-├── playwright.config.ts    # Playwright test configuration
-├── tailwind.config.ts      # Tailwind CSS configuration
-├── db/                     # Database schema and RLS policies
-├── next.config.ts          # Next.js configuration
-├── package.json            # Project dependencies and scripts
-└── bun.lockb               # Bun lockfile
+│   ├── app/[locale]/       # 🌐 Next.js App Router with i18n
+│   │   ├── (dashboard)/    # 📊 Dashboard routes (protected)
+│   │   │   ├── _components/# Sidebar, header, shell
+│   │   │   ├── employees/  # Employee management
+│   │   │   ├── prizes/     # Prize management
+│   │   │   ├── rewards/    # Reward distribution
+│   │   │   └── error.tsx   # Error boundary
+│   │   ├── login/          # 🔐 Login page
+│   │   ├── public/         # 🌐 Public pages (no auth)
+│   │   └── layout.tsx      # Root layout
+│   ├── components/ui/      # 🎨 Shadcn UI components
+│   ├── lib/
+│   │   ├── supabase/       # Supabase clients (client, server, middleware)
+│   │   ├── env.ts          # ✅ Environment validation
+│   │   ├── logger.ts       # 📝 Logging utility
+│   │   ├── rate-limit.ts   # 🛡️ Rate limiting
+│   │   └── utils.ts        # Utility functions
+│   └── middleware.ts       # 🔒 Auth + i18n middleware
+├── db/                     # 🗄️ Database schema and migrations
+├── tests/                  # 🧪 Playwright E2E tests
+├── next.config.ts          # ⚙️ Next.js configuration
+├── tailwind.config.ts      # 🎨 Tailwind CSS configuration
+└── package.json            # 📦 Dependencies
 ```
 
-## Deployment
+## 📚 Documentation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Comprehensive documentation is available in the `docs/` folder:
 
-For more details on deploying Next.js applications, refer to the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
+- **[Quick Start Guide](./docs/README.md)** - Get started quickly
+- **[Developer Guide](./docs/developer-guide.md)** - Complete development guide
+- **[Architecture Diagrams](./docs/architecture.md)** - System architecture
+- **[Improvements Checklist](./docs/improvements.md)** - What's been improved
+- **[Logging Guide](./docs/logging-guide.md)** - Logging and monitoring
+
+### Visual Diagrams
+
+- [Architecture Diagram (SVG)](./docs/architecture-diagram.svg)
+- [Data Flow Diagram (SVG)](./docs/data-flow-diagram.svg)
+- [Architecture (Draw.io)](./docs/architecture.drawio) - Editable
+- [Detailed Flow (Draw.io)](./docs/architecture-detail.drawio) - Editable
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Import project to [Vercel](https://vercel.com)
+3. Add environment variables
+4. Deploy!
+
+### Environment Variables
+
+Make sure to set these in Vercel:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+For more details, refer to the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read the [Developer Guide](./docs/developer-guide.md) first.
+
+## 📝 License
+
+MIT License - feel free to use this project for your own applications.
+
+---
+
+**Built with ❤️ using Next.js 15 + Supabase**

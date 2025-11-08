@@ -8,6 +8,9 @@ export const employeeSchema = z.object({
   full_name: z.string()
     .min(1, 'Full name is required')
     .max(255, 'Full name must be less than 255 characters'),
+  full_name_en: z.string()
+    .max(255, 'Full name (EN) must be less than 255 characters')
+    .optional(),
   department: z.string()
     .max(100, 'Department must be less than 100 characters')
     .optional(),
