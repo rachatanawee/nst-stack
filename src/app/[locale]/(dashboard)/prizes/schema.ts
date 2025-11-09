@@ -23,8 +23,7 @@ export const prizeSchema = z.object({
     .nullable()
     .optional(),
   random_sec: z.number()
-    .int('Random seconds must be a whole number')
-    .min(1, 'Random seconds must be at least 1')
+    .min(0.1, 'Random seconds must be at least 0.1')
     .max(60, 'Random seconds must be less than 60')
     .nullable()
     .optional(),

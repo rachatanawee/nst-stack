@@ -162,6 +162,7 @@ export function PrizeForm({ prize }: PrizeFormProps) {
               id="random_sec"
               name="random_sec"
               type="number"
+              step="0.1"
               defaultValue={prize?.random_sec ?? ""}
               className="col-span-3"
             />

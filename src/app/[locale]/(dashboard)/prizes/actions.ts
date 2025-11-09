@@ -39,7 +39,7 @@ export async function createPrize(formData: FormData) {
     is_continue: formData.get("is_continue") === "true",
     group_no: formData.get("group_no") ? parseInt(formData.get("group_no") as string, 10) : null,
     order_no: formData.get("order_no") ? parseInt(formData.get("order_no") as string, 10) : null,
-    random_sec: formData.get("random_sec") ? parseInt(formData.get("random_sec") as string, 10) : null,
+    random_sec: formData.get("random_sec") ? parseFloat(formData.get("random_sec") as string) : null,
   }
 
   const result = prizeSchema.safeParse(rawData)
@@ -90,7 +90,7 @@ export async function updatePrize(id: string, formData: FormData) {
     is_continue: formData.get("is_continue") === "true",
     group_no: formData.get("group_no") ? parseInt(formData.get("group_no") as string, 10) : null,
     order_no: formData.get("order_no") ? parseInt(formData.get("order_no") as string, 10) : null,
-    random_sec: formData.get("random_sec") ? parseInt(formData.get("random_sec") as string, 10) : null,
+    random_sec: formData.get("random_sec") ? parseFloat(formData.get("random_sec") as string) : null,
   }
 
   if (imageRemoved) {
