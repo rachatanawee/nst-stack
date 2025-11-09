@@ -43,6 +43,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -63,6 +64,9 @@ interface DataTableProps<TData, TValue> {
   onRowDoubleClick?: (row: TData) => void
   sorting?: SortingState
   onSortingChange?: (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => void
+  groupFilter?: string
+  onGroupFilterChange?: (value: string) => void
+  uniqueGroups?: number[]
 }
 
 export function DataTable<TData extends { id?: string; employee_id?: string }, TValue>({
@@ -84,6 +88,9 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   onRowDoubleClick,
   sorting: externalSorting,
   onSortingChange: externalOnSortingChange,
+  groupFilter,
+  onGroupFilterChange,
+  uniqueGroups,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const paginationKey = resourceName ? `data-table-pagination-${resourceName}` : null
@@ -206,13 +213,36 @@ export function DataTable<TData extends { id?: string; employee_id?: string }, T
   return (
     <div>
       <div className="flex items-center py-4">
-        <div className="flex items-center">
+        <div className="flex items-center gap-4">
           <Input
             placeholder="Search all columns..."
             value={(table.getState().globalFilter as string) ?? ''}
             onChange={(event) => table.setGlobalFilter(event.target.value)}
             className="max-w-sm"
           />
+          {uniqueGroups && uniqueGroups.length > 0 && onGroupFilterChange && (
+            <div className="flex items-center gap-2">
+              <Label htmlFor="group-filter" className="text-sm font-medium">
+                Group:
+              </Label>
+              <Select
+                value={groupFilter || "all"}
+                onValueChange={onGroupFilterChange}
+              >
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="All Groups" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Groups</SelectItem>
+                  {uniqueGroups.map((group) => (
+                    <SelectItem key={group} value={group.toString()}>
+                       {group}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
         <div className="flex items-center ml-auto">
           {showExportButton && (

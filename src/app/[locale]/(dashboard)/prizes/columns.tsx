@@ -99,6 +99,17 @@ export const columns: ColumnDef<Prize>[] = [
     },
   },
   {
+    accessorKey: "random_sec",
+    header: "Random Sec",
+    size: 100,
+    minSize: 80,
+    maxSize: 120,
+    cell: ({ row }) => {
+      const randomSec = row.getValue("random_sec") as number | null;
+      return randomSec || "-";
+    },
+  },
+  {
     accessorKey: "image_url",
     header: "Image",
     cell: ({ row }) => {

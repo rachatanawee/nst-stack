@@ -23,11 +23,33 @@ export function PrizesClientWrapper({ prizes }: PrizesClientWrapperProps) {
     { id: "order_no", desc: false },
   ])
 
+  // Group filtering
+  const [groupFilter, setGroupFilter] = React.useState<string>("all")
+
+  // Get unique group numbers
+  const uniqueGroups = React.useMemo(() => {
+    const groups = prizes
+      .map(prize => prize.group_no)
+      .filter((group): group is number => group !== null && group !== undefined)
+      .filter((group, index, arr) => arr.indexOf(group) === index)
+      .sort((a, b) => a - b)
+    return groups
+  }, [prizes])
+
+  // Filter data based on group
+  const filteredData = React.useMemo(() => {
+    if (groupFilter === "all") {
+      return prizes
+    }
+    const groupNumber = parseInt(groupFilter)
+    return prizes.filter(prize => prize.group_no === groupNumber)
+  }, [prizes, groupFilter])
+
   return (
     <>
       <DataTable
         columns={columns}
-        data={prizes}
+        data={filteredData}
         resourceName="prizes"
         showAddButton={true}
         onAddClick={() => router.push('/prizes/new')}
@@ -35,6 +57,9 @@ export function PrizesClientWrapper({ prizes }: PrizesClientWrapperProps) {
         showExportButton={true}
         sorting={sorting}
         onSortingChange={setSorting}
+        groupFilter={groupFilter}
+        onGroupFilterChange={setGroupFilter}
+        uniqueGroups={uniqueGroups}
       />
     </>
   )
